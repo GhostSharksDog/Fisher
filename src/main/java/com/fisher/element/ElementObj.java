@@ -30,7 +30,7 @@ public abstract class ElementObj {
     /**
      * 父类定义键盘监听
      */
-    public void keyClick(){
+    public void keyClick(boolean bl,int key){
 
     }
 

@@ -29,8 +29,6 @@ public class GameMainPanel extends JPanel implements Runnable {
     public GameMainPanel() {
         init();
 
-        //Test load
-        load();
     }
 
     public void init() {

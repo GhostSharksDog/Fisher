@@ -28,15 +28,29 @@ public class GameListener implements KeyListener {
      */
     @Override
     public void keyPressed(KeyEvent e) {
+
+        int key = e.getKeyCode();
+        if(set.contains(key)){
+            return;
+        }else{
+            set.add(key);
+        }
         //获取玩家元素
         List<ElementObj> play = em.getElementByKey(GameElement.PLAYER);
         for(ElementObj obj : play){
-            obj.keyClick();
+            obj.keyClick(true,e.getKeyCode());
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-
+        if(!set.contains(e.getKeyCode())){
+            return;
+        }
+        set.remove(e.getKeyCode());
+        List<ElementObj> play = em.getElementByKey(GameElement.PLAYER);
+        for(ElementObj obj : play){
+            obj.keyClick(false,e.getKeyCode());
+        }
     }
 }

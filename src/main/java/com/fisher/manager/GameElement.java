@@ -6,5 +6,5 @@ public enum GameElement {
      * 鱼
      * 地图
      */
-    MAP,PLAYER,FISH
+    MAP,PLAYER,FISH,BULLET
 }

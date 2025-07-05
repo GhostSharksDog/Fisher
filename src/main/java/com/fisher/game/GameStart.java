@@ -3,6 +3,8 @@ package com.fisher.game;
 import com.fisher.show.GameJFrame;
 import com.fisher.show.GameMainPanel;
 
+import java.awt.*;
+
 public class GameStart {
     /**
      * 程序唯一入口

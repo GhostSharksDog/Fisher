@@ -26,6 +26,7 @@ public class ElementManager {
     public Map<GameElement, List<ElementObj>> getGameElements() {
         return gameElements;
     }
+
     //添加元素
     public void addElement(ElementObj element, GameElement gameElement) {
         gameElements.get(gameElement).add(element);
@@ -61,5 +62,6 @@ public class ElementManager {
         //将每种元素都放到map中
         gameElements.put(GameElement.PLAYER, new ArrayList<ElementObj>());
         gameElements.put(GameElement.FISH, new ArrayList<ElementObj>());
+        gameElements.put(GameElement.MAP, new ArrayList<ElementObj>());
     }
 }

@@ -6,7 +6,7 @@ import java.awt.*;
 /**
  * 所有元素的基类
  */
-public class ElementObj {
+public abstract class ElementObj {
     private int x;
     private int y;
     private int width;
@@ -22,6 +22,32 @@ public class ElementObj {
         this.y = y;
         this.width = width;
         this.height = height;
+        this.icon = icon;
+    }
+
+    public abstract void showElement(Graphics g);
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public ImageIcon getIcon() {
+        return icon;
+    }
+
+    public void setIcon(ImageIcon icon) {
         this.icon = icon;
     }
 

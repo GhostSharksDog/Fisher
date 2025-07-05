@@ -27,6 +27,13 @@ public abstract class ElementObj {
 
     public abstract void showElement(Graphics g);
 
+    /**
+     * 父类定义键盘监听
+     */
+    public void keyClick(){
+
+    }
+
     public int getX() {
         return x;
     }

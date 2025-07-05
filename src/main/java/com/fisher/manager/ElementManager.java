@@ -60,8 +60,9 @@ public class ElementManager {
     public void init() {
         gameElements = new HashMap<GameElement, List<ElementObj>>();
         //将每种元素都放到map中
-        gameElements.put(GameElement.PLAYER, new ArrayList<ElementObj>());
-        gameElements.put(GameElement.FISH, new ArrayList<ElementObj>());
-        gameElements.put(GameElement.MAP, new ArrayList<ElementObj>());
+        for(GameElement e:GameElement.values()) {
+            gameElements.put(e,new ArrayList<ElementObj>());
+        }
+
     }
 }

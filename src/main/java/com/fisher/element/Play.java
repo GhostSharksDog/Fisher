@@ -36,10 +36,12 @@ public class Play extends ElementObj {
 
     public Play(int x, int y, int width, int height, ImageIcon icon) {
         super(x, y, width, height, icon);
+        this.startAutoFire();
     }
 
     public Play(ImageIcon icon) {
         super(icon);
+        this.startAutoFire();
     }
 
     @Override
@@ -90,25 +92,34 @@ public class Play extends ElementObj {
     // 开炮！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
     public void fire() {
         long currentTime = System.currentTimeMillis();
-        if (System.currentTimeMillis() - currentTime < this.fireTime) {
+        if (currentTime - this.lastFireTime < this.fireTime) {
             return;
         }
-        lastFireTime = currentTime;
-
-        // 计算子弹起始位置(炮口位置)
-        int bulletX = this.getX() + this.getWidth() / 2;
-        int bulletY = this.getY() + this.getHeight() / 2;
-
-        // 加载子弹图片
-        URL bulletUrl = getClass().getClassLoader().getResource("image/change/img_3.png");
-        ImageIcon bulletIcon = new ImageIcon(bulletUrl != null ? bulletUrl.getFile() : null);
+        this.lastFireTime = currentTime;
 
         // 创建子弹对象
-        Bullet bullet = new Bullet(bulletX, bulletY, 20, 20, bulletIcon, this.angle);
+        URL bulletUrl = getClass().getClassLoader().getResource("image/changefire/img_3.png");
+        Bullet bullet = getBullet(bulletUrl);
 
         // 向元素管理器中添加子弹
         ElementManager.getManager().addElement(bullet, GameElement.BULLET);
+    }
 
+    // 获得子弹对象
+    private Bullet getBullet(URL bulletUrl) {
+        ImageIcon bulletIcon = new ImageIcon(bulletUrl != null ? bulletUrl.getFile() : null);
+        Bullet bullet = new Bullet(bulletIcon, this.angle);
+        bullet.setSize(this.size);
+
+        // 计算子弹起始位置(炮口位置)
+        int cannonCenterX = this.getX() + this.getWidth() / 2 - bullet.getWidth() / 2;
+        int cannonCenterY = this.getY() + this.getHeight() / 2 - bullet.getHeight() / 2;
+        double barrelLength = this.getHeight() * 0.6; // 炮管长度取炮身高度百分比
+        int bulletX = (int) (cannonCenterX + barrelLength * Math.sin(this.angle));
+        int bulletY = (int) (cannonCenterY - barrelLength * Math.cos(this.angle));
+
+        bullet.setPosition(bulletX, bulletY);
+        return bullet;
     }
 
     // 自动开炮
@@ -123,11 +134,7 @@ public class Play extends ElementObj {
                 }
             }
         });
-    }
-
-    // 销毁炮弹
-    private void cleanupBullets() {
-
+        this.firingThread.start();
     }
 
     // 设置窗口大小, 设置大炮的位置

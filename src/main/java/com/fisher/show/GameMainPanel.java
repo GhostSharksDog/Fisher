@@ -105,6 +105,11 @@ public class GameMainPanel extends JPanel implements Runnable {
     @Override
     public void run() {
         while (true) {
+            List<ElementObj> bullets = EM.getElementByKey(GameElement.BULLET);
+            for (ElementObj bullet : bullets) {
+                bullet.update();  // 调用子弹的update方法，更新子弹位置
+            }
+
             this.repaint();
 
             try {

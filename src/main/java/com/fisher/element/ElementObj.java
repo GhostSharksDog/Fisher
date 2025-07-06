@@ -34,6 +34,30 @@ public abstract class ElementObj {
 
     }
 
+    /**
+     *定义对象执行方法顺序
+     */
+    public final void model(long gameTime){
+
+        updateImage();
+
+        move();
+
+    }
+
+    public void updateImage(){
+
+    }
+
+    protected void move(){
+
+    }
+
+    // 添加子弹
+    public void add(long gameTime){
+
+    }
+
     public int getX() {
         return x;
     }

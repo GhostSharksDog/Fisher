@@ -8,6 +8,8 @@ import com.fisher.manager.GameElement;
 
 import javax.swing.*;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用于控制游戏主线程,用于控制游戏加载，游戏关卡，游戏运行时自动化
@@ -31,7 +33,7 @@ public class GameThread extends Thread{
             gameOver();
 
             try {
-                sleep(50); //20fps
+                sleep(25); //40fps
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -49,11 +51,23 @@ public class GameThread extends Thread{
      * 游戏进行
      */
     private void gameRun() {
+        long gameTime = 0L;
         while(true){
-
+            /**
+             * 读取各类基类，按model顺序执行功能
+             */
+            Map<GameElement, List<ElementObj>> all = EM.getGameElements();
+            for(GameElement e : GameElement.values()){
+                List<ElementObj> list = all.get(e);
+                for(int i=0; i<list.size(); i++){
+                    ElementObj obj = list.get(i);
+                    obj.model(gameTime);
+                }
+            }
+            gameTime++;
             //true改为变量控制结束
             try {
-                sleep(50); //20fps
+                sleep(10); //100fps
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

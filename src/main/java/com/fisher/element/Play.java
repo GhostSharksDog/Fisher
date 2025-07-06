@@ -2,6 +2,7 @@ package com.fisher.element;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Map;
 
 public class Play extends ElementObj {
     /**
@@ -14,8 +15,9 @@ public class Play extends ElementObj {
      * 旋转角度
      * 大炮位置 x，y
      * 大炮图片宽高 width，height
-     * 大炮图片素材 icon
+     * 大炮图片素材 imgMap
      */
+    private Map<String,ImageIcon> imgMap;
 
 
     public Play(int x, int y, int width, int height, ImageIcon icon) {
@@ -36,5 +38,20 @@ public class Play extends ElementObj {
 
             }
         }
+    }
+
+    @Override
+    public void updateImage() {
+
+    }
+
+    @Override
+    public void move() {
+
+    }
+
+    @Override
+    public void add(long gameTime) {
+
     }
 }

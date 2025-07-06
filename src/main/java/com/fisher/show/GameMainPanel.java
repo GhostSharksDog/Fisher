@@ -23,12 +23,9 @@ import java.util.Set;
 public class GameMainPanel extends JPanel implements Runnable {
     // 联动管理器，调用元素
     private ElementManager EM;
-    // 背景图片
-    private Image background;
 
     public GameMainPanel() {
         init();
-
     }
 
     public void init() {
@@ -36,25 +33,10 @@ public class GameMainPanel extends JPanel implements Runnable {
 
     }
 
-    public void load() {
-        URL imgUrl1 = FindImgUrl("image/cannon/00.png");
-        URL imgUrl2 = FindImgUrl("image/background/fishlightbg_0.jpg");
-
-        if (imgUrl2 == null) return;
-        this.background = new ImageIcon(imgUrl2).getImage();
-    }
-
-    public URL FindImgUrl(String address) {
-        return getClass().getClassLoader().getResource(address);
-    }
 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-
-        if (this.background != null) {
-            g.drawImage(this.background, 0, 0, this.getWidth(), this.getHeight(), null);
-        }
 
         Map<GameElement, List<ElementObj>> all = EM.getGameElements();
 //		GameElement.values();//隐藏方法  返回值是一个数组,数组的顺序就是定义枚举的顺序
@@ -75,9 +57,8 @@ public class GameMainPanel extends JPanel implements Runnable {
     public void run() {
         while (true) {
             this.repaint();
-
             try {
-                Thread.sleep(50); // 20fps
+                Thread.sleep(10); // 100fps
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

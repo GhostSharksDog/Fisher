@@ -7,5 +7,5 @@
       "/img/"
     ]
   },
-  "panelBackground": ["image/background/fishlightbg_0.jpg"]
+  "panelBackground": "image/background/fishlightbg_0.jpg"
 }

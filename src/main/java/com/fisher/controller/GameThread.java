@@ -52,17 +52,17 @@ public class GameThread extends Thread{
      * 游戏加载
      */
     private void gameLoad(int cStatus, int cLevel) {
-        switch (cStatus) {
-            case 0:
-                GameLoad.loadMap(8);
-                GameLoad.loadPlay("00");
-                break;
-            case 1:
-                GameLoad.loadMap(16);
-                break;
-            case 2:
-                GameLoad.loadMap(cLevel);
-        }
+//        switch (cStatus) {
+//            case 0:
+//                GameLoad.loadMap(8);
+//                GameLoad.loadPlay("00");
+//                break;
+//            case 1:
+//                GameLoad.loadMap(16);
+//                break;
+//            case 2:
+//                GameLoad.loadMap(cLevel);
+//        }
     }
 
     /**
@@ -71,8 +71,8 @@ public class GameThread extends Thread{
     private void gameRun() {
         long gameTime = 0L;
         while(true){
-            /**
-             * 读取各类基类，按model顺序执行功能
+            /*
+              读取各类基类，按model顺序执行功能
              */
             Map<GameElement, List<ElementObj>> all = EM.getGameElements();
             for(GameElement e : GameElement.values()){
@@ -111,11 +111,6 @@ public class GameThread extends Thread{
 //        bg.setSize(this.size);
 //        EM.addElement(bg, GameElement.MAP);
     }
-
-    public URL FindImgUrl(String address) {
-        return getClass().getClassLoader().getResource(address);
-    }
-
 
     public void setSize(Dimension size) {
         this.size = size;

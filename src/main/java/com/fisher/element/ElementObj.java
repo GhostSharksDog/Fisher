@@ -1,5 +1,7 @@
 package com.fisher.element;
 
+import com.alibaba.fastjson.JSONObject;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -48,20 +50,20 @@ public abstract class ElementObj {
      *定义对象执行方法顺序
      */
     public final void model(long gameTime){
-
-        updateImage();
-
-        move();
-
+        updateImage(); // 更新图片
+        move(); // 移动
     }
 
-    public void updateImage(){
 
-    }
+    /**
+     * 用于获取对象
+     * @return
+     */
+    public abstract ElementObj createElement(JSONObject jsonObject);
 
-    protected void move(){
+    public void updateImage(){}
 
-    }
+    protected void move(){}
 
     // 添加子弹
     public void add(long gameTime){

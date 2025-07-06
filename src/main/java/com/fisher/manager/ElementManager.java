@@ -2,6 +2,7 @@ package com.fisher.manager;
 
 import com.fisher.element.ElementObj;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,15 @@ public class ElementManager {
     private List<Object> listMap;  //地图列表
     private List<Object> listPlay; //玩家列表
     private List<Object> listPlayFire; //发射渔网列表
+    private Dimension mainPanelSize=new Dimension(0,0);
+
+    public Dimension getMainPanelSize() {
+        return mainPanelSize;
+    }
+
+    public void setMainPanelSize(Dimension mainPanelSize) {
+        this.mainPanelSize = mainPanelSize;
+    }
 
     /**
      * String作为key匹配所有元素

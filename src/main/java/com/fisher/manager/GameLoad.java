@@ -5,7 +5,9 @@ import com.fisher.element.ElementObj;
 import com.fisher.element.FishMap;
 import com.fisher.element.Play;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -107,5 +109,24 @@ public class GameLoad {
     public static void main(String[] args) {
 //        DataLoader.load();
         new GameLoad();
+    }
+
+
+    /**
+     * 通过address，返回ICON对象，
+     * 注意：对象路径需要从/开始
+     * @param address resources开始的路径
+     * @return IMAGE_ICON
+     */
+    public static ImageIcon findResourceIcon(String address) {
+        try (InputStream resourceAsStream = GameLoad.class.getResourceAsStream(address)) {
+            if(resourceAsStream == null) {
+                throw new RuntimeException("resource not found");
+            }
+            BufferedImage read = ImageIO.read(resourceAsStream);
+            return new ImageIcon(read);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

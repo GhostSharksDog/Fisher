@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameElement;
+import com.fisher.manager.GameLoad;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,7 +65,9 @@ public class Play extends ElementObj {
 
         // 设置旋转中心并旋转
         g2d.rotate(angle, cx, cy);
-
+        System.out.println(this.getIcon().getImage());
+        System.out.println("x"+this.getX()+" y"+this.getY());
+        System.out.println("width"+this.getWidth()+" height"+this.getHeight());
         // 绘制图像（注意坐标是旋转前的）
         g2d.drawImage(this.getIcon().getImage(),
                 this.getX(), this.getY(),
@@ -171,14 +174,9 @@ public class Play extends ElementObj {
      */
     @Override
     public ElementObj createElement(JSONObject jsonObject) {
-        System.out.println(jsonObject);
-        URL lURL = getClass().getClassLoader().getResource(jsonObject.getString("canonLeft"));
-        URL rURL = getClass().getClassLoader().getResource(jsonObject.getString("canonRight"));
-        URL cannonURL = getClass().getClassLoader().getResource(jsonObject.getString("cannon"));
-
-        ImageIcon lIcon = new ImageIcon(lURL != null ? lURL.getFile() : null);
-        ImageIcon rIcon = new ImageIcon(rURL != null ? rURL.getFile() : null);
-        ImageIcon cannonIcon = new ImageIcon(cannonURL != null ? cannonURL.getFile() : null);
+        ImageIcon lIcon = GameLoad.findResourceIcon(jsonObject.getString("canonLeft"));
+        ImageIcon rIcon = GameLoad.findResourceIcon(jsonObject.getString("canonRight"));
+        ImageIcon cannonIcon = GameLoad.findResourceIcon(jsonObject.getString("cannon"));
 
         this.setIcon(cannonIcon);
         this.setSize(ElementManager.getManager().getMainPanelSize());

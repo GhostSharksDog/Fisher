@@ -8,7 +8,6 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -83,10 +82,10 @@ public class GameLoad {
             return null;
         }
         try {
-            ElementObj obj = (ElementObj) classMap.get(key).getDeclaredConstructor().newInstance();
+            ElementObj obj = (ElementObj) classMap.get(key).newInstance();
             JSONObject elementJson = jsonObject.getJSONObject("allClass").getJSONObject(key);
             return obj.createElement(elementJson);
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException  e) {
             e.printStackTrace();
         }
         return null;

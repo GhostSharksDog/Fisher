@@ -1,19 +1,12 @@
 package com.fisher.controller;
 
 import com.fisher.element.ElementObj;
-import com.fisher.element.Fish;
-import com.fisher.element.FishMap;
-import com.fisher.element.Play;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameElement;
 import com.fisher.manager.GameLoad;
-
-import javax.swing.*;
 import java.awt.*;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * 用于控制游戏主线程,用于控制游戏加载，游戏关卡，游戏运行时自动化

@@ -65,9 +65,7 @@ public class GameJFrame extends JFrame {
           多线程启动
          */
         setLocationRelativeTo(null); // 居中
-//        System.out.println(this.getSize());
         this.setVisible(true);
-//        System.out.println(this.getSize());
 
         if (mainThread != null) {
             mainThread.start();  //启动线程

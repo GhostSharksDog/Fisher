@@ -94,8 +94,7 @@ public class GameThread extends Thread{
         ElementObj player = GameLoad.getInstance().getElement("Play");
         EM.addElement(player,GameElement.PLAYER);
 
-//        // 大炮
-        System.out.println(EM.getMainPanelSize());
+//        //
 //        URL cannonUrl = FindImgUrl("image/cannon/00.png");
 //        ElementObj cannon = new Play(new ImageIcon(cannonUrl));
 //        cannon.setSize(this.size);

@@ -1,10 +1,8 @@
 package com.fisher.manager;
 
 public enum GameElement {
-    /**
-     * 玩家
-     * 鱼
-     * 地图
-     */
-    MAP,PLAYER,FISH,BULLET
+    MAP,  // 地图
+    PLAYER,  // 玩家
+    FISH,  // 鱼
+    BULLET  // 子弹
 }

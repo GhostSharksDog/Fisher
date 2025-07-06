@@ -7,7 +7,9 @@ import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameElement;
 
 import javax.swing.*;
+import java.awt.*;
 import java.net.URL;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * 用于控制游戏主线程,用于控制游戏加载，游戏关卡，游戏运行时自动化
@@ -15,6 +17,7 @@ import java.net.URL;
  */
 public class GameThread extends Thread {
     private ElementManager EM;
+    private Dimension size;
 
     public GameThread() {
         EM = ElementManager.getManager();
@@ -53,7 +56,7 @@ public class GameThread extends Thread {
 
             //true改为变量控制结束
             try {
-                sleep(50); //20fps
+                sleep(10); // 20fps
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -67,29 +70,23 @@ public class GameThread extends Thread {
     }
 
     public void load() {
-//        URL cannonUrl = getUrl();
+//        // 大炮
+//        URL cannonUrl = FindImgUrl("image/cannon/00.png");
+//        ElementObj cannon = new Play(new ImageIcon(cannonUrl));
+//        cannon.setSize(this.size);
+//        EM.addElement(cannon, GameElement.PLAYER);
+//
 //        URL bgUrl = FindImgUrl("image/background/fishlightbg_0.jpg");
-
-//        ElementObj obj = new Play(800, 900, 66, 77, new ImageIcon(cannonUrl));
-//        EM.addElement(obj, GameElement.PLAYER);
-
-//        ImageIcon icon2 = new ImageIcon(bgUrl);
-//        ElementObj bg = new FishMap(0, 0, this.panelWidth, this.panelHeight, icon2);
+//        ElementObj bg = new FishMap(new ImageIcon(bgUrl));
+//        bg.setSize(this.size);
 //        EM.addElement(bg, GameElement.MAP);
-
     }
-
-    private URL getUrl() {
-        URL cannonUrl = FindImgUrl("image/cannon/00.png");
-        return cannonUrl;
-    }
-
 
     public URL FindImgUrl(String address) {
-        URL imgUrl = getClass().getClassLoader().getResource(address);
-        if (imgUrl == null) {
-            return null;
-        }
-        return imgUrl;
+        return getClass().getClassLoader().getResource(address);
+    }
+
+    public void setSize(Dimension size) {
+        this.size = size;
     }
 }

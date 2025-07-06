@@ -5,6 +5,7 @@ import com.fisher.manager.GameElement;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Map;
 import java.net.URL;
 
 public class Play extends ElementObj {
@@ -18,8 +19,10 @@ public class Play extends ElementObj {
      * 旋转角度
      * 大炮位置 x，y
      * 大炮图片宽高 width，height
-     * 大炮图片素材 icon
+     * 大炮图片素材 imgMap
      */
+    private Map<String,ImageIcon> imgMap;
+
     // 大炮旋转角度（垂直角度）
     private double angle = 0;
     // 开炮时间 ms
@@ -152,5 +155,20 @@ public class Play extends ElementObj {
 
             }
         }
+    }
+
+    @Override
+    public void updateImage() {
+
+    }
+
+    @Override
+    public void move() {
+
+    }
+
+    @Override
+    public void add(long gameTime) {
+
     }
 }

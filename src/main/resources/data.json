@@ -1,0 +1,11 @@
+{
+  "player" : {
+    "coordinates": "(10, 10)"
+  },
+  "fish": {
+    "images": [
+      "/img/"
+    ]
+  },
+  "panelBackground": ["image/background/fishlightbg_0.jpg"]
+}

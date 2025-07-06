@@ -14,8 +14,9 @@ import java.util.Map;
  *
  */
 public class ElementManager {
-    private List<Object> listMap;
-    private List<Object> listPlay;
+    private List<Object> listMap;  //地图列表
+    private List<Object> listPlay; //玩家列表
+    private List<Object> listPlayFire; //发射渔网列表
 
     /**
      * String作为key匹配所有元素

@@ -3,6 +3,7 @@ package com.fisher.show;
 import com.fisher.element.ElementObj;
 import com.fisher.element.FishMap;
 import com.fisher.element.Play;
+import com.fisher.manager.DataLoader;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameElement;
 
@@ -26,10 +27,10 @@ public class GameMainPanel extends JPanel implements Runnable {
     // 联动管理器，调用元素
     private ElementManager EM;
     // 背景图片
-    private Image background;
+
+    private ImageIcon background;
     // 大炮
     private Play player;
-
 
     public GameMainPanel() {
         init();
@@ -38,6 +39,13 @@ public class GameMainPanel extends JPanel implements Runnable {
 
     public void init() {
         EM = ElementManager.getManager();
+//        设置面板大小
+        setPreferredSize(new Dimension(1000,618));
+        load();
+    }
+
+    public void load() {
+        this.background = DataLoader.getPanelBackground();
         loadPlay();  // 加载大炮
         listen();  // 注册监听器
     }
@@ -68,22 +76,21 @@ public class GameMainPanel extends JPanel implements Runnable {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
+        if (this.background != null) {
+            g.drawImage(this.background.getImage(), 0, 0, this.getWidth(), this.getHeight(), null);
+        }
+
 
         Map<GameElement, List<ElementObj>> all = EM.getGameElements();
 //		GameElement.values();  // 隐藏方法  返回值是一个数组,数组的顺序就是定义枚举的顺序
 
-        // 背景图片
-        if (this.background == null) {
-            URL bgUrl = getClass().getClassLoader().getResource("image/background/fishlightbg_0.jpg");
-            background = new ImageIcon(bgUrl != null ? bgUrl.getFile() : null).getImage();
-        }
-        g.drawImage(background, 0, 0, this.getWidth(), this.getHeight(), null);
+        g.drawImage(background.getImage(), 0, 0, this.getWidth(), this.getHeight(), null);
 
         for (GameElement e : GameElement.values()) {
             List<ElementObj> list = all.get(e);
-            for (ElementObj obj : list) {
-//                System.out.println("show img");
-                obj.showElement(g);  // 调用每个类自己的show进行显示
+            for (int i = 0; i < list.size(); i++) {
+                ElementObj obj = list.get(i);
+                obj.showElement(g); //调用每个类自己的show进行显示
             }
         }
     }
@@ -111,9 +118,8 @@ public class GameMainPanel extends JPanel implements Runnable {
             }
 
             this.repaint();
-
             try {
-                Thread.sleep(50); // 20fps
+                Thread.sleep(10); // 100fps
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

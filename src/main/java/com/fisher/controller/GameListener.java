@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Set;
 
 public class GameListener implements KeyListener {
-    private ElementManager em = ElementManager.getManager();
+    private final ElementManager em = ElementManager.getManager();
 
     /**
      * 用于记录按下的键，松开后删除set中数据，使按键
      */
-    private Set<Integer> set = new HashSet<Integer>();
+    private final Set<Integer> set = new HashSet<Integer>();
 
     @Override
     public void keyTyped(KeyEvent e) {

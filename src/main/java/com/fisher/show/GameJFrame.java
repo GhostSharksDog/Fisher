@@ -36,14 +36,10 @@ public class GameJFrame extends JFrame {
     }
 
     public void init() {
-        this.setSize(GameX, GameY);
+//        this.setSize(GameX, GameY);
         this.setTitle("捕鱼达人");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLocationRelativeTo(null);
-
-        // 大小自适应
-        this.setResizable(true);
-        this.setLayout(new BorderLayout());
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // 设置JFrame的默认关闭操作
+        this.setLocationRelativeTo(null); // 设置JFrame在屏幕居中
     }
 
     /**
@@ -58,7 +54,8 @@ public class GameJFrame extends JFrame {
      */
     public void start() {
         if (panel != null) {
-            this.add(panel, BorderLayout.CENTER);
+            this.add(panel); // 添加面板, 布局为中间
+            pack(); // 自动适配大小
         }
         if (keyListener != null) {
             this.addKeyListener(keyListener);
@@ -66,10 +63,11 @@ public class GameJFrame extends JFrame {
         if (mainThread != null) {
             mainThread.start();  //启动线程
         }
-        /**
-         *显示界面
-         * 多线程启动
+        /*
+         显示界面
+          多线程启动
          */
+        setLocationRelativeTo(null); // 居中
         this.setVisible(true);
         if (this.panel instanceof Runnable) {
             new Thread((Runnable) this.panel).start();

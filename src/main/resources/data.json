@@ -11,13 +11,13 @@
   "allClass": {
     "Play": {
       "className": "com.fisher.element.Play",
-      "canonLeft": "before\\cannon\\sub.png",
-      "canonRight": "before\\cannon\\add.png",
-      "cannon": "image\\cannon\\09.png"
+      "canonLeft": "/before/cannon/sub.png",
+      "canonRight": "/before/cannon/add.png",
+      "cannon": "/image/cannon/09.png"
     },
     "Bullet": {
       "className": "com.fisher.element.Bullet",
-      "bullet": "image\\changefire\\img_3.png"
+      "bullet": "/image/changefire/img_3.png"
     }
   }
 }

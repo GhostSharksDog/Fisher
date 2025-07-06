@@ -78,13 +78,13 @@ public class GameMainPanel extends JPanel implements Runnable {
     public void paint(Graphics g) {
         super.paint(g);
         Map<GameElement, List<ElementObj>> all = EM.getGameElements();
-        System.out.println(all);
 //		GameElement.values();  // 隐藏方法  返回值是一个数组,数组的顺序就是定义枚举的顺序
         g.drawImage(background.getImage(), 0, 0, this.getWidth(), this.getHeight(), null);
         for (GameElement e : GameElement.values()) {
             List<ElementObj> list = all.get(e);
             for (int i = 0; i < list.size(); i++) {
                 ElementObj obj = list.get(i);
+                System.out.println(obj);
                 obj.showElement(g); //调用每个类自己的show进行显示
             }
         }

@@ -10,15 +10,20 @@ public class Bullet extends ElementObj {
     private double speed = 10;
     // 子弹大小比例
     private double bulletSize = 0.02;
+    // 记录子弹创建时间和存活时间（毫秒）
+    private long createTime;
+    private final long lifeTime = 5000; // 子弹存活时间
 
     public Bullet(int x, int y, int width, int height, ImageIcon icon, double angle) {
         super(x, y, width, height, icon);
         this.angle = angle;
+        this.createTime = System.currentTimeMillis();
     }
 
     public Bullet(ImageIcon icon, double angle) {
         super(icon);
         this.angle = angle;
+        this.createTime = System.currentTimeMillis();
     }
 
     @Override
@@ -26,6 +31,11 @@ public class Bullet extends ElementObj {
         // 根据角度移动子弹
         this.setX((int)(this.getX() + this.speed * Math.sin(angle)));
         this.setY((int)(this.getY() + this.speed * -Math.cos(angle)));
+
+        // 判断子弹是否超出生存周期
+        if (System.currentTimeMillis() - this.createTime > this.lifeTime) {
+            this.setAlive(false);
+        }
     }
 
     @Override

@@ -12,6 +12,7 @@ public abstract class ElementObj {
     private int width;
     private int height;
     private ImageIcon icon;
+    protected boolean alive = true;  // 默认存活
 
 
     public ElementObj() {
@@ -66,6 +67,15 @@ public abstract class ElementObj {
     public void add(long gameTime){
 
     }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
     public int getX() {
         return x;
     }

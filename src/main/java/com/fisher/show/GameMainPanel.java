@@ -14,6 +14,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +28,6 @@ public class GameMainPanel extends JPanel implements Runnable {
     // 联动管理器，调用元素
     private ElementManager EM;
     // 背景图片
-
     private ImageIcon background;
     // 大炮
     private Play player;
@@ -113,8 +113,15 @@ public class GameMainPanel extends JPanel implements Runnable {
     public void run() {
         while (true) {
             List<ElementObj> bullets = EM.getElementByKey(GameElement.BULLET);
-            for (ElementObj bullet : bullets) {
-                bullet.update();  // 调用子弹的update方法，更新子弹位置
+
+            Iterator<ElementObj> it = bullets.iterator();
+            while (it.hasNext()) {
+                ElementObj bullet = it.next();
+                if (!bullet.isAlive()) {
+                    it.remove();  // 子弹死亡，从集合中移除
+                } else {
+                    bullet.update();  // 子弹活着，更新位置
+                }
             }
 
             this.repaint();

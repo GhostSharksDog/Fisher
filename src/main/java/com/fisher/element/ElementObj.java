@@ -25,7 +25,13 @@ public abstract class ElementObj {
         this.icon = icon;
     }
 
+    public ElementObj(ImageIcon icon) {
+        this.icon = icon;
+    }
+
     public abstract void showElement(Graphics g);
+
+    public abstract void setSize(Dimension size);
 
     /**
      * 父类定义键盘监听
@@ -34,6 +40,9 @@ public abstract class ElementObj {
 
     }
 
+    public void update() {
+
+    }
     /**
      *定义对象执行方法顺序
      */
@@ -57,7 +66,6 @@ public abstract class ElementObj {
     public void add(long gameTime){
 
     }
-
     public int getX() {
         return x;
     }
@@ -80,6 +88,22 @@ public abstract class ElementObj {
 
     public void setIcon(ImageIcon icon) {
         this.icon = icon;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 
 }

@@ -1,9 +1,8 @@
 package com.fisher.show;
 
 import com.fisher.element.ElementObj;
-import com.fisher.element.FishMap;
 import com.fisher.element.Play;
-import com.fisher.manager.DataLoader;
+import com.fisher.manager.GameLoad;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameElement;
 
@@ -45,7 +44,7 @@ public class GameMainPanel extends JPanel implements Runnable {
     }
 
     public void load() {
-        this.background = DataLoader.getPanelBackground();
+        this.background = GameLoad.getInstance().getPanelBackground();  // 加载背景图片
         loadPlay();  // 加载大炮
         listen();  // 注册监听器
     }
@@ -76,16 +75,9 @@ public class GameMainPanel extends JPanel implements Runnable {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        if (this.background != null) {
-            g.drawImage(this.background.getImage(), 0, 0, this.getWidth(), this.getHeight(), null);
-        }
-
-
         Map<GameElement, List<ElementObj>> all = EM.getGameElements();
 //		GameElement.values();  // 隐藏方法  返回值是一个数组,数组的顺序就是定义枚举的顺序
-
         g.drawImage(background.getImage(), 0, 0, this.getWidth(), this.getHeight(), null);
-
         for (GameElement e : GameElement.values()) {
             List<ElementObj> list = all.get(e);
             for (int i = 0; i < list.size(); i++) {

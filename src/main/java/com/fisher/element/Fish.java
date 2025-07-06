@@ -15,7 +15,7 @@ public class Fish extends ElementObj {
     private int width, height; // 尺寸
     private Dimension size;    // 屏幕边界
     private double boundaryWidth, boundaryHeight;
-    private int speed;  // 鱼的移动速度,每帧移动的固定距离
+    private double speed;  // 鱼的移动速度,每帧移动的固定距离
     private double direction;  // 当前移动方向
 
     private ImageIcon icon;
@@ -23,6 +23,9 @@ public class Fish extends ElementObj {
     private boolean isAlive = true;  //鱼的生存状态
     private long createTime;  //鱼的生成时间
     private long liveTime;    //鱼的生存周期
+
+    private int frameCounter = 0;  // 新增帧计数器
+    private final int moveInterval = 3; // 每3帧移动一次（可调整）
 
     private Random random = new Random();
 
@@ -41,7 +44,7 @@ public class Fish extends ElementObj {
         this.boundaryHeight = size.getHeight();
         this.speed = speed;
         this.createTime = System.currentTimeMillis();
-        this.liveTime = (long)(Math.sqrt(Math.pow(boundaryWidth,2) + Math.pow(boundaryHeight,2)) / speed)*30;
+        this.liveTime = (long)(Math.sqrt(Math.pow(boundaryWidth,2) + Math.pow(boundaryHeight,2)) / speed) * 100;
 
         // 随机初始尺寸
         width = random.nextInt(50) + 30;  // 30-80像素
@@ -85,24 +88,28 @@ public class Fish extends ElementObj {
             isAlive = false; // 标记为需要销毁
             return;
         }
-        // 计算移动向量
-        int dx = (int)(Math.cos(direction) * speed);
-        int dy = (int)(Math.sin(direction) * speed);
+        frameCounter++;
+        if (frameCounter >= moveInterval) {
+            frameCounter = 0; // 重置计数器
+            // 计算移动向量
+            int dx = (int) (Math.cos(direction) * speed);
+            int dy = (int) (Math.sin(direction) * speed);
 
-        // 更新位置
-        x += dx;
-        y += dy;
+            // 更新位置
+            x += dx;
+            y += dy;
 
-        System.out.println("element.Fish： 成功位移x: " + x + ", y: " + y);
+//            System.out.println("element.Fish： 成功位移x: " + x + ", y: " + y);
 
-        // 10%的概率随机改变方向
-        if (random.nextFloat() < 0.1f) {
-            // 计算最大偏移量（5度转换为弧度）
-            double maxOffset = Math.toRadians(5);
-            // 生成-5度到+5度之间的随机偏移
-            double randomOffset = (random.nextDouble() * 2 - 1) * maxOffset;
-            // 应用偏移到当前方向
-            direction += randomOffset;
+            // 10%的概率随机改变方向
+            if (random.nextFloat() < 0.1f) {
+                // 计算最大偏移量（5度转换为弧度）
+                double maxOffset = Math.toRadians(5);
+                // 生成-5度到+5度之间的随机偏移
+                double randomOffset = (random.nextDouble() * 2 - 1) * maxOffset;
+                // 应用偏移到当前方向
+                direction += randomOffset;
+            }
         }
     }
 

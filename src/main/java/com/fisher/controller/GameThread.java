@@ -52,17 +52,7 @@ public class GameThread extends Thread{
      * 游戏加载
      */
     private void gameLoad(int cStatus, int cLevel) {
-//        switch (cStatus) {
-//            case 0:
-//                GameLoad.loadMap(8);
-//                GameLoad.loadPlay("00");
-//                break;
-//            case 1:
-//                GameLoad.loadMap(16);
-//                break;
-//            case 2:
-//                GameLoad.loadMap(cLevel);
-//        }
+        loadPlayer();
     }
 
     /**
@@ -99,8 +89,22 @@ public class GameThread extends Thread{
     }
 
 
-    public void load() {
+    public void loadPlayer() {
 
+        ElementObj player = GameLoad.getInstance().getElement("Play");
+        EM.addElement(player,GameElement.PLAYER);
+
+//        // 大炮
+        System.out.println(EM.getMainPanelSize());
+//        URL cannonUrl = FindImgUrl("image/cannon/00.png");
+//        ElementObj cannon = new Play(new ImageIcon(cannonUrl));
+//        cannon.setSize(this.size);
+//        EM.addElement(cannon, GameElement.PLAYER);
+//
+//        URL bgUrl = FindImgUrl("image/background/fishlightbg_0.jpg");
+//        ElementObj bg = new FishMap(new ImageIcon(bgUrl));
+//        bg.setSize(this.size);
+//        EM.addElement(bg, GameElement.MAP);
     }
 
     public void setSize(Dimension size) {

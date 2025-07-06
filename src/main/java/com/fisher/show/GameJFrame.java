@@ -60,15 +60,18 @@ public class GameJFrame extends JFrame {
         if (keyListener != null) {
             this.addKeyListener(keyListener);
         }
-        if (mainThread != null) {
-            mainThread.start();  //启动线程
-        }
         /*
          显示界面
           多线程启动
          */
         setLocationRelativeTo(null); // 居中
+//        System.out.println(this.getSize());
         this.setVisible(true);
+//        System.out.println(this.getSize());
+
+        if (mainThread != null) {
+            mainThread.start();  //启动线程
+        }
         if (this.panel instanceof Runnable) {
             new Thread((Runnable) this.panel).start();
         }

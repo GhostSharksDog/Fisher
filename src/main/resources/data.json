@@ -4,8 +4,20 @@
   },
   "fish": {
     "images": [
-      "/img/"
+      "/img/1.png"
     ]
   },
-  "panelBackground": "image/background/fishlightbg_0.jpg"
+  "panelBackground": "image/background/fishlightbg_0.jpg",
+  "allClass": {
+    "Play": {
+      "className": "com.fisher.element.Play",
+      "canonLeft": "/before/cannon/sub.png",
+      "canonRight": "/before/cannon/add.png",
+      "cannon": "/image/cannon/09.png"
+    },
+    "Bullet": {
+      "className": "com.fisher.element.Bullet",
+      "bullet": "/image/changefire/img_3.png"
+    }
+  }
 }

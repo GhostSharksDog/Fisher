@@ -18,7 +18,7 @@ import java.util.Objects;
 public class DataLoader {
     private static final Map<String, Class<?>> map =  new HashMap<>();
 
-    public static void load{
+    public static void load(){
 //        加载配置文件
         try (InputStream inputStream = DataLoader.class.getClassLoader().getResourceAsStream("data.json")) {
             if(inputStream == null){

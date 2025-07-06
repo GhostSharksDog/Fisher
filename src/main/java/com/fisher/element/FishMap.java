@@ -14,6 +14,5 @@ public class FishMap extends ElementObj {
         g.drawImage(this.getIcon().getImage(),
                 this.getX(),this.getY(),
                 this.getWidth(),this.getHeight(),null);
-
     }
 }

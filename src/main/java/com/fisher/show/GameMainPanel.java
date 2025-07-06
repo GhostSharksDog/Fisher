@@ -1,5 +1,6 @@
 package com.fisher.show;
 
+import com.fisher.element.Bullet;
 import com.fisher.element.ElementObj;
 import com.fisher.element.FishMap;
 import com.fisher.element.Play;
@@ -8,6 +9,8 @@ import com.fisher.manager.GameElement;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -23,31 +26,57 @@ import java.util.Set;
 public class GameMainPanel extends JPanel implements Runnable {
     // 联动管理器，调用元素
     private ElementManager EM;
+    // 背景图片
+    private Image background;
+    // 大炮
+    private Play player;
+
 
     public GameMainPanel() {
         init();
+        addMouseListener();
     }
 
     public void init() {
         EM = ElementManager.getManager();
 
+        // 初始化玩家
+        URL cannonUrl = getClass().getClassLoader().getResource("image/cannon/00.png");
+        this.player = new Play(800, 900, 66, 77, new ImageIcon(cannonUrl != null ? cannonUrl.getFile() : null));
+        EM.addElement(this.player, GameElement.PLAYER);
     }
-
 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
 
         Map<GameElement, List<ElementObj>> all = EM.getGameElements();
-//		GameElement.values();//隐藏方法  返回值是一个数组,数组的顺序就是定义枚举的顺序
+//		GameElement.values();  // 隐藏方法  返回值是一个数组,数组的顺序就是定义枚举的顺序
+
+        // 背景图片
+        URL bgUrl = getClass().getClassLoader().getResource("image/background/fishlightbg_0.jpg");
+        ImageIcon icon2 = new ImageIcon(bgUrl != null ? bgUrl.getFile() : null);
+        ElementObj bg = new FishMap(0, 0, this.getWidth(), this.getHeight(), icon2);
+        EM.addElement(bg, GameElement.MAP);
+
         for (GameElement e : GameElement.values()) {
             List<ElementObj> list = all.get(e);
-            for (int i = 0; i < list.size(); i++) {
-                System.out.println("show img");
-                ElementObj obj = list.get(i);
-                obj.showElement(g); //调用每个类自己的show进行显示
+            for (ElementObj obj : list) {
+//                System.out.println("show img");
+                obj.showElement(g);  // 调用每个类自己的show进行显示
             }
         }
+    }
+
+    // 鼠标监听
+    private void addMouseListener() {
+        this.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // 当鼠标点击时，让大炮指向点击位置
+                player.pointTo(e.getX(), e.getY());
+            }
+        });
     }
 
     /**
@@ -57,6 +86,7 @@ public class GameMainPanel extends JPanel implements Runnable {
     public void run() {
         while (true) {
             this.repaint();
+
             try {
                 Thread.sleep(10); // 100fps
             } catch (InterruptedException e) {

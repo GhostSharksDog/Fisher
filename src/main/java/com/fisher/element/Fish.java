@@ -15,4 +15,9 @@ public class Fish extends ElementObj{
     public void showElement(Graphics g) {
 
     }
+
+    @Override
+    public void setSize(Dimension size) {
+
+    }
 }

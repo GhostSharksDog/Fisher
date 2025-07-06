@@ -3,9 +3,9 @@
     "coordinates": "(10, 10)"
   },
   "fish": {
-    "imgs": [
+    "images": [
       "/img/"
-
     ]
-  }
+  },
+  "panelBackground": ["image/background/fishlightbg_0.jpg"]
 }

@@ -9,11 +9,21 @@ public class FishMap extends ElementObj {
         super(x, y, width, height, icon);
     }
 
+    public FishMap(ImageIcon icon) {
+        super(icon);
+    }
+
     @Override
     public void showElement(Graphics g) {
         g.drawImage(this.getIcon().getImage(),
                 this.getX(),this.getY(),
                 this.getWidth(),this.getHeight(),null);
+    }
 
+    @Override
+    public void setSize(Dimension size) {
+        if (size == null) return;
+        this.setHeight(size.height);
+        this.setWidth(size.width);
     }
 }

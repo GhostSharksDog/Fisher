@@ -3,16 +3,19 @@ package com.fisher.show;
 import com.fisher.element.ElementObj;
 import com.fisher.element.FishMap;
 import com.fisher.element.Play;
+import com.fisher.manager.DataLoader;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameElement;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 游戏主面板
@@ -24,11 +27,14 @@ public class GameMainPanel extends JPanel implements Runnable {
     // 联动管理器，调用元素
     private ElementManager EM;
     // 背景图片
+
     private ImageIcon background;
+    // 大炮
+    private Play player;
 
     public GameMainPanel() {
         init();
-
+        addMouseListener();
     }
 
     public void init() {
@@ -39,13 +45,32 @@ public class GameMainPanel extends JPanel implements Runnable {
     }
 
     public void load() {
-        URL imgUrl2 = FindImgUrl("image/background/fishlightbg_0.jpg");
-        if (imgUrl2 == null) return;
-        this.background = new ImageIcon(imgUrl2);
+        this.background = DataLoader.getPanelBackground();
+        loadPlay();  // 加载大炮
+        listen();  // 注册监听器
     }
 
-    public URL FindImgUrl(String address) {
-        return getClass().getClassLoader().getResource(address);
+    // 注册监听器
+    public void listen() {
+        // 添加窗口监听器
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                player.setWinSize(new Dimension(getWidth(), getHeight()));
+            }
+        });
+    }
+
+    // 加载大炮
+    public void loadPlay() {
+        // 提前加载大炮（替代 GameThread.load）
+        URL cannonUrl = getClass().getClassLoader().getResource("image/cannon/00.png");
+        ImageIcon icon = new ImageIcon(cannonUrl != null ? cannonUrl.getFile() : null);
+        Play player = new Play(icon);
+        player.setWinSize(this.getSize());  // 提前设置窗口大小
+        EM.addElement(player, GameElement.PLAYER);
+
+        this.player = player;
     }
 
     @Override
@@ -54,8 +79,13 @@ public class GameMainPanel extends JPanel implements Runnable {
         if (this.background != null) {
             g.drawImage(this.background.getImage(), 0, 0, this.getWidth(), this.getHeight(), null);
         }
+
+
         Map<GameElement, List<ElementObj>> all = EM.getGameElements();
-//		GameElement.values();//隐藏方法  返回值是一个数组,数组的顺序就是定义枚举的顺序
+//		GameElement.values();  // 隐藏方法  返回值是一个数组,数组的顺序就是定义枚举的顺序
+
+        g.drawImage(background.getImage(), 0, 0, this.getWidth(), this.getHeight(), null);
+
         for (GameElement e : GameElement.values()) {
             List<ElementObj> list = all.get(e);
             for (int i = 0; i < list.size(); i++) {
@@ -63,6 +93,17 @@ public class GameMainPanel extends JPanel implements Runnable {
                 obj.showElement(g); //调用每个类自己的show进行显示
             }
         }
+    }
+
+    // 鼠标监听
+    private void addMouseListener() {
+        this.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // 当鼠标点击时，让大炮指向点击位置
+                player.pointTo(e.getX(), e.getY());
+            }
+        });
     }
 
     /**

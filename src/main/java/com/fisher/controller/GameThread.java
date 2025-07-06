@@ -100,16 +100,7 @@ public class GameThread extends Thread{
 
 
     public void load() {
-//        // 大炮
-//        URL cannonUrl = FindImgUrl("image/cannon/00.png");
-//        ElementObj cannon = new Play(new ImageIcon(cannonUrl));
-//        cannon.setSize(this.size);
-//        EM.addElement(cannon, GameElement.PLAYER);
-//
-//        URL bgUrl = FindImgUrl("image/background/fishlightbg_0.jpg");
-//        ElementObj bg = new FishMap(new ImageIcon(bgUrl));
-//        bg.setSize(this.size);
-//        EM.addElement(bg, GameElement.MAP);
+
     }
 
     public void setSize(Dimension size) {

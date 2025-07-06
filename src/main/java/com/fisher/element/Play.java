@@ -1,5 +1,7 @@
 package com.fisher.element;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameElement;
 
@@ -37,18 +39,23 @@ public class Play extends ElementObj {
     private double widthRatio = 0.04;
     private double HeightRatio = 0.07;
 
-    public Play(int x, int y, int width, int height, ImageIcon icon) {
-        super(x, y, width, height, icon);
-        this.startAutoFire();
-    }
+    public Play() {}
 
-    public Play(ImageIcon icon) {
-        super(icon);
-        this.startAutoFire();
-    }
+//    public Play(int x, int y, int width, int height, ImageIcon icon) {
+//        super(x, y, width, height, icon);
+//        this.startAutoFire();
+//    }
+//
+//    public Play(ImageIcon icon) {
+//        super(icon);
+//        this.startAutoFire();
+//    }
 
     @Override
     public void showElement(Graphics g) {
+//      获取panel尺寸
+//        System.out.println(ElementManager.getManager().getMainPanelSize());
+
         Graphics2D g2d = (Graphics2D) g.create();
 
         // 计算中心点
@@ -114,7 +121,7 @@ public class Play extends ElementObj {
         Bullet bullet = new Bullet(bulletIcon, this.angle);
         bullet.setSize(this.size);
 
-        // 计算子弹起始位置(炮口位置)
+        // 计算子弹起始位置 (炮口位置)
         int cannonCenterX = this.getX() + this.getWidth() / 2 - bullet.getWidth() / 2;
         int cannonCenterY = this.getY() + this.getHeight() / 2 - bullet.getHeight() / 2;
         double barrelLength = this.getHeight() * 0.6; // 炮管长度取炮身高度百分比
@@ -155,6 +162,28 @@ public class Play extends ElementObj {
 
             }
         }
+    }
+
+
+    /**
+     * @param jsonObject 数据
+     * @return
+     */
+    @Override
+    public ElementObj createElement(JSONObject jsonObject) {
+        System.out.println(jsonObject);
+        URL lURL = getClass().getClassLoader().getResource(jsonObject.getString("canonLeft"));
+        URL rURL = getClass().getClassLoader().getResource(jsonObject.getString("canonRight"));
+        URL cannonURL = getClass().getClassLoader().getResource(jsonObject.getString("cannon"));
+
+        ImageIcon lIcon = new ImageIcon(lURL != null ? lURL.getFile() : null);
+        ImageIcon rIcon = new ImageIcon(rURL != null ? rURL.getFile() : null);
+        ImageIcon cannonIcon = new ImageIcon(cannonURL != null ? cannonURL.getFile() : null);
+
+        this.setIcon(cannonIcon);
+        this.setSize(ElementManager.getManager().getMainPanelSize());
+
+        return this;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.fisher.element;
 
+import com.alibaba.fastjson.JSONObject;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -25,5 +27,10 @@ public class FishMap extends ElementObj {
         if (size == null) return;
         this.setHeight(size.height);
         this.setWidth(size.width);
+    }
+
+    @Override
+    public ElementObj createElement(JSONObject jsonObject) {
+        return this;
     }
 }

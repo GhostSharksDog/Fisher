@@ -28,24 +28,26 @@ public class GameMainPanel extends JPanel implements Runnable {
     private ElementManager EM;
     // 背景图片
     private ImageIcon background;
-    // 大炮
-    private Play player;
+
+    private final int width = 1000;
+    private final int height = 618;
 
     public GameMainPanel() {
         init();
-        addMouseListener();
     }
 
     public void init() {
         EM = ElementManager.getManager();
 //        设置面板大小
-        setPreferredSize(new Dimension(1000,618));
+        setPreferredSize(new Dimension(width,height));
         load();
+        if (EM != null) {
+            EM.setMainPanelSize(new Dimension(width, height));
+        }
     }
 
     public void load() {
         this.background = GameLoad.getInstance().getPanelBackground();  // 加载背景图片
-        loadPlay();  // 加载大炮
         listen();  // 注册监听器
     }
 
@@ -55,27 +57,28 @@ public class GameMainPanel extends JPanel implements Runnable {
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                player.setWinSize(new Dimension(getWidth(), getHeight()));
+                Dimension size = getSize();
+                EM.setMainPanelSize(size);
             }
         });
     }
 
     // 加载大炮
-    public void loadPlay() {
-        // 提前加载大炮（替代 GameThread.load）
-        URL cannonUrl = getClass().getClassLoader().getResource("image/cannon/00.png");
-        ImageIcon icon = new ImageIcon(cannonUrl != null ? cannonUrl.getFile() : null);
-        Play player = new Play(icon);
-        player.setWinSize(this.getSize());  // 提前设置窗口大小
-        EM.addElement(player, GameElement.PLAYER);
-
-        this.player = player;
-    }
+//    public void loadPlay() {
+//        // 提前加载大炮（替代 GameThread.load）
+//        URL cannonUrl = getClass().getClassLoader().getResource("image/cannon/00.png");
+//        ImageIcon icon = new ImageIcon(cannonUrl != null ? cannonUrl.getFile() : null);
+//        Play player = new Play(icon);
+//        player.setWinSize(this.getSize());  // 提前设置窗口大小
+//        EM.addElement(player, GameElement.PLAYER);
+//        this.player = player;
+//    }
 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         Map<GameElement, List<ElementObj>> all = EM.getGameElements();
+        System.out.println(all);
 //		GameElement.values();  // 隐藏方法  返回值是一个数组,数组的顺序就是定义枚举的顺序
         g.drawImage(background.getImage(), 0, 0, this.getWidth(), this.getHeight(), null);
         for (GameElement e : GameElement.values()) {
@@ -87,16 +90,6 @@ public class GameMainPanel extends JPanel implements Runnable {
         }
     }
 
-    // 鼠标监听
-    private void addMouseListener() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                // 当鼠标点击时，让大炮指向点击位置
-                player.pointTo(e.getX(), e.getY());
-            }
-        });
-    }
 
     /**
      * 多线程
@@ -104,17 +97,17 @@ public class GameMainPanel extends JPanel implements Runnable {
     @Override
     public void run() {
         while (true) {
-            List<ElementObj> bullets = EM.getElementByKey(GameElement.BULLET);
-
-            Iterator<ElementObj> it = bullets.iterator();
-            while (it.hasNext()) {
-                ElementObj bullet = it.next();
-                if (!bullet.isAlive()) {
-                    it.remove();  // 子弹死亡，从集合中移除
-                } else {
-                    bullet.update();  // 子弹活着，更新位置
-                }
-            }
+//            List<ElementObj> bullets = EM.getElementByKey(GameElement.BULLET);
+//
+//            Iterator<ElementObj> it = bullets.iterator();
+//            while (it.hasNext()) {
+//                ElementObj bullet = it.next();
+//                if (!bullet.isAlive()) {
+//                    it.remove();  // 子弹死亡，从集合中移除
+//                } else {
+//                    bullet.update();  // 子弹活着，更新位置
+//                }
+//            }
 
             this.repaint();
             try {

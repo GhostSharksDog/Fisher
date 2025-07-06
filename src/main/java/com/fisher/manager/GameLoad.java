@@ -14,63 +14,80 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GameLoad {
-    private static final Map<String, Class<?>> map =  new HashMap<>();
+    private static final Map<String, Class<?>> classMap = new HashMap<>();
 
     private static final GameLoad dataLoader = new GameLoad();
 
-    public static GameLoad getInstance(){
+    public static GameLoad getInstance() {
         return dataLoader;
     }
+
     /**
      * 全局图片资源
      * eg: panelBackground.jpg etc.
      */
-    private final Map<String,ImageIcon> imgMap = new HashMap<>();
+    private final Map<String, ImageIcon> imgMap = new HashMap<>();
 
     private JSONObject jsonObject; // 配置文件中的json对象
 
-    public void load(){
+    public void load() {
         loadJson(); // 加载配置文件
 //        将panelBackground加载到imgMap中
         String panelBackground = jsonObject.getString("panelBackground");
 //        存入imgMap
-        imgMap.put("panelBackground",new ImageIcon(GameLoad.FindResourceUrl(panelBackground)));
+        imgMap.put("panelBackground", new ImageIcon(GameLoad.FindResourceUrl(panelBackground)));
     }
 
-    private void loadJson(){
+    private void loadJson() {
         try (InputStream inputStream = GameLoad.class.getClassLoader().getResourceAsStream("data.json")) {
-            if(inputStream == null){
+            if (inputStream == null) {
                 throw new RuntimeException("data.json not found");
             }
             String jsonStr = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
             jsonObject = JSONObject.parseObject(jsonStr);
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public ImageIcon getPanelBackground(){
+    public ImageIcon getPanelBackground() {
         return imgMap.get("panelBackground");
     }
 
-    private GameLoad(){
+    private GameLoad() {
         init();
     }
 
-    protected void init(){
+    protected void init() {
         load(); // 加载配置
+        if (jsonObject == null) {
+            throw new RuntimeException("data.json not get");
+        }
 //        设置map
-        map.put("ElementObj", ElementObj.class);
-        map.put("FishMap", FishMap.class);
-        map.put("Play", Play.class);
+//        map.put("ElementObj", ElementObj.class);
+//        map.put("FishMap", FishMap.class);
+//        map.put("Play", Play.class);
+
+        JSONObject allClass = jsonObject.getJSONObject("allClass");
+        for(String key : allClass.keySet()) {
+            String s = allClass.getJSONObject(key).getString("className");
+            try {
+                classMap.put(key,Class.forName(s));
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
     }
 
     public ElementObj getElement(String key) {
-        if(map.get(key) == null){
+        if (classMap.get(key) == null) {
             return null;
         }
         try {
-            return (ElementObj) map.get(key).newInstance();
+            ElementObj obj = (ElementObj) classMap.get(key).newInstance();
+            JSONObject elementJson = jsonObject.getJSONObject("allClass").getJSONObject(key);
+            return obj.createElement(elementJson);
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -79,6 +96,7 @@ public class GameLoad {
 
     /**
      * 查找资源的url
+     *
      * @param address 资源地址
      * @return URL
      */

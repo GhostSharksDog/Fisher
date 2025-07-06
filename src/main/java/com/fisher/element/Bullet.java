@@ -1,5 +1,7 @@
 package com.fisher.element;
 
+import com.alibaba.fastjson.JSONObject;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -36,6 +38,11 @@ public class Bullet extends ElementObj {
         if (System.currentTimeMillis() - this.createTime > this.lifeTime) {
             this.setAlive(false);
         }
+    }
+
+    @Override
+    public ElementObj createElement(JSONObject jsonObject) {
+        return null;
     }
 
     @Override

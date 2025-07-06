@@ -114,7 +114,7 @@ public class GameMainPanel extends JPanel implements Runnable {
         while (true) {
             this.repaint();
             try {
-                Thread.sleep(50); // 20fps
+                Thread.sleep(10); // 100fps
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

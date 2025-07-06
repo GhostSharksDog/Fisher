@@ -18,8 +18,6 @@ import java.awt.event.MouseMotionListener;
  */
 public class GameJFrame extends JFrame {
     //窗体默认大小
-    public static int GameX = 1000;
-    public static int GameY = 618;
 
     private JPanel panel = null;
 

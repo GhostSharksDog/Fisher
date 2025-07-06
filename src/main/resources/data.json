@@ -1,0 +1,11 @@
+{
+  "player" : {
+    "coordinates": "(10, 10)"
+  },
+  "fish": {
+    "imgs": [
+      "/img/"
+
+    ]
+  }
+}

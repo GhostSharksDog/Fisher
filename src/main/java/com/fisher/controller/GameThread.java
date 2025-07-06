@@ -67,25 +67,11 @@ public class GameThread extends Thread{
     }
 
     public void load(){
-        URL imgUrl1 = FindImgUrl("image/cannon/00.png");
-        URL imgUrl2 = FindImgUrl("image/background/fishlightbg_0.jpg");
-
-        ImageIcon icon = new ImageIcon(imgUrl1);
-        ElementObj obj = new Play(100,100,66,77,icon);
-        EM.addElement(obj, GameElement.PLAYER);
-
-        ImageIcon icon2 = new ImageIcon(imgUrl2);
-        ElementObj bg = new FishMap(0,0,800,480,icon2);
-        EM.addElement(bg, GameElement.MAP);
 
     }
 
 
     public URL FindImgUrl(String address){
-        URL imgUrl = getClass().getClassLoader().getResource(address);
-        if (imgUrl == null) {
-            return null;
-        }
-        return imgUrl;
+        return getClass().getClassLoader().getResource(address);
     }
 }

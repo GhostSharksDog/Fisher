@@ -12,14 +12,14 @@ public class GameStart {
      * 程序唯一入口
      */
     public static void main(String[] args) {
-        GameJFrame frame = new GameJFrame();
-        GameMainPanel mainPanel = new GameMainPanel();
-        GameListener gameListener = new GameListener();
-        GameThread mainThread = new GameThread();
+        GameJFrame frame = new GameJFrame(); // 创建窗体
+        GameMainPanel mainPanel = new GameMainPanel(); // 创建游戏面板
+        GameListener gameListener = new GameListener(); // 创建游戏监听器
+        GameThread mainThread = new GameThread(); // 创建游戏主线程
 
-        frame.setPanel(mainPanel);
-        frame.setKeyListener(gameListener);
-        frame.setMainThread(mainThread);
-        frame.start();
+        frame.setPanel(mainPanel); // 注入游戏面板
+        frame.setKeyListener(gameListener); // 注入游戏监听器
+        frame.setMainThread(mainThread); // 注入游戏主线程
+        frame.start(); // 启动游戏
     }
 }

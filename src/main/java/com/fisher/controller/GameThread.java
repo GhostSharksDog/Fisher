@@ -1,6 +1,7 @@
 package com.fisher.controller;
 
 import com.fisher.element.ElementObj;
+import com.fisher.element.Fish;
 import com.fisher.element.FishMap;
 import com.fisher.element.Play;
 import com.fisher.manager.ElementManager;
@@ -53,6 +54,8 @@ public class GameThread extends Thread{
      */
     private void gameLoad(int cStatus, int cLevel) {
         loadPlayer();
+
+        generateFishes(1,1);
     }
 
     /**
@@ -94,20 +97,20 @@ public class GameThread extends Thread{
         ElementObj player = GameLoad.getInstance().getElement("Play");
         EM.addElement(player,GameElement.PLAYER);
 
-//        // 大炮
-        System.out.println(EM.getMainPanelSize());
-//        URL cannonUrl = FindImgUrl("image/cannon/00.png");
-//        ElementObj cannon = new Play(new ImageIcon(cannonUrl));
-//        cannon.setSize(this.size);
-//        EM.addElement(cannon, GameElement.PLAYER);
-//
-//        URL bgUrl = FindImgUrl("image/background/fishlightbg_0.jpg");
-//        ElementObj bg = new FishMap(new ImageIcon(bgUrl));
-//        bg.setSize(this.size);
-//        EM.addElement(bg, GameElement.MAP);
+    }
+
+
+    public void generateFishes(int count, int speed) {
+        for (int i = 0; i < count; i++) {
+            ElementObj fish = GameLoad.getInstance().getElement("Fish"); // 创建鱼对象
+            if (fish != null) {
+                EM.addElement(fish, GameElement.FISH); // 添加到元素管理器
+            }
+        }
     }
 
     public void setSize(Dimension size) {
         this.size = size;
     }
+
 }

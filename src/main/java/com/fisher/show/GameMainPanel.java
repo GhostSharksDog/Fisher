@@ -84,7 +84,7 @@ public class GameMainPanel extends JPanel implements Runnable {
             List<ElementObj> list = all.get(e);
             for (int i = 0; i < list.size(); i++) {
                 ElementObj obj = list.get(i);
-                System.out.println(obj);
+//                System.out.println(obj);
                 obj.showElement(g); //调用每个类自己的show进行显示
             }
         }

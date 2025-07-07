@@ -3,6 +3,7 @@ package com.fisher.element;
 import com.alibaba.fastjson.JSONObject;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameLoad;
+import com.fisher.manager.FishClass;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +16,9 @@ public class Fish extends ElementObj {
     private int width, height; // 尺寸
     private Dimension size;    // 屏幕边界
     private double boundaryWidth, boundaryHeight;
+    private int score;         // 鱼类积分
+    private FishClass fishClass;
+
     private double speed;  // 鱼的移动速度,每帧移动的固定距离
     private double direction;  // 当前移动方向
 
@@ -25,34 +29,56 @@ public class Fish extends ElementObj {
     private long liveTime;    //鱼的生存周期
 
     private int frameCounter = 0;  // 新增帧计数器
-    private final int moveInterval = 3; // 每3帧移动一次（可调整）
+    private int moveInterval = 3; // 每3帧移动一次（可调整）
 
     private Random random = new Random();
 
     public Fish() {
         // 无参构造函数
-        this(3); // 默认速度设为3
+        this(getRandomFishClass());
     }
+
+    /**
+     * 获取随机鱼种
+     */
+    public static FishClass getRandomFishClass() {
+        Random rand = new Random();
+        double randomValue = rand.nextDouble() * 100;
+
+        if (randomValue <= 50) {
+            return FishClass.SMALL;
+        } else if (randomValue <= 95) {
+            return FishClass.MEDIUM;
+        } else {
+            return FishClass.LARGE;
+        }
+    }
+
+
     /**
      * 鱼的构造函数
-     * @param speed 每帧移动的固定距离
+     * @param fishClass 鱼的三种等级
      * 鱼
-     * @param g
      * 鱼会乱游，设置随机数和设计算法使鱼按照一定规则移动，鱼超出屏幕范围外生命周期结束
      * x,y,width,height
      */
-    public Fish(int speed) {
+    public Fish(FishClass fishClass) {
+        this.fishClass = fishClass;
         size = ElementManager.getManager().getMainPanelSize();
+
+        // 使用枚举中的属性
+        this.score = fishClass.getScore();
+        this.speed = fishClass.getSpeed();
+        this.moveInterval = fishClass.getMoveInterval();
+
+        // 随机尺寸在最小和最大之间
+        this.width = fishClass.getMinSize() + random.nextInt(fishClass.getMaxSize() - fishClass.getMinSize());
+        this.height = width;
 
         this.boundaryWidth = size.getWidth();
         this.boundaryHeight = size.getHeight();
-        this.speed = speed;
         this.createTime = System.currentTimeMillis();
         this.liveTime = (long)(Math.sqrt(Math.pow(boundaryWidth,2) + Math.pow(boundaryHeight,2)) / speed) * 100;
-
-        // 随机初始尺寸
-        width = random.nextInt(50) + 30;  // 30-80像素
-        height = width;
 
         // 随机位置（确保在边界内）
         int[] siteXY = randomBoundary((int)(boundaryWidth), (int)(boundaryHeight), width, height, random);
@@ -107,7 +133,7 @@ public class Fish extends ElementObj {
 //            System.out.println("element.Fish： 成功位移x: " + x + ", y: " + y);
 
             // 10%的概率随机改变方向
-            if (random.nextFloat() < 0.1f) {
+            if (random.nextFloat() < 0.2f) {
                 // 计算最大偏移量（5度转换为弧度）
                 double maxOffset = Math.toRadians(5);
                 // 生成-5度到+5度之间的随机偏移
@@ -228,5 +254,14 @@ public class Fish extends ElementObj {
 
     public Point getPosition() {
         return new Point(x, y);
+    }
+
+    // 添加获取鱼等级和积分的方法
+    public FishClass getFishClass() {
+        return fishClass;
+    }
+
+    public int getScore() {
+        return score;
     }
 }

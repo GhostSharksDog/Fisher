@@ -11,9 +11,9 @@
   "allClass": {
     "Play": {
       "className": "com.fisher.element.Play",
+      "cannon": "/image/cannon/09.png",
       "canonLeft": "/before/cannon/sub.png",
-      "canonRight": "/before/cannon/add.png",
-      "cannon": "/image/cannon/09.png"
+      "canonRight": "/before/cannon/add.png"
     },
     "Bullet": {
       "className": "com.fisher.element.Bullet",
@@ -22,6 +22,14 @@
     "Fish": {
       "className": "com.fisher.element.Fish",
       "fish": "/image/fish/testFish.png"
+    },
+    "CannonLeftDecoration": {
+      "className": "com.fisher.element.CannonLeftDecoration",
+      "canonLeft": "/before/cannon/sub.png"
+    },
+    "CannonRightDecoration": {
+      "className": "com.fisher.element.CannonRightDecoration",
+      "canonRight": "/before/cannon/add.png"
     }
   }
 }

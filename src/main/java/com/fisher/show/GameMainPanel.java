@@ -1,7 +1,6 @@
 package com.fisher.show;
 
 import com.fisher.element.ElementObj;
-import com.fisher.element.Play;
 import com.fisher.manager.GameLoad;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameElement;
@@ -12,8 +11,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.net.URL;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -57,22 +54,19 @@ public class GameMainPanel extends JPanel implements Runnable {
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                Dimension size = getSize();
-                EM.setMainPanelSize(size);
+                EM.setMainPanelSize(getSize());
             }
         });
-    }
 
-    // 加载大炮
-//    public void loadPlay() {
-//        // 提前加载大炮（替代 GameThread.load）
-//        URL cannonUrl = getClass().getClassLoader().getResource("image/cannon/00.png");
-//        ImageIcon icon = new ImageIcon(cannonUrl != null ? cannonUrl.getFile() : null);
-//        Play player = new Play(icon);
-//        player.setWinSize(this.getSize());  // 提前设置窗口大小
-//        EM.addElement(player, GameElement.PLAYER);
-//        this.player = player;
-//    }
+        // 添加鼠标监听器
+        this.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                EM.setMousePoint(e.getX(), e.getY());
+            }
+        });
+
+    }
 
     @Override
     public void paint(Graphics g) {
@@ -84,7 +78,8 @@ public class GameMainPanel extends JPanel implements Runnable {
             List<ElementObj> list = all.get(e);
             for (int i = 0; i < list.size(); i++) {
                 ElementObj obj = list.get(i);
-                System.out.println(obj);
+                obj.setSize(ElementManager.getManager().getMainPanelSize());
+//                System.out.println(obj);
                 obj.showElement(g); //调用每个类自己的show进行显示
             }
         }

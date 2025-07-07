@@ -1,6 +1,8 @@
 package com.fisher.element;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fisher.manager.ElementManager;
+import com.fisher.manager.GameLoad;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,17 +18,19 @@ public class Bullet extends ElementObj {
     private long createTime;
     private final long lifeTime = 5000; // 子弹存活时间
 
-    public Bullet(int x, int y, int width, int height, ImageIcon icon, double angle) {
-        super(x, y, width, height, icon);
-        this.angle = angle;
-        this.createTime = System.currentTimeMillis();
-    }
+    public Bullet() {}
 
-    public Bullet(ImageIcon icon, double angle) {
-        super(icon);
-        this.angle = angle;
-        this.createTime = System.currentTimeMillis();
-    }
+//    public Bullet(int x, int y, int width, int height, ImageIcon icon, double angle) {
+//        super(x, y, width, height, icon);
+//        this.angle = angle;
+//        this.createTime = System.currentTimeMillis();
+//    }
+//
+//    public Bullet(ImageIcon icon, double angle) {
+//        super(icon);
+//        this.angle = angle;
+//        this.createTime = System.currentTimeMillis();
+//    }
 
     @Override
     public void update() {
@@ -42,7 +46,10 @@ public class Bullet extends ElementObj {
 
     @Override
     public ElementObj createElement(JSONObject jsonObject) {
-        return null;
+        ImageIcon Icon = GameLoad.findResourceIcon(jsonObject.getString("bullet"));
+        this.setIcon(Icon);
+        this.setSize(ElementManager.getManager().getMainPanelSize());
+        return this;
     }
 
     @Override

@@ -2,11 +2,10 @@ package com.fisher.manager;
 
 import com.fisher.element.ElementObj;
 
+import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Function
@@ -15,9 +14,11 @@ import java.util.Map;
  *
  */
 public class ElementManager {
-    private List<Object> listMap;  //地图列表
-    private List<Object> listPlay; //玩家列表
-    private List<Object> listPlayFire; //发射渔网列表
+    private List<Object> listMap;  // 地图列表
+    private List<Object> listPlay; // 玩家列表
+    private List<Object> listPlayFire; // 发射渔网列表
+    private List<Integer> mousePoint = new ArrayList<>(Arrays.asList(0, 0)); // 初始化默认值
+    private boolean isMouseClick;  // 是否点击鼠标
     private Dimension mainPanelSize=new Dimension(0,0);
 
     public Dimension getMainPanelSize() {
@@ -26,6 +27,23 @@ public class ElementManager {
 
     public void setMainPanelSize(Dimension mainPanelSize) {
         this.mainPanelSize = mainPanelSize;
+    }
+
+    public boolean isMouseClick() {
+        return isMouseClick;
+    }
+
+    public synchronized void setMousePoint(int x, int y) {
+        SwingUtilities.invokeLater(() -> { // 确保在EDT执行
+            mousePoint.clear();
+            mousePoint.add(x);
+            mousePoint.add(y);
+            this.isMouseClick = true;
+        });
+    }
+
+    public synchronized List<Integer> getMousePoint() {
+        return new ArrayList<>(mousePoint); // 返回副本
     }
 
     /**
@@ -38,10 +56,11 @@ public class ElementManager {
         return gameElements;
     }
 
-    //添加元素
+    // 添加元素
     public void addElement(ElementObj element, GameElement gameElement) {
         gameElements.get(gameElement).add(element);
     }
+
     //根据key返回list集合取回某元素
     public List<ElementObj> getElementByKey(GameElement element) {
         return gameElements.get(element);

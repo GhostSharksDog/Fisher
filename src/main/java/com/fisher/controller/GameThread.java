@@ -1,18 +1,13 @@
 package com.fisher.controller;
 
 import com.fisher.element.ElementObj;
-import com.fisher.element.FishMap;
-import com.fisher.element.Play;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameElement;
 import com.fisher.manager.GameLoad;
 
-import javax.swing.*;
 import java.awt.*;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * 用于控制游戏主线程,用于控制游戏加载，游戏关卡，游戏运行时自动化
@@ -94,17 +89,6 @@ public class GameThread extends Thread{
         ElementObj player = GameLoad.getInstance().getElement("Play");
         EM.addElement(player,GameElement.PLAYER);
 
-//        // 大炮
-        System.out.println(EM.getMainPanelSize());
-//        URL cannonUrl = FindImgUrl("image/cannon/00.png");
-//        ElementObj cannon = new Play(new ImageIcon(cannonUrl));
-//        cannon.setSize(this.size);
-//        EM.addElement(cannon, GameElement.PLAYER);
-//
-//        URL bgUrl = FindImgUrl("image/background/fishlightbg_0.jpg");
-//        ElementObj bg = new FishMap(new ImageIcon(bgUrl));
-//        bg.setSize(this.size);
-//        EM.addElement(bg, GameElement.MAP);
     }
 
     public void setSize(Dimension size) {

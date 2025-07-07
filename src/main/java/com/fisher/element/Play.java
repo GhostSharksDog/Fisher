@@ -8,6 +8,7 @@ import com.fisher.manager.GameLoad;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 import java.util.Map;
 import java.net.URL;
 
@@ -39,6 +40,8 @@ public class Play extends ElementObj {
     // 大炮的大小的比例
     private double widthRatio = 0.04;
     private double HeightRatio = 0.07;
+    // 是否自动开炮
+    private boolean autoPlay = false;
 
     public Play() {}
 
@@ -57,6 +60,13 @@ public class Play extends ElementObj {
 //      获取panel尺寸
 //        System.out.println(ElementManager.getManager().getMainPanelSize());
 
+        if (ElementManager.getManager().isMouseClick()) {
+            // 鼠标点击，计算方向并开炮
+            int x = ElementManager.getManager().getMousePoint().get(0);
+            int y = ElementManager.getManager().getMousePoint().get(1);
+            this.pointTo(x, y);
+        }
+
         Graphics2D g2d = (Graphics2D) g.create();
 
         // 计算中心点
@@ -65,9 +75,9 @@ public class Play extends ElementObj {
 
         // 设置旋转中心并旋转
         g2d.rotate(angle, cx, cy);
-        System.out.println(this.getIcon().getImage());
-        System.out.println("x"+this.getX()+" y"+this.getY());
-        System.out.println("width"+this.getWidth()+" height"+this.getHeight());
+//        System.out.println(this.getIcon().getImage());
+//        System.out.println("x"+this.getX()+" y"+this.getY());
+//        System.out.println("width"+this.getWidth()+" height"+this.getHeight());
         // 绘制图像（注意坐标是旋转前的）
         g2d.drawImage(this.getIcon().getImage(),
                 this.getX(), this.getY(),
@@ -77,12 +87,13 @@ public class Play extends ElementObj {
 
     @Override
     public void setSize(Dimension size) {
+//        System.out.println("Play setSize: " + size);
         if (size == null) return;
         this.size = size;
         this.setWidth((int)(size.getWidth() * this.widthRatio));
         this.setHeight((int)(size.getHeight() * this.HeightRatio));
-        this.setX((int)(size.getWidth() / 2 - this.getWidth()));
-        this.setY((int)(size.getHeight() / 2 - this.getHeight()));
+        this.setX((int)(size.getWidth() / 2 - (double) this.getWidth() / 2));
+        this.setY((int)(size.getHeight() - this.getHeight()));
     }
 
     // 计算鼠标指向的方向并开炮
@@ -111,17 +122,15 @@ public class Play extends ElementObj {
         this.lastFireTime = currentTime;
 
         // 创建子弹对象
-        URL bulletUrl = getClass().getClassLoader().getResource("image/changefire/img_3.png");
-        Bullet bullet = getBullet(bulletUrl);
+        Bullet bullet = getBullet();
 
         // 向元素管理器中添加子弹
         ElementManager.getManager().addElement(bullet, GameElement.BULLET);
     }
 
     // 获得子弹对象
-    private Bullet getBullet(URL bulletUrl) {
-        ImageIcon bulletIcon = new ImageIcon(bulletUrl != null ? bulletUrl.getFile() : null);
-        Bullet bullet = new Bullet(bulletIcon, this.angle);
+    private Bullet getBullet() {
+        Bullet bullet = (Bullet) GameLoad.getInstance().getElement("Bullet");
         bullet.setSize(this.size);
 
         // 计算子弹起始位置 (炮口位置)
@@ -148,15 +157,6 @@ public class Play extends ElementObj {
             }
         });
         this.firingThread.start();
-    }
-
-    // 设置窗口大小, 设置大炮的位置
-    public void setWinSize(Dimension size) {
-        this.size = size.getSize();
-        this.setWidth((int)(this.size.getWidth() * this.widthRatio));
-        this.setHeight((int)(this.size.getHeight() * this.HeightRatio));
-        this.setX((int)(this.size.getWidth() / 2 - this.getWidth()));
-        this.setY((int)(this.size.getHeight() - this.getHeight()));
     }
 
     public void keyClick(boolean b, int keycode) {

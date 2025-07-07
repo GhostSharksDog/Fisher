@@ -1,8 +1,10 @@
 package com.fisher.element;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.awt.*;
 
-public class Fish extends ElementObj{
+public class Fish extends ElementObj {
     /**
      * 鱼
      * @param g
@@ -19,5 +21,10 @@ public class Fish extends ElementObj{
     @Override
     public void setSize(Dimension size) {
 
+    }
+
+    @Override
+    public ElementObj createElement(JSONObject jsonObject) {
+        return null;
     }
 }

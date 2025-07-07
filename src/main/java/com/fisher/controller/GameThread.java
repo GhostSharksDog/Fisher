@@ -1,13 +1,16 @@
 package com.fisher.controller;
 
 import com.fisher.element.ElementObj;
+import com.fisher.element.Fish;
 import com.fisher.manager.ElementManager;
+import com.fisher.manager.FishClass;
 import com.fisher.manager.GameElement;
 import com.fisher.manager.GameLoad;
 
 import java.awt.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * 用于控制游戏主线程,用于控制游戏加载，游戏关卡，游戏运行时自动化
@@ -20,6 +23,12 @@ public class GameThread extends Thread{
     private int currentLevel = 0;   //  当前地图
     private int currentStatus = 0;     //  当前界面状态  0为初始界面，1为关卡选择界面，2为关卡界面
     private Dimension size;
+
+    // 鱼类生成配置
+    private final long FISH_GENERATION_INTERVAL = 2000; // 每2秒生成一次鱼（毫秒）
+    private long lastFishGenerationTime = 0;
+    private final Random random = new Random();
+
 
     public GameThread(){
         EM = ElementManager.getManager();
@@ -49,7 +58,6 @@ public class GameThread extends Thread{
     private void gameLoad(int cStatus, int cLevel) {
         loadPlayer();
 
-        generateFishes(5,1);
     }
 
     /**
@@ -58,6 +66,7 @@ public class GameThread extends Thread{
     private void gameRun() {
         long gameTime = 0L;
         while(true){
+            generateFishesContinuously();
             /*
               读取各类基类，按model顺序执行功能
              */
@@ -93,11 +102,31 @@ public class GameThread extends Thread{
     }
 
 
-    public void generateFishes(int count, double speed) {
+    private void generateFishesContinuously() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastFishGenerationTime > FISH_GENERATION_INTERVAL) {
+            lastFishGenerationTime = currentTime;
+
+            // 每次生成1-3条鱼
+            int fishCount = 1 + random.nextInt(3);
+            generateFishes(fishCount);
+        }
+    }
+
+    public void generateFishes(int count) {
         for (int i = 0; i < count; i++) {
-            ElementObj fish = GameLoad.getInstance().getElement("Fish"); // 创建鱼对象
-            if (fish != null) {
-                EM.addElement(fish, GameElement.FISH); // 添加到元素管理器
+            ElementObj fishObj = GameLoad.getInstance().getElement("Fish");
+            if (fishObj != null && fishObj instanceof Fish) {
+                Fish fish = (Fish) fishObj;
+
+                // 根据概率选择鱼的种类
+                FishClass fishClass = Fish.getRandomFishClass();
+
+                // 创建新的鱼对象（指定类型）
+                Fish newFish = new Fish(fishClass);
+                newFish.setIcon(fish.getIcon()); // 保留图像
+
+                EM.addElement(newFish, GameElement.FISH);
             }
         }
     }

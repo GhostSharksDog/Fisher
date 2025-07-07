@@ -68,15 +68,10 @@ public class GameMainPanel extends JPanel implements Runnable {
 
     }
 
-    public void removeElement() {
-        EM.getGameElements().get(GameElement.BULLET).removeIf(ele -> !ele.isAlive());
-    }
 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-
-        this.removeElement();  // 移除死亡的元素
 
         Map<GameElement, List<ElementObj>> all = EM.getGameElements();
 //		GameElement.values();  // 隐藏方法  返回值是一个数组,数组的顺序就是定义枚举的顺序

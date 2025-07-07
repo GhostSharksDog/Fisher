@@ -17,6 +17,7 @@ public class ElementManager {
     private List<Object> listMap;  // 地图列表
     private List<Object> listPlay; // 玩家列表
     private List<Object> listPlayFire; // 发射渔网列表
+    private List<Object> listEffect;   // 爆炸效果列表
     private List<Integer> mousePoint = new ArrayList<>(Arrays.asList(0, 0)); // 初始化默认值
     private boolean isMouseClick;  // 是否点击鼠标
     private Dimension mainPanelSize=new Dimension(0,0);

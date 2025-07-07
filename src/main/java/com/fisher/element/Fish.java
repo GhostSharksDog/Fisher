@@ -1,6 +1,7 @@
 package com.fisher.element;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fisher.controller.Collider;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameLoad;
 import com.fisher.manager.FishClass;
@@ -9,7 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
 
-public class Fish extends ElementObj {
+public class Fish extends ElementObj implements Collider {
 
     // 鱼的基本属性
     private int x, y;          // 位置坐标
@@ -145,8 +146,13 @@ public class Fish extends ElementObj {
     }
 
     @Override
+    public void setAlive(boolean alive) {
+        this.isAlive = alive;
+    }
+
+    @Override
     public boolean isAlive() {
-        return true;
+        return this.isAlive;
     }
 
     @Override
@@ -263,5 +269,15 @@ public class Fish extends ElementObj {
 
     public int getScore() {
         return score;
+    }
+
+    @Override
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, width, height);
+    }
+
+    @Override
+    public ElementObj getThis() {
+        return this;
     }
 }

@@ -43,9 +43,8 @@ public abstract class ElementObj {
 
     }
 
-    public void update() {
+    public abstract void update();
 
-    }
     /**
      *定义对象执行方法顺序
      */
@@ -54,6 +53,7 @@ public abstract class ElementObj {
         move(); // 移动
     }
 
+    public abstract boolean isAlive();
 
     /**
      * 用于获取对象
@@ -68,10 +68,6 @@ public abstract class ElementObj {
     // 添加子弹
     public void add(long gameTime){
 
-    }
-
-    public boolean isAlive() {
-        return alive;
     }
 
     public void setAlive(boolean alive) {

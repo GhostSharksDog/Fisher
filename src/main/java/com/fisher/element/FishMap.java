@@ -30,7 +30,18 @@ public class FishMap extends ElementObj {
     }
 
     @Override
+    public void update() {
+
+    }
+
+    @Override
+    public boolean isAlive() {
+        return true;
+    }
+
+    @Override
     public ElementObj createElement(JSONObject jsonObject) {
         return this;
     }
+
 }

@@ -8,40 +8,40 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Bullet extends ElementObj {
-    // 子弹角度
-    private double angle;
-    // 子弹速度
-    private double speed = 10;
-    // 子弹大小比例
-    private double bulletSize = 0.02;
-    // 记录子弹创建时间和存活时间（毫秒）
-    private long createTime;
-    private final long lifeTime = 5000; // 子弹存活时间
+    private double angle;  // 子弹角度
+    private double speed = 10; // 子弹速度
+    private double bulletSize = 0.02;  // 子弹大小比例
+    private long createTime;  // 记录子弹创建时间和存活时间（毫秒）
+    private final long lifeTime = 3000; // 子弹存活时间（ms）
 
     public Bullet() {}
 
-//    public Bullet(int x, int y, int width, int height, ImageIcon icon, double angle) {
-//        super(x, y, width, height, icon);
-//        this.angle = angle;
-//        this.createTime = System.currentTimeMillis();
-//    }
-//
-//    public Bullet(ImageIcon icon, double angle) {
-//        super(icon);
-//        this.angle = angle;
-//        this.createTime = System.currentTimeMillis();
-//    }
-
     @Override
     public void update() {
+        this.bulletTTL();;  // 子弹生存周期
+
         // 根据角度移动子弹
         this.setX((int)(this.getX() + this.speed * Math.sin(angle)));
         this.setY((int)(this.getY() + this.speed * -Math.cos(angle)));
+    }
 
+    @Override
+    public boolean isAlive() {
+        return this.alive;
+    }
+
+    // 子弹生存周期
+    public void bulletTTL() {
         // 判断子弹是否超出生存周期
         if (System.currentTimeMillis() - this.createTime > this.lifeTime) {
             this.setAlive(false);
         }
+
+        // 判断子弹是否超出边界
+        if (this.getX() < 0 || this.getX() > ElementManager.getManager().getMainPanelSize().width
+                || this.getY() < 0 || this.getY() > ElementManager.getManager().getMainPanelSize().height) {
+            this.setAlive(false);
+                }
     }
 
     @Override
@@ -70,5 +70,13 @@ public class Bullet extends ElementObj {
     public void setPosition(int x, int y) {
         this.setX(x);
         this.setY(y);
+    }
+
+    public void setAngle(double angle) {
+        this.angle = angle;
+    }
+
+    public void setCreateTime(long l) {
+        this.createTime = l;
     }
 }

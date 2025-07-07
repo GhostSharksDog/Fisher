@@ -1,7 +1,6 @@
 package com.fisher.show;
 
 import com.fisher.element.ElementObj;
-import com.fisher.element.Play;
 import com.fisher.manager.GameLoad;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameElement;
@@ -12,8 +11,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.net.URL;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -71,9 +68,16 @@ public class GameMainPanel extends JPanel implements Runnable {
 
     }
 
+    public void removeElement() {
+        EM.getGameElements().get(GameElement.BULLET).removeIf(ele -> !ele.isAlive());
+    }
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
+
+        this.removeElement();  // 移除死亡的元素
+
         Map<GameElement, List<ElementObj>> all = EM.getGameElements();
 //		GameElement.values();  // 隐藏方法  返回值是一个数组,数组的顺序就是定义枚举的顺序
         g.drawImage(background.getImage(), 0, 0, this.getWidth(), this.getHeight(), null);
@@ -81,13 +85,12 @@ public class GameMainPanel extends JPanel implements Runnable {
             List<ElementObj> list = all.get(e);
             for (int i = 0; i < list.size(); i++) {
                 ElementObj obj = list.get(i);
-                obj.setSize(ElementManager.getManager().getMainPanelSize());
-//                System.out.println(obj);
-                obj.showElement(g); //调用每个类自己的show进行显示
+                obj.setSize(ElementManager.getManager().getMainPanelSize());  // 设置元素大小，位置
+                obj.update();  // 更新元素状态
+                obj.showElement(g);  // 调用每个类自己的show进行显示
             }
         }
     }
-
 
     /**
      * 多线程
@@ -95,25 +98,12 @@ public class GameMainPanel extends JPanel implements Runnable {
     @Override
     public void run() {
         while (true) {
-//            List<ElementObj> bullets = EM.getElementByKey(GameElement.BULLET);
-//
-//            Iterator<ElementObj> it = bullets.iterator();
-//            while (it.hasNext()) {
-//                ElementObj bullet = it.next();
-//                if (!bullet.isAlive()) {
-//                    it.remove();  // 子弹死亡，从集合中移除
-//                } else {
-//                    bullet.update();  // 子弹活着，更新位置
-//                }
-//            }
-
             this.repaint();
             try {
                 Thread.sleep(10); // 100fps
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-
         }
     }
 }

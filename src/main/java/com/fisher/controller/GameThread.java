@@ -5,7 +5,6 @@ import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameElement;
 import com.fisher.manager.GameLoad;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +18,6 @@ public class GameThread extends Thread{
     private volatile boolean paused = false;
     private int currentLevel = 0;   //  当前地图
     private int currentStatus = 0;     //  当前界面状态  0为初始界面，1为关卡选择界面，2为关卡界面
-    private Dimension size;
 
     public GameThread(){
         EM = ElementManager.getManager();
@@ -87,7 +85,6 @@ public class GameThread extends Thread{
 
 
     public void loadPlayer() {
-
         ElementObj player = GameLoad.getInstance().getElement("Play");
         EM.addElement(player,GameElement.PLAYER);
     }
@@ -100,10 +97,6 @@ public class GameThread extends Thread{
                 EM.addElement(fish, GameElement.FISH); // 添加到元素管理器
             }
         }
-    }
-
-    public void setSize(Dimension size) {
-        this.size = size;
     }
 
 }

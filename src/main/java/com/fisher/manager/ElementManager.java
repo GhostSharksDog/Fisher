@@ -33,6 +33,10 @@ public class ElementManager {
         return isMouseClick;
     }
 
+    public void setMouseClick(boolean isMouseClick) {
+        this.isMouseClick = isMouseClick;
+    }
+
     public synchronized void setMousePoint(int x, int y) {
         SwingUtilities.invokeLater(() -> { // 确保在EDT执行
             mousePoint.clear();
@@ -66,8 +70,6 @@ public class ElementManager {
         return gameElements.get(element);
     }
 
-
-
     /**
      * 单例方法获取类对象
      */
@@ -82,7 +84,7 @@ public class ElementManager {
 
     private ElementManager() {
         init();
-    } //私有化实例化方法
+    }  // 私有化实例化方法
 
     /**
      * element实例化方法

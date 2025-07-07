@@ -119,10 +119,14 @@ public class Fish extends ElementObj {
     }
 
     @Override
+    public boolean isAlive() {
+        return true;
+    }
+
+    @Override
     public void move() {
         update();
     }
-
 
     /**
      * 生成位于边界外 50 像素范围内的随机坐标
@@ -208,7 +212,6 @@ public class Fish extends ElementObj {
     // --- Getter 方法 ---
     public int getX() {
         return x;
-        return null;
     }
 
     public int getY() {

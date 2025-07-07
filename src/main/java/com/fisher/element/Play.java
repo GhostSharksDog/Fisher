@@ -8,7 +8,6 @@ import com.fisher.manager.GameLoad;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 import java.util.Map;
 import java.net.URL;
 
@@ -25,48 +24,22 @@ public class Play extends ElementObj {
      * 大炮图片宽高 width，height
      * 大炮图片素材 imgMap
      */
+    private ImageIcon leftdecorate;
+    private ImageIcon rightdecorate;
     private Map<String,ImageIcon> imgMap;
-
-    // 大炮旋转角度（垂直角度）
-    private double angle = 0;
-    // 开炮时间 ms
-    private int fireTime = 200;
-    // 上次开炮时间 ms
-    private long lastFireTime = 0;
-    // 自动开炮线程
-    private Thread firingThread;
-    // 窗口大小
-    private Dimension size;
+    private double angle = 0;  // 大炮旋转角度（垂直角度）
+    private int fireTime = 100;  // 开炮时间 ms
+    private long lastFireTime = 0;  // 上次开炮时间 ms
+    private Thread firingThread;  // 开炮线程
+    private Dimension size;  // 窗口大小
     // 大炮的大小的比例
-    private double widthRatio = 0.04;
-    private double HeightRatio = 0.07;
-    // 是否自动开炮
-    private boolean autoPlay = false;
+    private double widthRatio = 0.08;
+    private double HeightRatio = 0.16;
 
     public Play() {}
 
-//    public Play(int x, int y, int width, int height, ImageIcon icon) {
-//        super(x, y, width, height, icon);
-//        this.startAutoFire();
-//    }
-//
-//    public Play(ImageIcon icon) {
-//        super(icon);
-//        this.startAutoFire();
-//    }
-
     @Override
     public void showElement(Graphics g) {
-//      获取panel尺寸
-//        System.out.println(ElementManager.getManager().getMainPanelSize());
-
-        if (ElementManager.getManager().isMouseClick()) {
-            // 鼠标点击，计算方向并开炮
-            int x = ElementManager.getManager().getMousePoint().get(0);
-            int y = ElementManager.getManager().getMousePoint().get(1);
-            this.pointTo(x, y);
-        }
-
         Graphics2D g2d = (Graphics2D) g.create();
 
         // 计算中心点
@@ -84,7 +57,6 @@ public class Play extends ElementObj {
 
     @Override
     public void setSize(Dimension size) {
-//        System.out.println("Play setSize: " + size);
         if (size == null) return;
         this.size = size;
         this.setWidth((int)(size.getWidth() * this.widthRatio));
@@ -123,6 +95,8 @@ public class Play extends ElementObj {
 
         // 向元素管理器中添加子弹
         ElementManager.getManager().addElement(bullet, GameElement.BULLET);
+
+        startFire(bullet);
     }
 
     // 获得子弹对象
@@ -138,15 +112,17 @@ public class Play extends ElementObj {
         int bulletY = (int) (cannonCenterY - barrelLength * Math.cos(this.angle));
 
         bullet.setPosition(bulletX, bulletY);
+        bullet.setAngle(this.angle);
+        bullet.setCreateTime(System.currentTimeMillis());
         return bullet;
     }
 
-    // 自动开炮
-    public void startAutoFire() {
+    // 开炮
+    public void startFire(Bullet bullet) {
         this.firingThread = new Thread(() -> {
             while (true) {
-                this.fire();
                 try {
+                    bullet.update();
                     Thread.sleep(this.fireTime);;
                 } catch (InterruptedException e) {
                     break;
@@ -164,6 +140,21 @@ public class Play extends ElementObj {
         }
     }
 
+    @Override
+    public void update() {
+        if (ElementManager.getManager().isMouseClick()) {
+            // 鼠标点击，计算方向并开炮
+            int x = ElementManager.getManager().getMousePoint().get(0);
+            int y = ElementManager.getManager().getMousePoint().get(1);
+            this.pointTo(x, y);
+            ElementManager.getManager().setMouseClick(false);
+        }
+    }
+
+    @Override
+    public boolean isAlive() {
+        return true;
+    }
 
     /**
      * @param jsonObject 数据

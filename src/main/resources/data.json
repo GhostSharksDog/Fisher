@@ -1,5 +1,5 @@
 {
-  "player" : {
+  "player": {
     "coordinates": "(10, 10)"
   },
   "fish": {
@@ -21,7 +21,26 @@
     },
     "Fish": {
       "className": "com.fisher.element.Fish",
-      "fish": "/image/fish/testFish.png"
+      "fish1": {
+        "bigImage": "/image/fish/fish.png",
+        "bigImageplist": "/image/fish/fish.plist",
+        "imageNomal": [
+          "fish01_01.png",
+          "fish01_02.png",
+          "fish01_03.png",
+          "fish01_04.png",
+          "fish01_05.png",
+          "fish01_06.png",
+          "fish01_07.png",
+          "fish01_08.png",
+          "fish01_09.png",
+          "fish01_10.png"
+        ],
+        "imageCatch": [
+          "fish01_catch_01.png",
+          "fish01_catch_02.png"
+        ]
+      }
     },
     "CannonLeftDecoration": {
       "className": "com.fisher.element.CannonLeftDecoration",

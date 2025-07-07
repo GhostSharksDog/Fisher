@@ -6,6 +6,7 @@ import com.dd.plist.NSNumber;
 import com.dd.plist.PropertyListFormatException;
 import com.dd.plist.PropertyListParser;
 import com.fisher.element.ElementObj;
+import com.fisher.element.Fish;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -13,19 +14,15 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GameLoad {
@@ -94,18 +91,47 @@ public class GameLoad {
         }
     }
 
+    /**
+     * 通过key，返回对应的ElementObj对象
+     * 
+     * @param key data.json的资源字符串
+     * eg:Fish.fish1表示使用的资源是data.json中allClass的Fish.fish1字段的数据,
+     * 实体类的全类名是allClass.Fish.className,创建对象
+     * @return
+     */
     public ElementObj getElement(String key) {
-        if (classMap.get(key) == null) {
+        String[] split = key.split("\\.");
+        if (!classMap.containsKey(split[0])) {
             return null;
         }
         try {
-            ElementObj obj = (ElementObj) classMap.get(key).newInstance();
-            JSONObject elementJson = jsonObject.getJSONObject("allClass").getJSONObject(key);
-            return obj.createElement(elementJson);
+            ElementObj obj = (ElementObj) classMap.get(split[0]).newInstance();
+            JSONObject allJsonObject = jsonObject.getJSONObject("allClass");
+            JSONObject jObject = getJSONObj(split, allJsonObject);
+            return obj.createElement(jObject);
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * getElement的辅助方法，用于获取层级深度较大的json对象
+     * @param split data.json的资源字符串eg:Fish.fish1表示使用的资源是data.json中allClass的Fish.fish1字段
+     * @param rJsonObject
+     * @return
+     */
+    private final JSONObject getJSONObj(String[] split, JSONObject rJsonObject) {
+        JSONObject res = rJsonObject;
+        for (int i = 0; i < split.length; i++) {
+            res = res.getJSONObject(split[i]);
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        ElementManager.getManager();
+        dataLoader.getElement("Fish.fish1");
     }
 
     /**
@@ -116,10 +142,6 @@ public class GameLoad {
      */
     public static URL findResourceUrl(String address) {
         return GameLoad.class.getClassLoader().getResource(address);
-    }
-
-    public static void main(String[] args) {
-        
     }
 
     /**

@@ -1,24 +1,41 @@
 package com.fisher.manager;
 
 import com.alibaba.fastjson.JSONObject;
+import com.dd.plist.NSDictionary;
+import com.dd.plist.NSNumber;
+import com.dd.plist.PropertyListFormatException;
+import com.dd.plist.PropertyListParser;
 import com.fisher.element.ElementObj;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class GameLoad {
-    //    将所有类加载到classMap中
+    // 将所有类加载到classMap中
     private static final Map<String, Class<?>> classMap = new HashMap<>();
-    //    将使用道德ICON对象用map缓存，避免重复加载
+    // 将使用的ICON对象用map缓存，避免重复加载
     private static final Map<String, ImageIcon> iconMap = new HashMap<>();
     private static final GameLoad dataLoader = new GameLoad();
+    // 将使用的大图对象用map缓存，避免重复加载
+    private static final Map<String, BufferedImage> bigImgMap = new HashMap<>();
 
     public static GameLoad getInstance() {
         return dataLoader;
@@ -34,10 +51,10 @@ public class GameLoad {
 
     public void load() {
         loadJson(); // 加载配置文件
-//        将panelBackground加载到imgMap中
+        // 将panelBackground加载到imgMap中
         String panelBackground = jsonObject.getString("panelBackground");
-//        存入imgMap
-        imgMap.put("panelBackground", new ImageIcon(GameLoad.FindResourceUrl(panelBackground)));
+        // 存入imgMap
+        imgMap.put("panelBackground", new ImageIcon(GameLoad.findResourceUrl(panelBackground)));
     }
 
     private void loadJson() {
@@ -65,7 +82,7 @@ public class GameLoad {
         if (jsonObject == null) {
             throw new RuntimeException("data.json not get");
         }
-//        从配置文件中将alClass字段加载出来
+        // 从配置文件中将alClass字段加载出来
         JSONObject allClass = jsonObject.getJSONObject("allClass");
         for (String key : allClass.keySet()) {
             String s = allClass.getJSONObject(key).getString("className");
@@ -85,7 +102,7 @@ public class GameLoad {
             ElementObj obj = (ElementObj) classMap.get(key).newInstance();
             JSONObject elementJson = jsonObject.getJSONObject("allClass").getJSONObject(key);
             return obj.createElement(elementJson);
-        } catch (InstantiationException | IllegalAccessException  e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;
@@ -97,30 +114,29 @@ public class GameLoad {
      * @param address 资源地址
      * @return URL
      */
-    public static URL FindResourceUrl(String address) {
+    public static URL findResourceUrl(String address) {
         return GameLoad.class.getClassLoader().getResource(address);
     }
 
     public static void main(String[] args) {
-//        DataLoader.load();
-        new GameLoad();
+        
     }
-
 
     /**
      * 通过address，返回ICON对象，
-     * 注意：对象路径需要从/开始
-     *
+     * 注意：address对应的图片是一张完整的图片，不是多张小图拼接而成的
+     * 注意：对象路径需要从/开始，表示从resources开始的路径
+     * 
      * @param address resources开始的路径
      * @return IMAGE_ICON
      */
     public static ImageIcon findResourceIcon(String address) {
-        if (classMap.get(address) != null) {
+        if (iconMap.containsKey(address)) {
             return iconMap.get(address);
         }
         try (InputStream resourceAsStream = GameLoad.class.getResourceAsStream(address)) {
             if (resourceAsStream == null) {
-                throw new RuntimeException("resource not found");
+                throw new RuntimeException("resource not found in GamaLoad.findResourceIcon");
             }
             BufferedImage read = ImageIO.read(resourceAsStream);
             ImageIcon imageIcon = new ImageIcon(read);
@@ -129,5 +145,74 @@ public class GameLoad {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 通过bigImgPath，plistPath，smallImgName，返回ICON对象，
+     * 注意：bigImgPath对应的图片是多张小图拼接而成的图像
+     * 注意：对象路径需要从/开始，表示从resources开始的路径
+     * 
+     * @param bigImgPath   resources开始的路径
+     * @param plistPath    resources开始的路径
+     * @param smallImgName 小图名称，plist文件中对应的小图名称
+     * @return IMAGE_ICON
+     */
+    public static ImageIcon findResourceIcon(String bigImgPath, String plistPath, String smallImgName) {
+        if (iconMap.containsKey(bigImgPath + smallImgName)) {
+            return iconMap.get(bigImgPath + smallImgName);
+        }
+        // 读取大图的bufferimage
+        BufferedImage bigImg = readImage(bigImgPath);
+        // 读取plist文件
+        try (InputStream resourceAsStream = GameLoad.class.getResourceAsStream(plistPath)) {
+            if (resourceAsStream == null) {
+                throw new RuntimeException("resource not found in GamaLoad.findResourceIcon");
+            }
+            NSDictionary rootDict = (NSDictionary) PropertyListParser.parse(resourceAsStream);
+            NSDictionary framesDict = (NSDictionary) rootDict.get("frames");
+            NSDictionary frameInfo = (NSDictionary) framesDict.get(smallImgName);
+            if (frameInfo == null) {
+                throw new RuntimeException("smallImgName not found in GamaLoad.findResourceIcon");
+            }
+            int x = ((NSNumber) frameInfo.get("x")).intValue();
+            int y = ((NSNumber) frameInfo.get("y")).intValue();
+            int width = ((NSNumber) frameInfo.get("width")).intValue();
+            int height = ((NSNumber) frameInfo.get("height")).intValue();
+            // 裁剪图片
+            BufferedImage smallImg = bigImg.getSubimage(x, y, width, height);
+            // 缓存
+            ImageIcon imageIcon = new ImageIcon(smallImg);
+            iconMap.put(bigImgPath + smallImgName, imageIcon);
+            return imageIcon;
+        } catch (IOException | PropertyListFormatException | ParseException | ParserConfigurationException
+                | SAXException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 用于加载大图
+     * 注意：对象路径需要从/开始，表示从resources开始的路径
+     * 
+     * @param address resources开始的路径
+     * @return BufferedImage
+     */
+    private static BufferedImage readImage(String bigImgPath) {
+        if (bigImgMap.containsKey(bigImgPath)) {
+            return bigImgMap.get(bigImgPath);
+        }
+        // 读取图片
+        try (InputStream resourceAsStream = GameLoad.class.getResourceAsStream(bigImgPath)) {
+            if (resourceAsStream == null) {
+                throw new RuntimeException("resource not found in GamaLoad.readImage");
+            }
+            BufferedImage read = ImageIO.read(resourceAsStream);
+            bigImgMap.put(bigImgPath, read); // 缓存
+            return read;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

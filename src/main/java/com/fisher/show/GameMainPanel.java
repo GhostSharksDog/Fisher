@@ -1,6 +1,7 @@
 package com.fisher.show;
 
 import com.fisher.element.ElementObj;
+import com.fisher.element.Play;
 import com.fisher.manager.GameLoad;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameElement;
@@ -11,6 +12,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 

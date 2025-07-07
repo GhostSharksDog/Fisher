@@ -4,7 +4,7 @@
   },
   "fish": {
     "images": [
-      "/img/1.png"
+      "image/fish/testFish.png"
     ]
   },
   "panelBackground": "image/background/fishlightbg_0.jpg",
@@ -18,6 +18,10 @@
     "Bullet": {
       "className": "com.fisher.element.Bullet",
       "bullet": "/image/changefire/img_3.png"
+    },
+    "Fish": {
+      "className": "com.fisher.element.Fish",
+      "fish": "/image/fish/testFish.png"
     }
   }
 }

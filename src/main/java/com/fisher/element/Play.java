@@ -75,9 +75,6 @@ public class Play extends ElementObj {
 
         // 设置旋转中心并旋转
         g2d.rotate(angle, cx, cy);
-//        System.out.println(this.getIcon().getImage());
-//        System.out.println("x"+this.getX()+" y"+this.getY());
-//        System.out.println("width"+this.getWidth()+" height"+this.getHeight());
         // 绘制图像（注意坐标是旋转前的）
         g2d.drawImage(this.getIcon().getImage(),
                 this.getX(), this.getY(),

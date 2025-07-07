@@ -2,8 +2,6 @@ package com.fisher.manager;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fisher.element.ElementObj;
-import com.fisher.element.FishMap;
-import com.fisher.element.Play;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,8 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GameLoad {
+    //    将所有类加载到classMap中
     private static final Map<String, Class<?>> classMap = new HashMap<>();
-
+    //    将使用道德ICON对象用map缓存，避免重复加载
+    private static final Map<String, ImageIcon> iconMap = new HashMap<>();
     private static final GameLoad dataLoader = new GameLoad();
 
     public static GameLoad getInstance() {
@@ -65,21 +65,16 @@ public class GameLoad {
         if (jsonObject == null) {
             throw new RuntimeException("data.json not get");
         }
-//        设置map
-//        map.put("ElementObj", ElementObj.class);
-//        map.put("FishMap", FishMap.class);
-//        map.put("Play", Play.class);
-
+//        从配置文件中将alClass字段加载出来
         JSONObject allClass = jsonObject.getJSONObject("allClass");
-        for(String key : allClass.keySet()) {
+        for (String key : allClass.keySet()) {
             String s = allClass.getJSONObject(key).getString("className");
             try {
-                classMap.put(key,Class.forName(s));
+                classMap.put(key, Class.forName(s));
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
-
     }
 
     public ElementObj getElement(String key) {
@@ -90,7 +85,7 @@ public class GameLoad {
             ElementObj obj = (ElementObj) classMap.get(key).newInstance();
             JSONObject elementJson = jsonObject.getJSONObject("allClass").getJSONObject(key);
             return obj.createElement(elementJson);
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException  e) {
             e.printStackTrace();
         }
         return null;
@@ -115,16 +110,22 @@ public class GameLoad {
     /**
      * 通过address，返回ICON对象，
      * 注意：对象路径需要从/开始
+     *
      * @param address resources开始的路径
      * @return IMAGE_ICON
      */
     public static ImageIcon findResourceIcon(String address) {
+        if (classMap.get(address) != null) {
+            return iconMap.get(address);
+        }
         try (InputStream resourceAsStream = GameLoad.class.getResourceAsStream(address)) {
-            if(resourceAsStream == null) {
+            if (resourceAsStream == null) {
                 throw new RuntimeException("resource not found");
             }
             BufferedImage read = ImageIO.read(resourceAsStream);
-            return new ImageIcon(read);
+            ImageIcon imageIcon = new ImageIcon(read);
+            iconMap.put(address, imageIcon); // 缓存
+            return imageIcon;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

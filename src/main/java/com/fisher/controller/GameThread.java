@@ -48,6 +48,8 @@ public class GameThread extends Thread{
      */
     private void gameLoad(int cStatus, int cLevel) {
         loadPlayer();
+
+        generateFishes(5,1);
     }
 
     /**
@@ -88,10 +90,20 @@ public class GameThread extends Thread{
 
         ElementObj player = GameLoad.getInstance().getElement("Play");
         EM.addElement(player,GameElement.PLAYER);
+    }
 
+
+    public void generateFishes(int count, double speed) {
+        for (int i = 0; i < count; i++) {
+            ElementObj fish = GameLoad.getInstance().getElement("Fish"); // 创建鱼对象
+            if (fish != null) {
+                EM.addElement(fish, GameElement.FISH); // 添加到元素管理器
+            }
+        }
     }
 
     public void setSize(Dimension size) {
         this.size = size;
     }
+
 }

@@ -97,7 +97,7 @@ public class GameLoad {
      * @param key data.json的资源字符串
      * eg:Fish.fish1表示使用的资源是data.json中allClass的Fish.fish1字段的数据,
      * 实体类的全类名是allClass.Fish.className,创建对象
-     * @return
+     * @return ElementObj对象
      */
     public ElementObj getElement(String key) {
         String[] split = key.split("\\.");
@@ -118,8 +118,8 @@ public class GameLoad {
     /**
      * getElement的辅助方法，用于获取层级深度较大的json对象
      * @param split data.json的资源字符串eg:Fish.fish1表示使用的资源是data.json中allClass的Fish.fish1字段
-     * @param rJsonObject
-     * @return
+     * @param rJsonObject data.json的json对象
+     * @return json对象
      */
     private final JSONObject getJSONObj(String[] split, JSONObject rJsonObject) {
         JSONObject res = rJsonObject;

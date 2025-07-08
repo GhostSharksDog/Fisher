@@ -20,7 +20,7 @@ public class ElementManager {
     private List<Object> listEffect;   // 爆炸效果列表
     private List<Integer> mousePoint = new ArrayList<>(Arrays.asList(0, 0)); // 初始化默认值
     private boolean isMouseClick;  // 是否点击鼠标
-    private Dimension mainPanelSize=new Dimension(0,0);
+    private Dimension mainPanelSize=new Dimension(10,10);
 
     public Dimension getMainPanelSize() {
         return mainPanelSize;

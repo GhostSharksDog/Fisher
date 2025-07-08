@@ -1,6 +1,5 @@
 package com.fisher.element;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fisher.controller.ColliderManager;
 import com.fisher.manager.ElementManager;
@@ -10,7 +9,6 @@ import com.fisher.manager.GameLoad;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
-import java.net.URL;
 
 public class Play extends ElementObj {
     /**
@@ -25,8 +23,6 @@ public class Play extends ElementObj {
      * 大炮图片宽高 width，height
      * 大炮图片素材 imgMap
      */
-    private ImageIcon leftdecorate;
-    private ImageIcon rightdecorate;
     private Map<String,ImageIcon> imgMap;
     private double angle = 0;  // 大炮旋转角度（垂直角度）
     private int fireTime = 100;  // 开炮时间 ms
@@ -36,6 +32,10 @@ public class Play extends ElementObj {
     // 大炮的大小的比例
     private double widthRatio = 0.08;
     private double HeightRatio = 0.16;
+    // 大炮装饰比例
+    private CannonRightDecoration rightDecoration;
+    private CannonLeftDecoration leftDecoration;
+    private double decorateRatio = 0.05;
 
     public Play() {}
 
@@ -64,6 +64,11 @@ public class Play extends ElementObj {
         this.setHeight((int)(size.getHeight() * this.HeightRatio));
         this.setX((int)(size.getWidth() / 2 - (double) this.getWidth() / 2));
         this.setY((int)(size.getHeight() - this.getHeight()));
+
+        if (this.leftDecoration!= null && this.rightDecoration!= null) {
+            this.leftDecoration.setCannonPosition(this.getX(), this.getY(), this.getWidth());
+            this.rightDecoration.setCannonPosition(this.getX(), this.getY(), this.getWidth());
+        }
     }
 
     // 计算鼠标指向的方向并开炮
@@ -117,6 +122,7 @@ public class Play extends ElementObj {
         bullet.setPosition(bulletX, bulletY);
         bullet.setAngle(this.angle);
         bullet.setCreateTime(System.currentTimeMillis());
+
         return bullet;
     }
 
@@ -163,14 +169,29 @@ public class Play extends ElementObj {
      * @param jsonObject 数据
      * @return
      */
+    // 创建大炮
     @Override
     public ElementObj createElement(JSONObject jsonObject) {
-        ImageIcon lIcon = GameLoad.findResourceIcon(jsonObject.getString("canonLeft"));
-        ImageIcon rIcon = GameLoad.findResourceIcon(jsonObject.getString("canonRight"));
+        // 瓦达西的炮
         ImageIcon cannonIcon = GameLoad.findResourceIcon(jsonObject.getString("cannon"));
-
         this.setIcon(cannonIcon);
         this.setSize(ElementManager.getManager().getMainPanelSize());
+
+        // 瓦达西的炮：你们都是我的翅膀
+        this.leftDecoration = (CannonLeftDecoration) GameLoad.getInstance().getElement("CannonLeftDecoration");
+        this.rightDecoration = (CannonRightDecoration) GameLoad.getInstance().getElement("CannonRightDecoration");
+
+        this.leftDecoration.createElement(jsonObject);
+        this.rightDecoration.createElement(jsonObject);
+
+         this.leftDecoration.setCannonPosition(this.getX(), this.getY(), this.getWidth());
+         this.rightDecoration.setCannonPosition(this.getX(), this.getY(), this.getWidth());
+
+        this.leftDecoration.setSize(ElementManager.getManager().getMainPanelSize());
+        this.rightDecoration.setSize(ElementManager.getManager().getMainPanelSize());
+
+        ElementManager.getManager().addElement(this.leftDecoration, GameElement.CannonLeftDecoration);
+        ElementManager.getManager().addElement(this.rightDecoration, GameElement.CannonRightDecoration);
 
         return this;
     }

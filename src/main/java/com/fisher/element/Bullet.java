@@ -1,13 +1,14 @@
 package com.fisher.element;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fisher.controller.Collider;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameLoad;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class Bullet extends ElementObj {
+public class Bullet extends ElementObj implements Collider {
     private double angle;  // 子弹角度
     private double speed = 10; // 子弹速度
     private double bulletSize = 0.02;  // 子弹大小比例
@@ -78,5 +79,15 @@ public class Bullet extends ElementObj {
 
     public void setCreateTime(long l) {
         this.createTime = l;
+    }
+
+    @Override
+    public Rectangle getBounds() {
+        return new Rectangle(getX(), getY(), getWidth(), getHeight());
+    }
+
+    @Override
+    public ElementObj getThis() {
+        return this;
     }
 }

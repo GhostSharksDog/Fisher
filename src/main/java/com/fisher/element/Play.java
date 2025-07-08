@@ -1,6 +1,7 @@
 package com.fisher.element;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fisher.controller.ColliderManager;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameElement;
 import com.fisher.manager.GameLoad;
@@ -89,6 +90,7 @@ public class Play extends ElementObj {
 
     // 开炮！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
     public void fire() {
+        ColliderManager colliderManager = new ColliderManager();
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastFireTime < this.fireTime) {
             return;
@@ -100,6 +102,7 @@ public class Play extends ElementObj {
 
         // 向元素管理器中添加子弹
         ElementManager.getManager().addElement(bullet, GameElement.BULLET);
+        colliderManager.addCollider(bullet);
 
         startFire(bullet);
     }

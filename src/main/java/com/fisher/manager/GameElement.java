@@ -5,6 +5,7 @@ public enum GameElement {
     PLAYER,  // 玩家
     FISH,  // 鱼
     BULLET,  // 子弹
+    EFFECT,   // 爆炸特效
     CannonRightDecoration,
     CannonLeftDecoration
 }

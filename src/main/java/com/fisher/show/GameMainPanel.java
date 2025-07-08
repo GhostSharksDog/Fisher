@@ -68,26 +68,24 @@ public class GameMainPanel extends JPanel implements Runnable {
         });
     }
 
-    public void removeElement() {
-        EM.getGameElements().get(GameElement.BULLET).removeIf(ele -> !ele.isAlive());
-    }
 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
 
-        this.removeElement();  // 移除死亡的元素
-
         Map<GameElement, List<ElementObj>> all = EM.getGameElements();
+//        System.out.println(all.get(GameElement.EFFECT));
 //		GameElement.values();  // 隐藏方法  返回值是一个数组,数组的顺序就是定义枚举的顺序
         g.drawImage(background.getImage(), 0, 0, this.getWidth(), this.getHeight(), null);
         for (GameElement e : GameElement.values()) {
             List<ElementObj> list = all.get(e);
+//            if (e.equals(GameElement.EFFECT)) System.out.println("GameMainPanel.paint: EFFECT成功调用");
             for (int i = 0; i < list.size(); i++) {
                 ElementObj obj = list.get(i);
                 obj.setSize(ElementManager.getManager().getMainPanelSize());  // 设置元素大小，位置
                 obj.update();  // 更新元素状态
                 obj.showElement(g);  // 调用每个类自己的show进行显示
+
             }
         }
     }

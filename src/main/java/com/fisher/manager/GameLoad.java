@@ -217,7 +217,7 @@ public class GameLoad {
      * 用于加载大图
      * 注意：对象路径需要从/开始，表示从resources开始的路径
      * 
-     * @param address resources开始的路径
+     * @param bigImgPath resources开始的路径
      * @return BufferedImage
      */
     private static BufferedImage readImage(String bigImgPath) {

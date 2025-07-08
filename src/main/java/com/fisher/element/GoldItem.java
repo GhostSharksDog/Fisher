@@ -50,7 +50,6 @@ public class GoldItem extends ElementObj{
 //         移动金币
 //         计算剩余移动距离
         double dis = Math.sqrt(Math.pow(destinationX - x, 2) + Math.pow(destinationY - y, 2));
-        System.out.println("dis = " + dis);
         if(dis <= VELOCITY){
             x = destinationX;
             y = destinationY;
@@ -64,8 +63,7 @@ public class GoldItem extends ElementObj{
 
     @Override
     public boolean isAlive() {
-
-        return true;
+        return x != destinationX || y != destinationY;
     }
 
     @Override

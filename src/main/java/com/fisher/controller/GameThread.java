@@ -59,6 +59,8 @@ public class GameThread extends Thread{
      */
     private void gameLoad(int cStatus, int cLevel) {
         loadPlayer();
+        ElementObj goldCoin = GameLoad.getInstance().getElement("GoldItem","{x:200,y:2}");
+        EM.addElement(goldCoin, GameElement.PLAYER);
     }
 
     /**
@@ -85,6 +87,7 @@ public class GameThread extends Thread{
             removeDeadElements();
 
             gameTime++;
+            EM.GameThreadTime = gameTime; // 更新ElementManager中记录的游戏主线程时间
             //true改为变量控制结束
             try {
                 sleep(10); //100fps
@@ -145,7 +148,10 @@ public class GameThread extends Thread{
         ColliderManager colliderManager = ColliderManager.getInstance();
 
         // 检测子弹与鱼的碰撞
-        for (ElementObj bulletObj : bullets) {
+//      这里不可以使用:的方式循环，因为无法保证线程安全!!!
+//        需要修改为:int i=0; i<bullets.size(); i++的方式
+        for (int i = 0; i<bullets.size(); i++) {
+            ElementObj bulletObj =  bullets.get(i);
             if (!bulletObj.isAlive()) continue;
 
             Bullet bullet = (Bullet) bulletObj;

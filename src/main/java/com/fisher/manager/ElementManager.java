@@ -14,6 +14,7 @@ import java.util.List;
  *
  */
 public class ElementManager {
+    public long GameThreadTime; // 游戏主线程时间
     private List<Object> listMap;  // 地图列表
     private List<Object> listPlay; // 玩家列表
     private List<Object> listPlayFire; // 发射炮弹列表

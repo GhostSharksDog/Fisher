@@ -393,6 +393,22 @@
     "CannonRightDecoration": {
       "className": "com.fisher.element.CannonRightDecoration",
       "canonRight": "/before/cannon/add.png"
+    },
+    "GoldItem": {
+      "className": "com.fisher.element.GoldItem",
+      "goldImage": "/before/score/goldItem.png",
+      "goldPlist": "/before/score/goldItem.plist",
+      "goldImages": [
+        "gold01.png",
+        "gold02.png",
+        "gold03.png",
+        "gold04.png",
+        "gold05.png",
+        "gold06.png",
+        "gold07.png",
+        "gold08.png",
+        "gold09.png"
+      ]
     }
   }
 }

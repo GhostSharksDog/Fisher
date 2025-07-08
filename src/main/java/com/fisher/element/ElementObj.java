@@ -57,7 +57,7 @@ public abstract class ElementObj {
 
     /**
      * 用于获取对象
-     * @return
+     * @return ElementObj
      */
     public abstract ElementObj createElement(JSONObject jsonObject);
 

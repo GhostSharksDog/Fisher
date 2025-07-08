@@ -85,6 +85,7 @@ public class GameMainPanel extends JPanel implements Runnable {
                 obj.setSize(ElementManager.getManager().getMainPanelSize());  // 设置元素大小，位置
                 obj.update();  // 更新元素状态
                 obj.showElement(g);  // 调用每个类自己的show进行显示
+
             }
         }
     }

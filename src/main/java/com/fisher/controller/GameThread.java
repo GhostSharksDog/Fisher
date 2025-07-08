@@ -166,27 +166,29 @@ public class GameThread extends Thread{
         // 1.子弹消失
         bullet.setAlive(false);
 
-        // 2.鱼死亡
+        // 2.播放特效
+        createExplosionEffect(fish.getX(), fish.getY());
+
+        // 3.鱼死亡
         fish.setAlive(false);
 
-        // 3.增加分数
+        // 4.增加分数
         int score = fish.getScore();
 
 //        ScoreManager.addScore(score);
 
-        // 4.播放特效
-        createExplosionEffect(fish.getX(), fish.getY());
     }
 
     private void createExplosionEffect(int x, int y) {
-        // 创建爆炸特效元素并添加到管理器
-        ElementObj explosion = new ExplosionEffect(x, y);
-        EM.addElement(explosion, GameElement.EFFECT);
-        System.out.println("GameThread.createExplosionEffect:  Element添加成功");
+        ElementObj effect = GameLoad.getInstance().getElement("ExplosionEffect");
+        if (effect instanceof ExplosionEffect) {
+            ExplosionEffect explosion = (ExplosionEffect) effect;
 
-        // 立即验证是否添加成功
-        List<ElementObj> effects = EM.getElementByKey(GameElement.EFFECT);
-        System.out.println("添加后特效元素数量: " + effects.size() + "，包含新添加的特效: " + effects.contains(explosion));
+            ExplosionEffect newExplosion = new ExplosionEffect(x,y);
+            newExplosion.setIcon(explosion.getIcon()); // 保留图像
+
+            EM.addElement(newExplosion, GameElement.EFFECT);
+        }
     }
 
     // 添加移除死亡元素的方法

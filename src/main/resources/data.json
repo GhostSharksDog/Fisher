@@ -24,7 +24,7 @@
       "fish1": {
         "bigImage": "/image/fish/fish.png",
         "bigImageplist": "/image/fish/fish.plist",
-        "imageNomal": [
+        "imageNormal": [
           "fish01_01.png",
           "fish01_02.png",
           "fish01_03.png",
@@ -41,6 +41,10 @@
           "fish01_catch_02.png"
         ]
       }
+    },
+    "ExplosionEffect": {
+      "className": "com.fisher.element.ExplosionEffect",
+      "effect": "/before/cannon/tenstar.png"
     },
     "CannonLeftDecoration": {
       "className": "com.fisher.element.CannonLeftDecoration",

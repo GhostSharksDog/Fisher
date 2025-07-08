@@ -1,5 +1,6 @@
 package com.fisher.element;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fisher.controller.Collider;
 import com.fisher.manager.ElementManager;
@@ -8,6 +9,7 @@ import com.fisher.manager.FishClass;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Random;
 
 public class Fish extends ElementObj implements Collider {
@@ -107,8 +109,27 @@ public class Fish extends ElementObj implements Collider {
 
     @Override
     public ElementObj createElement(JSONObject jsonObject) {
-        String fishImagePath = jsonObject.getString("fish");
-        this.setIcon(GameLoad.findResourceIcon(fishImagePath));
+        // 尝试获取直接图片路径
+
+        // 从 fish1 配置中获取图集信息
+        JSONObject fish1Config = jsonObject.getJSONObject("fish1");
+        if (fish1Config != null) {
+            String bigImage = fish1Config.getString("bigImage");
+            String plist = fish1Config.getString("bigImageplist");
+            JSONArray normalImages = fish1Config.getJSONArray("imageNormal");
+
+            if (normalImages != null && normalImages.size() > 0) {
+                // 获取第一张正常状态的鱼图片
+                String firstNormalImage = normalImages.getString(0);
+                this.setIcon(GameLoad.findResourceIcon(bigImage, plist, firstNormalImage));
+            }
+        }
+
+        // 如果以上都没有
+        if (this.getIcon() == null) {
+            System.err.println("无法加载鱼图片");
+        }
+
         return this;
     }
 

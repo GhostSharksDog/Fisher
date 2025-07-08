@@ -33,7 +33,13 @@ public class ExplosionEffect extends ElementObj {
 
     @Override
     public void showElement(Graphics g) {
-
+        System.out.println("绘制爆炸特效: (" + x + ", " + y + ")");
+        if (getIcon() != null) {
+            System.out.println("特效图像存在，尺寸: " + getIcon().getIconWidth() + "x" + getIcon().getIconHeight());
+            g.drawImage(getIcon().getImage(), x, y, getWidth(), getHeight(), null);
+        } else {
+            System.err.println("特效图像为null!");
+        }
     }
 
     @Override
@@ -43,7 +49,13 @@ public class ExplosionEffect extends ElementObj {
 
     @Override
     public void update() {
+        long elapsed = System.currentTimeMillis() - startTime;
+        System.out.println("特效存活时间: " + elapsed + "ms / " + DURATION + "ms");
 
+        if (elapsed > DURATION) {
+            System.out.println("标记特效为死亡");
+            this.setAlive(false);
+        }
     }
 
     @Override

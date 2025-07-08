@@ -183,6 +183,10 @@ public class GameThread extends Thread{
         ElementObj explosion = new ExplosionEffect(x, y);
         EM.addElement(explosion, GameElement.EFFECT);
         System.out.println("GameThread.createExplosionEffect:  Element添加成功");
+
+        // 立即验证是否添加成功
+        List<ElementObj> effects = EM.getElementByKey(GameElement.EFFECT);
+        System.out.println("添加后特效元素数量: " + effects.size() + "，包含新添加的特效: " + effects.contains(explosion));
     }
 
     // 添加移除死亡元素的方法

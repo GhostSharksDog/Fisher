@@ -16,7 +16,7 @@ import java.util.Map;
 public class GameLoad {
     //    将所有类加载到classMap中
     private static final Map<String, Class<?>> classMap = new HashMap<>();
-    //    将使用道德ICON对象用map缓存，避免重复加载
+    //    将使用到的ICON对象用map缓存，避免重复加载
     private static final Map<String, ImageIcon> iconMap = new HashMap<>();
     private static final GameLoad dataLoader = new GameLoad();
 

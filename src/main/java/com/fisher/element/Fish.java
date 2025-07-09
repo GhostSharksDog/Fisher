@@ -112,7 +112,7 @@ public class Fish extends ElementObj implements Collider {
         // 尝试获取直接图片路径
 
         // 从 fish1 配置中获取图集信息
-        JSONObject fish1Config = jsonObject.getJSONObject("fish1");
+        JSONObject fish1Config = jsonObject.getJSONObject("fish01");
         if (fish1Config != null) {
             String bigImage = fish1Config.getString("bigImage");
             String plist = fish1Config.getString("bigImageplist");

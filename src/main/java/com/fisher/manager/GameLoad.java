@@ -6,7 +6,6 @@ import com.dd.plist.NSNumber;
 import com.dd.plist.PropertyListFormatException;
 import com.dd.plist.PropertyListParser;
 import com.fisher.element.ElementObj;
-import com.fisher.element.Fish;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -20,9 +19,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GameLoad {
@@ -93,21 +90,19 @@ public class GameLoad {
 
     /**
      * 通过key，返回对应的ElementObj对象
-     * 
      * @param key data.json的资源字符串
      * eg:Fish.fish1表示使用的资源是data.json中allClass的Fish.fish1字段的数据,
      * 实体类的全类名是allClass.Fish.className,创建对象
-     * @return
+     * @return ElementObj对象
      */
     public ElementObj getElement(String key) {
         String[] split = key.split("\\.");
         if (!classMap.containsKey(split[0])) {
             return null;
         }
+        JSONObject jObject = getJSONObj(split);
         try {
             ElementObj obj = (ElementObj) classMap.get(split[0]).newInstance();
-            JSONObject allJsonObject = jsonObject.getJSONObject("allClass");
-            JSONObject jObject = getJSONObj(split, allJsonObject);
             return obj.createElement(jObject);
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
@@ -116,17 +111,82 @@ public class GameLoad {
     }
 
     /**
-     * getElement的辅助方法，用于获取层级深度较大的json对象
-     * @param split data.json的资源字符串eg:Fish.fish1表示使用的资源是data.json中allClass的Fish.fish1字段
-     * @param rJsonObject
-     * @return
+     *
+     * @param key data.json的资源字符串
+     * @param runningData 运行时数据,有时候创建对象除了静态资源外，还需要一些运行时数据，比如金币创建时候的位置和🐟死亡的位置有关
+     * @return ElementObj对象
      */
-    private final JSONObject getJSONObj(String[] split, JSONObject rJsonObject) {
-        JSONObject res = rJsonObject;
-        for (int i = 0; i < split.length; i++) {
-            res = res.getJSONObject(split[i]);
+    public ElementObj getElement(String key, JSONObject runningData){
+        String[] split = key.split("\\.");
+        if (!classMap.containsKey(split[0])) {
+            return null;
         }
-        return res;
+        JSONObject jObject = getJSONObj(split); // 获取静态资源的json对象
+//        合并静态资源的json对象和运行时数据
+        jObject = mergeWithConflictCheck(jObject, runningData);
+        try {
+            ElementObj obj = (ElementObj) classMap.get(split[0]).newInstance();
+            return obj.createElement(jObject);
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 通过key，返回对应的ElementObj对象，运行时数据为字符串形式
+     * @param key data.json的资源字符串
+     * @param runningData 运行时数据，字符串形式
+     * @return ElementObj对象
+     */
+    public ElementObj getElement(String key, String runningData){
+//        将运行时数据转换为json对象
+        JSONObject jsonObject = JSONObject.parseObject(runningData);
+        return getElement(key,jsonObject);
+    }
+
+
+    /**
+     * getElement的辅助方法，用于获取静态资源的json对象(层级深度较大的json对象也可以处理)
+     * @param split data.json的资源字符串用"."分割后的数组
+     * @return json对象
+     */
+    private JSONObject getJSONObj(String[] split) {
+        JSONObject allJsonObject = jsonObject.getJSONObject("allClass");
+        for (String s : split) {
+            allJsonObject = allJsonObject.getJSONObject(s);
+        }
+        return allJsonObject;
+    }
+
+    /**
+     * 合并两个json对象，如果有键名冲突(即重复)，则报错
+     * @param source json对象
+     * @param target json对象
+     * @return 合并后的json对象
+     */
+    public JSONObject mergeWithConflictCheck(JSONObject source, JSONObject target) {
+        if (source == null || target == null) {
+            throw new IllegalArgumentException("Source or target JSONObject is null");
+        }
+        JSONObject result = new JSONObject();
+        // 合并两个json对象
+        for (String key : source.keySet()) {
+            // 1. 键名冲突检测
+            if (target.containsKey(key)) {
+                // 1.1 冲突时报错（核心需求）
+                throw new IllegalStateException("Key conflict detected: '" + key + "'");
+            }
+//            将source中的键值对写入target
+            result.put(key, source.get(key));
+        }
+        // 2. 合并target中的键值对
+        for(String key : target.keySet()) {
+//            不需要检测冲突，如果有键名冲突，上方的冲突检测会报错
+            // 2.1 将target中的键值对写入result
+            result.put(key, target.get(key));
+        }
+        return result;
     }
 
     public static void main(String[] args) {
@@ -183,7 +243,7 @@ public class GameLoad {
         if (iconMap.containsKey(bigImgPath + smallImgName)) {
             return iconMap.get(bigImgPath + smallImgName);
         }
-        // 读取大图的bufferimage
+        // 读取大图的bufferImage
         BufferedImage bigImg = readImage(bigImgPath);
         // 读取plist文件
         try (InputStream resourceAsStream = GameLoad.class.getResourceAsStream(plistPath)) {
@@ -217,7 +277,7 @@ public class GameLoad {
      * 用于加载大图
      * 注意：对象路径需要从/开始，表示从resources开始的路径
      * 
-     * @param address resources开始的路径
+     * @param bigImgPath resources开始的路径
      * @return BufferedImage
      */
     private static BufferedImage readImage(String bigImgPath) {

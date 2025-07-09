@@ -21,7 +21,7 @@
     },
     "Fish": {
       "className": "com.fisher.element.Fish",
-      "fish1": {
+      "fish01": {
         "bigImage": "/image/fish/fish.png",
         "bigImageplist": "/image/fish/fish.plist",
         "imageNormal": [
@@ -40,6 +40,346 @@
           "fish01_catch_01.png",
           "fish01_catch_02.png"
         ]
+      },
+      "fish02": {
+        "bigImage": "/image/fish/fish.png",
+        "bigImageplist": "/image/fish/fish.plist",
+        "imageNormal": [
+          "fish02_01.png",
+          "fish02_02.png",
+          "fish02_03.png",
+          "fish02_04.png",
+          "fish02_05.png",
+          "fish02_06.png",
+          "fish02_07.png",
+          "fish02_08.png",
+          "fish02_09.png",
+          "fish02_10.png"
+        ],
+        "imageCatch": [
+          "fish02_catch_01.png",
+          "fish02_catch_02.png"
+        ]
+      },
+      "fish03": {
+        "bigImage": "/image/fish/fish.png",
+        "bigImageplist": "/image/fish/fish.plist",
+        "imageNormal": [
+          "fish03_01.png",
+          "fish03_02.png",
+          "fish03_03.png",
+          "fish03_04.png",
+          "fish03_05.png",
+          "fish03_06.png",
+          "fish03_07.png",
+          "fish03_08.png",
+          "fish03_09.png",
+          "fish03_10.png"
+        ],
+        "imageCatch": [
+          "fish03_catch_01.png",
+          "fish03_catch_02.png"
+        ]
+      },
+      "fish04": {
+        "bigImage": "/image/fish/fish.png",
+        "bigImageplist": "/image/fish/fish.plist",
+        "imageNormal": [
+          "fish04_01.png",
+          "fish04_02.png",
+          "fish04_03.png",
+          "fish04_04.png",
+          "fish04_05.png",
+          "fish04_06.png",
+          "fish04_07.png",
+          "fish04_08.png",
+          "fish04_09.png",
+          "fish04_10.png"
+        ],
+        "imageCatch": [
+          "fish04_catch_01.png",
+          "fish04_catch_02.png"
+        ]
+      },
+      "fish05": {
+        "bigImage": "/image/fish/fish.png",
+        "bigImageplist": "/image/fish/fish.plist",
+        "imageNormal": [
+          "fish05_01.png",
+          "fish05_02.png",
+          "fish05_03.png",
+          "fish05_04.png",
+          "fish05_05.png",
+          "fish05_06.png",
+          "fish05_07.png",
+          "fish05_08.png",
+          "fish05_09.png",
+          "fish05_10.png"
+        ],
+        "imageCatch": [
+          "fish05_catch_01.png",
+          "fish05_catch_02.png"
+        ]
+      },
+      "fish06": {
+        "bigImage": "/image/fish/fish.png",
+        "bigImageplist": "/image/fish/fish.plist",
+        "imageNormal": [
+          "fish06_01.png",
+          "fish06_02.png",
+          "fish06_03.png",
+          "fish06_04.png",
+          "fish06_05.png",
+          "fish06_06.png",
+          "fish06_07.png",
+          "fish06_08.png",
+          "fish06_09.png",
+          "fish06_10.png"
+        ],
+        "imageCatch": [
+          "fish06_catch_01.png",
+          "fish06_catch_02.png"
+        ]
+      },
+      "fish07": {
+        "bigImage": "/image/fish/fish.png",
+        "bigImageplist": "/image/fish/fish.plist",
+        "imageNormal": [
+          "fish07_01.png",
+          "fish07_02.png",
+          "fish07_03.png",
+          "fish07_04.png",
+          "fish07_05.png",
+          "fish07_06.png",
+          "fish07_07.png",
+          "fish07_08.png",
+          "fish07_09.png",
+          "fish07_10.png"
+        ],
+        "imageCatch": [
+          "fish07_catch_01.png",
+          "fish07_catch_02.png"
+        ]
+      },
+      "fish08": {
+        "bigImage": "/image/fish/fish.png",
+        "bigImageplist": "/image/fish/fish.plist",
+        "imageNormal": [
+          "fish08_01.png",
+          "fish08_02.png",
+          "fish08_03.png",
+          "fish08_04.png",
+          "fish08_05.png",
+          "fish08_06.png",
+          "fish08_07.png",
+          "fish08_08.png",
+          "fish08_09.png",
+          "fish08_10.png"
+        ],
+        "imageCatch": [
+          "fish08_catch_01.png",
+          "fish08_catch_02.png",
+          "fish08_catch_03.png",
+          "fish08_catch_04.png"
+        ]
+      },
+      "fish09": {
+        "bigImage": "/image/fish/fish.png",
+        "bigImageplist": "/image/fish/fish.plist",
+        "imageNormal": [
+          "fish09_01.png",
+          "fish09_02.png",
+          "fish09_03.png",
+          "fish09_04.png",
+          "fish09_05.png",
+          "fish09_06.png",
+          "fish09_07.png",
+          "fish09_08.png",
+          "fish09_09.png",
+          "fish09_10.png"
+        ],
+        "imageCatch": [
+          "fish09_catch_01.png",
+          "fish09_catch_02.png",
+          "fish09_catch_03.png",
+          "fish09_catch_04.png"
+        ]
+      },
+      "fish13": {
+        "bigImage": "/image/fish/fish.png",
+        "bigImageplist": "/image/fish/fish.plist",
+        "imageNormal": [
+          "fish13_01.png",
+          "fish13_02.png",
+          "fish13_03.png",
+          "fish13_04.png",
+          "fish13_05.png",
+          "fish13_06.png",
+          "fish13_07.png",
+          "fish13_08.png",
+          "fish13_09.png",
+          "fish13_10.png"
+        ],
+        "imageCatch": [
+          "fish13_catch_01.png",
+          "fish13_catch_02.png",
+          "fish13_catch_03.png",
+          "fish13_catch_04.png"
+        ]
+      },
+      "fish14": {
+        "bigImage": "/image/fish/fish.png",
+        "bigImageplist": "/image/fish/fish.plist",
+        "imageNormal": [
+          "fish14_01.png",
+          "fish14_02.png",
+          "fish14_03.png",
+          "fish14_04.png",
+          "fish14_05.png",
+          "fish14_06.png",
+          "fish14_07.png",
+          "fish14_08.png",
+          "fish14_09.png",
+          "fish14_10.png"
+        ],
+        "imageCatch": [
+          "fish14_catch_01.png",
+          "fish14_catch_02.png",
+          "fish14_catch_03.png",
+          "fish14_catch_04.png"
+        ]
+      },
+      "fish10": {
+        "bigImage": "/image/fish/fish2.png",
+        "bigImageplist": "/image/fish/fish2.plist",
+        "imageNormal": [
+          "fish10_01.png",
+          "fish10_02.png",
+          "fish10_03.png",
+          "fish10_04.png",
+          "fish10_05.png",
+          "fish10_06.png",
+          "fish10_07.png",
+          "fish10_08.png",
+          "fish10_09.png",
+          "fish10_10.png"
+        ],
+        "imageCatch": [
+          "fish10_catch_01.png",
+          "fish10_catch_02.png",
+          "fish10_catch_03.png",
+          "fish10_catch_04.png"
+        ]
+      },
+      "fish15": {
+        "bigImage": "/image/fish/fish2.png",
+        "bigImageplist": "/image/fish/fish2.plist",
+        "imageNormal": [
+          "fish15_01.png",
+          "fish15_02.png",
+          "fish15_03.png",
+          "fish15_04.png",
+          "fish15_05.png",
+          "fish15_06.png",
+          "fish15_07.png",
+          "fish15_08.png",
+          "fish15_09.png",
+          "fish15_10.png"
+        ],
+        "imageCatch": [
+          "fish15_catch_01.png",
+          "fish15_catch_02.png"
+        ]
+      },
+      "fish16": {
+        "bigImage": "/image/fish/fish2.png",
+        "bigImageplist": "/image/fish/fish2.plist",
+        "imageNormal": [
+          "fish16_01.png",
+          "fish16_02.png",
+          "fish16_03.png",
+          "fish16_04.png",
+          "fish16_05.png"
+        ],
+        "imageCatch": []
+      },
+      "fish17": {
+        "bigImage": "/image/fish/fish3.png",
+        "bigImageplist": "/image/fish/fish3.plist",
+        "imageNormal": [
+          "fish17_01.png",
+          "fish17_02.png",
+          "fish17_03.png",
+          "fish17_04.png",
+          "fish17_05.png",
+          "fish17_06.png",
+          "fish17_07.png",
+          "fish17_08.png",
+          "fish17_09.png",
+          "fish17_10.png"
+        ],
+        "imageCatch": [
+          "fish17_catch_01.png",
+          "fish17_catch_02.png",
+          "fish17_catch_03.png",
+          "fish17_catch_04.png"
+        ]
+      },
+      "fish11": {
+        "bigImage": "/image/fish/seamaid.png",
+        "bigImageplist": "/image/fish/seamaid.plist",
+        "imageNormal": [
+          "fish11_01.png",
+          "fish11_02.png",
+          "fish11_03.png",
+          "fish11_04.png",
+          "fish11_05.png",
+          "fish11_06.png",
+          "fish11_07.png",
+          "fish11_08.png",
+          "fish11_09.png",
+          "fish11_10.png",
+          "fish11_11.png",
+          "fish11_12.png",
+          "fish11_13.png",
+          "fish11_14.png",
+          "fish11_15.png",
+          "fish11_16.png"
+        ],
+        "imageCatch": [
+          "fish11_catch_01.png",
+          "fish11_catch_02.png",
+          "fish11_catch_03.png",
+          "fish11_catch_04.png"
+        ]
+      },
+      "fish12": {
+        "bigImage": "/image/fish/seamaid.png",
+        "bigImageplist": "/image/fish/seamaid.plist",
+        "imageNormal": [
+          "fish12_01.png",
+          "fish12_02.png",
+          "fish12_03.png",
+          "fish12_04.png",
+          "fish12_05.png",
+          "fish12_06.png",
+          "fish12_07.png",
+          "fish12_08.png",
+          "fish12_09.png",
+          "fish12_10.png",
+          "fish12_11.png",
+          "fish12_12.png",
+          "fish12_13.png",
+          "fish12_14.png",
+          "fish12_15.png",
+          "fish12_16.png"
+        ],
+        "imageCatch": [
+          "fish12_catch_01.png",
+          "fish12_catch_02.png",
+          "fish12_catch_03.png",
+          "fish12_catch_04.png"
+        ]
       }
     },
     "ExplosionEffect": {
@@ -53,6 +393,22 @@
     "CannonRightDecoration": {
       "className": "com.fisher.element.CannonRightDecoration",
       "canonRight": "/before/cannon/add.png"
+    },
+    "GoldItem": {
+      "className": "com.fisher.element.GoldItem",
+      "goldImage": "/before/score/goldItem.png",
+      "goldPlist": "/before/score/goldItem.plist",
+      "goldImages": [
+        "gold01.png",
+        "gold02.png",
+        "gold03.png",
+        "gold04.png",
+        "gold05.png",
+        "gold06.png",
+        "gold07.png",
+        "gold08.png",
+        "gold09.png"
+      ]
     },
     "Splint": {
       "className": "com.fisher.element.Splint",

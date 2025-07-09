@@ -2,16 +2,13 @@ package com.fisher.controller;
 
 import com.fisher.element.ElementObj;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-public class ColliderManager {
-    private static ColliderManager instance = new ColliderManager();
+public class Collidercontroller {
+    private static Collidercontroller instance = new Collidercontroller();
 
-    public static ColliderManager getInstance() {
+    public static Collidercontroller getInstance() {
         return instance;
     }
 

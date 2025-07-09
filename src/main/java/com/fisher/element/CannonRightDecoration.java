@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class CannonRightDecoration extends ElementObj {
-    private double ratio = 0.05;
+    private double ratio = 0.1;
     private int cannonX;
     private int cannonY;
     private int cannonWidth;

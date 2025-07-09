@@ -53,6 +53,14 @@
     "CannonRightDecoration": {
       "className": "com.fisher.element.CannonRightDecoration",
       "canonRight": "/before/cannon/add.png"
+    },
+    "Splint": {
+      "className": "com.fisher.element.Splint",
+      "splint": "/before/componet/bottom.png"
+    },
+    "Scoreboard": {
+      "className": "com.fisher.element.Scoreboard",
+      "scoreboard": "/before/componet/bottom_gold.png"
     }
   }
 }

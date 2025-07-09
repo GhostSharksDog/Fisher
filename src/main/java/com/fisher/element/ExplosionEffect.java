@@ -74,7 +74,7 @@ public class ExplosionEffect extends ElementObj {
     @Override
     public ElementObj createElement(JSONObject jsonObject) {
         String effectPath = jsonObject.getString("effect");
-        System.out.println("加载炮弹图片: " + effectPath);
+//        System.out.println("加载炮弹图片: " + effectPath);
 
         ImageIcon Icon = GameLoad.findResourceIcon(effectPath);
         this.setIcon(Icon);

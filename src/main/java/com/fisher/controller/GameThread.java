@@ -9,7 +9,6 @@ import com.fisher.manager.FishClass;
 import com.fisher.manager.GameElement;
 import com.fisher.manager.GameLoad;
 
-import java.awt.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +57,9 @@ public class GameThread extends Thread{
      * 游戏加载
      */
     private void gameLoad(int cStatus, int cLevel) {
+        loadSplint();
         loadPlayer();
+        loadScoreBoard();
     }
 
     /**
@@ -100,13 +101,20 @@ public class GameThread extends Thread{
     private void gameOver() {
     }
 
-
-
     public void loadPlayer() {
         ElementObj player = GameLoad.getInstance().getElement("Play");
-        EM.addElement(player,GameElement.PLAYER);
+        EM.addElement(player, GameElement.PLAYER);
     }
 
+    public void loadSplint() {
+        ElementObj splint = GameLoad.getInstance().getElement("Splint");
+        EM.addElement(splint, GameElement.SPLINT);
+    }
+
+    public void loadScoreBoard() {
+        ElementObj scoreBoard = GameLoad.getInstance().getElement("Scoreboard");
+        EM.addElement(scoreBoard, GameElement.SCOREBOARD);
+    }
 
     private void generateFishesContinuously() {
         long currentTime = System.currentTimeMillis();
@@ -120,7 +128,7 @@ public class GameThread extends Thread{
     }
 
     public void generateFishes(int count) {
-        ColliderManager instance = ColliderManager.getInstance();
+        Collidercontroller instance = Collidercontroller.getInstance();
         for (int i = 0; i < count; i++) {
             ElementObj fishObj = GameLoad.getInstance().getElement("Fish");
             if (fishObj instanceof Fish) {
@@ -142,14 +150,14 @@ public class GameThread extends Thread{
     private void checkCollisions() {
         List<ElementObj> bullets = EM.getElementByKey(GameElement.BULLET);
         List<ElementObj> fishes = EM.getElementByKey(GameElement.FISH);
-        ColliderManager colliderManager = ColliderManager.getInstance();
+        Collidercontroller collidercontroller = Collidercontroller.getInstance();
 
         // 检测子弹与鱼的碰撞
         for (ElementObj bulletObj : bullets) {
             if (!bulletObj.isAlive()) continue;
 
             Bullet bullet = (Bullet) bulletObj;
-            List<ElementObj> collidedFishes = colliderManager.getIntersectColliders(bullet);
+            List<ElementObj> collidedFishes = collidercontroller.getIntersectColliders(bullet);
 
             for (ElementObj fishObj : collidedFishes) {
                 Fish fish = (Fish) fishObj;
@@ -203,7 +211,7 @@ public class GameThread extends Thread{
                 if (!obj.isAlive()) {
                     // 如果是碰撞体，从碰撞管理器中移除
                     if (obj instanceof Collider) {
-                        ColliderManager.getInstance().removeCollider((Collider) obj);
+                        Collidercontroller.getInstance().removeCollider((Collider) obj);
                     }
                     iterator.remove();
                 }

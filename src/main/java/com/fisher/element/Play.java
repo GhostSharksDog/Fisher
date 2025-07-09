@@ -1,7 +1,7 @@
 package com.fisher.element;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fisher.controller.ColliderManager;
+import com.fisher.controller.Collidercontroller;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameElement;
 import com.fisher.manager.GameLoad;
@@ -63,7 +63,7 @@ public class Play extends ElementObj {
         this.setWidth((int)(size.getWidth() * this.widthRatio));
         this.setHeight((int)(size.getHeight() * this.HeightRatio));
         this.setX((int)(size.getWidth() / 2 - (double) this.getWidth() / 2));
-        this.setY((int)(size.getHeight() - this.getHeight()));
+        this.setY((int)(size.getHeight() - this.getHeight() * 0.85));
 
         if (this.leftDecoration!= null && this.rightDecoration!= null) {
             this.leftDecoration.setCannonPosition(this.getX(), this.getY(), this.getWidth());
@@ -90,7 +90,7 @@ public class Play extends ElementObj {
 
     // 开炮！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
     public void fire() {
-        ColliderManager colliderManager = new ColliderManager();
+        Collidercontroller collidercontroller = new Collidercontroller();
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastFireTime < this.fireTime) {
             return;
@@ -102,7 +102,7 @@ public class Play extends ElementObj {
 
         // 向元素管理器中添加子弹
         ElementManager.getManager().addElement(bullet, GameElement.BULLET);
-        colliderManager.addCollider(bullet);
+        collidercontroller.addCollider(bullet);
 
         startFire(bullet);
     }

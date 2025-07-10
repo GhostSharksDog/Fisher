@@ -61,9 +61,8 @@ public class GameMainPanel extends JPanel implements Runnable {
         // 添加鼠标监听器
         this.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 EM.handleElementClick(e);  // 调用统一事件处理器
-//                EM.setMousePoint(e.getX(), e.getY());
             }
         });
     }

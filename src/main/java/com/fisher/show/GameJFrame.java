@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Stack;
 
 /**
  * 游戏窗体显示
@@ -20,14 +21,13 @@ public class GameJFrame extends JFrame {
     //窗体默认大小
     public static int GameX = 1000;
     public static int GameY = 618;
-
+    private final Stack<JPanel> panelStack = new Stack<>(); // 面板栈, 用于切换面板
     private JPanel panel = null;
 
     //监听器
     private KeyListener keyListener = null;
     private MouseMotionListener mouseMotionListener = null;
     private MouseListener mouseListener = null;
-
     //游戏主进程
     private Thread mainThread = null;
 
@@ -42,6 +42,28 @@ public class GameJFrame extends JFrame {
         this.setLocationRelativeTo(null); // 设置JFrame在屏幕居中
     }
 
+    public void addPanel(JPanel panel) {
+//        在JFrame中清除旧的panel
+        if(!panelStack.isEmpty()) {
+            this.getContentPane().removeAll(); // 清除旧面板
+        }
+        panelStack.push(panel); // 压栈
+        this.panel = panelStack.peek(); // 设置当前面板
+        this.add(panel); // 添加面板到窗体
+    }
+
+    public boolean removePanel() {
+        if (panelStack.size() > 1) {
+            panelStack.pop();// 弹栈
+            this.getContentPane().removeAll(); // 清除旧面板
+            this.panel = panelStack.peek(); // 设置当前面板
+//            设置新的面板
+            this.add(panel);
+            return true;
+        }
+        return false; // 至少保留一个面板, 不能删除
+    }
+
     /**
      * 窗体布局: 添加控件
      */
@@ -54,7 +76,6 @@ public class GameJFrame extends JFrame {
      */
     public void start() {
         if (panel != null) {
-            this.add(panel); // 添加面板, 布局为中间
             pack(); // 自动适配大小
         }
         if (keyListener != null) {
@@ -76,9 +97,6 @@ public class GameJFrame extends JFrame {
     }
 
 
-    public void setPanel(JPanel panel) {
-        this.panel = panel;
-    }
 
     public void setKeyListener(KeyListener keyListener) {
         this.keyListener = keyListener;

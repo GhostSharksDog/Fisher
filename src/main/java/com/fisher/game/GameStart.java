@@ -4,6 +4,7 @@ import com.fisher.controller.GameListener;
 import com.fisher.controller.GameThread;
 import com.fisher.show.GameJFrame;
 import com.fisher.show.GameMainPanel;
+import com.fisher.show.StartPanel;
 
 import java.awt.*;
 
@@ -17,9 +18,18 @@ public class GameStart {
         GameListener gameListener = new GameListener(); // 创建游戏监听器
         GameThread mainThread = new GameThread(); // 创建游戏主线程
 
-        frame.setPanel(mainPanel); // 注入游戏面板
+        StartPanel startPanel = new StartPanel(e -> {
+            // 开始游戏
+            frame.addPanel(mainPanel); // 将游戏主面板注入窗体
+            frame.start(); // 启动游戏
+        }, e -> {
+            // 退出游戏
+            System.exit(0);
+        });// 创建开始面板
+
+        frame.addPanel(startPanel); // 注入开始面板
+        frame.start(); // 启动游戏
         frame.setKeyListener(gameListener); // 注入游戏监听器
         frame.setMainThread(mainThread); // 注入游戏主线程
-        frame.start(); // 启动游戏
     }
 }

@@ -59,6 +59,15 @@ public abstract class ElementObj {
      * 用于获取对象
      * @return ElementObj
      */
+
+    public abstract void onClick();
+
+    // 检测点击的范围是否在元素里面
+    public boolean contain(Point p) {
+        return (p.x >= this.getX() && p.x <= this.x + this.getWidth() &&
+                p.y >= this.getY() && p.y <= this.y + this.getHeight());
+    }
+
     public abstract ElementObj createElement(JSONObject jsonObject);
 
     public void updateImage(){}

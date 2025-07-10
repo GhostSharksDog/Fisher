@@ -4,6 +4,7 @@ import com.fisher.element.ElementObj;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 
@@ -97,6 +98,30 @@ public class ElementManager {
         for(GameElement e:GameElement.values()) {
             gameElements.put(e,new ArrayList<ElementObj>());
         }
+
+    }
+
+    public void handleElementClick(MouseEvent e) {
+        List<ElementObj> left = gameElements.get(GameElement.CannonLeftDecoration);
+        List<ElementObj> right = gameElements.get(GameElement.CannonRightDecoration);
+
+        if (!left.isEmpty() || !right.isEmpty()) {
+            for (ElementObj obj : left) {
+                if (obj.contain(e.getPoint())) {
+                    obj.onClick();
+                    return;
+                }
+            }
+
+            for (ElementObj obj : right) {
+                if (obj.contain(e.getPoint())) {
+                    obj.onClick();
+                    return;
+                }
+            }
+        }
+
+        this.setMousePoint(e.getX(), e.getY());
 
     }
 }

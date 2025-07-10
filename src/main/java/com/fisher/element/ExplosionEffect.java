@@ -72,6 +72,11 @@ public class ExplosionEffect extends ElementObj {
     }
 
     @Override
+    public void onClick() {
+
+    }
+
+    @Override
     public ElementObj createElement(JSONObject jsonObject) {
         String effectPath = jsonObject.getString("effect");
 //        System.out.println("加载炮弹图片: " + effectPath);

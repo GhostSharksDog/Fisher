@@ -60,8 +60,6 @@ public class GameThread extends Thread{
         loadSplint();
         loadPlayer();
         loadScoreBoard();
-        ElementObj goldCoin = GameLoad.getInstance().getElement("GoldItem","{x:200,y:2}");
-        EM.addElement(goldCoin, GameElement.PLAYER);
     }
 
     /**

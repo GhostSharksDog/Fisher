@@ -11,9 +11,18 @@
   "allClass": {
     "Play": {
       "className": "com.fisher.element.Play",
-      "cannon": "/image/cannon/09.png",
       "canonLeft": "/before/cannon/sub.png",
-      "canonRight": "/before/cannon/add.png"
+      "canonRight": "/before/cannon/add.png",
+      "cannon": [
+        "/image/cannon/10.png",
+        "/image/cannon/09.png",
+        "/image/cannon/06.png",
+        "/image/cannon/05.png",
+        "/image/cannon/07.png",
+        "/image/cannon/03.png",
+        "/image/cannon/02.png",
+        "/image/cannon/01.png"
+      ]
     },
     "Bullet": {
       "className": "com.fisher.element.Bullet",

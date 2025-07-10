@@ -62,11 +62,11 @@ public class GameMainPanel extends JPanel implements Runnable {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                EM.setMousePoint(e.getX(), e.getY());
+                EM.handleElementClick(e);  // 调用统一事件处理器
+//                EM.setMousePoint(e.getX(), e.getY());
             }
         });
     }
-
 
     @Override
     public void paint(Graphics g) {

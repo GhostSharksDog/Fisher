@@ -40,6 +40,11 @@ public class FishMap extends ElementObj {
     }
 
     @Override
+    public void onClick() {
+
+    }
+
+    @Override
     public ElementObj createElement(JSONObject jsonObject) {
         return this;
     }

@@ -38,6 +38,11 @@ public class Splint extends ElementObj {
     }
 
     @Override
+    public void onClick() {
+
+    }
+
+    @Override
     public ElementObj createElement(JSONObject jsonObject) {
         ImageIcon icon = GameLoad.findResourceIcon(jsonObject.getString("splint"));
         this.setIcon(icon);

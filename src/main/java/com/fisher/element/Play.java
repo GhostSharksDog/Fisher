@@ -1,10 +1,9 @@
 package com.fisher.element;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fisher.controller.Collidercontroller;
-import com.fisher.manager.ElementManager;
-import com.fisher.manager.GameElement;
-import com.fisher.manager.GameLoad;
+import com.fisher.manager.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,7 +34,8 @@ public class Play extends ElementObj {
     // 大炮装饰比例
     private CannonRightDecoration rightDecoration;
     private CannonLeftDecoration leftDecoration;
-    private double decorateRatio = 0.05;
+    // 存储配置
+    private static JSONArray jsonArray;
 
     public Play() {}
 
@@ -96,6 +96,10 @@ public class Play extends ElementObj {
             return;
         }
         this.lastFireTime = currentTime;
+
+        // 减少金币
+        if (CoinManager.getInstance().getCoins() < CannonManager.getCannonLevel()) return;  // 金币不够，无法发射炮弹
+        CoinManager.getInstance().reduceCoins(CannonManager.getCannonLevel());
 
         // 创建子弹对象
         Bullet bullet = getBullet();
@@ -158,11 +162,22 @@ public class Play extends ElementObj {
             this.pointTo(x, y);
             ElementManager.getManager().setMouseClick(false);
         }
+
+        // 更新炮图标
+        if (jsonArray != null) {
+            this.setIcon(GameLoad.findResourceIcon(jsonArray.getString(CannonManager.getCannonLevel() - 1)));
+        }
+
     }
 
     @Override
     public boolean isAlive() {
         return true;
+    }
+
+    @Override
+    public void onClick() {
+
     }
 
     /**
@@ -172,20 +187,28 @@ public class Play extends ElementObj {
     // 创建大炮
     @Override
     public ElementObj createElement(JSONObject jsonObject) {
+        jsonArray = jsonObject.getJSONArray("cannon");
+
         // 瓦达西的炮
-        ImageIcon cannonIcon = GameLoad.findResourceIcon(jsonObject.getString("cannon"));
+        ImageIcon cannonIcon = GameLoad.findResourceIcon(jsonArray.getString(CannonManager.getCannonLevel() - 1));
         this.setIcon(cannonIcon);
         this.setSize(ElementManager.getManager().getMainPanelSize());
 
         // 瓦达西的炮：你们都是我的翅膀
+        this.createDecoration(jsonObject);
+
+        return this;
+    }
+
+    public void createDecoration(JSONObject jsonObject) {
         this.leftDecoration = (CannonLeftDecoration) GameLoad.getInstance().getElement("CannonLeftDecoration");
         this.rightDecoration = (CannonRightDecoration) GameLoad.getInstance().getElement("CannonRightDecoration");
 
         this.leftDecoration.createElement(jsonObject);
         this.rightDecoration.createElement(jsonObject);
 
-         this.leftDecoration.setCannonPosition(this.getX(), this.getY(), this.getWidth());
-         this.rightDecoration.setCannonPosition(this.getX(), this.getY(), this.getWidth());
+        this.leftDecoration.setCannonPosition(this.getX(), this.getY(), this.getWidth());
+        this.rightDecoration.setCannonPosition(this.getX(), this.getY(), this.getWidth());
 
         this.leftDecoration.setSize(ElementManager.getManager().getMainPanelSize());
         this.rightDecoration.setSize(ElementManager.getManager().getMainPanelSize());
@@ -193,7 +216,6 @@ public class Play extends ElementObj {
         ElementManager.getManager().addElement(this.leftDecoration, GameElement.CannonLeftDecoration);
         ElementManager.getManager().addElement(this.rightDecoration, GameElement.CannonRightDecoration);
 
-        return this;
     }
 
     @Override

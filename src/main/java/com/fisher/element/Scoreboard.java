@@ -59,6 +59,11 @@ public class Scoreboard extends ElementObj {
     }
 
     @Override
+    public void onClick() {
+
+    }
+
+    @Override
     public ElementObj createElement(JSONObject jsonObject) {
         ImageIcon icon = GameLoad.findResourceIcon(jsonObject.getString("scoreboard"));
         this.setIcon(icon);

@@ -177,6 +177,11 @@ public class Fish extends ElementObj implements Collider {
     }
 
     @Override
+    public void onClick() {
+
+    }
+
+    @Override
     public void move() {
         update();
     }

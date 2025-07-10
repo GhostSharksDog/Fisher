@@ -2,6 +2,7 @@ package com.fisher.element;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fisher.controller.Collider;
+import com.fisher.manager.CannonManager;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameLoad;
 
@@ -10,10 +11,11 @@ import java.awt.*;
 
 public class Bullet extends ElementObj implements Collider {
     private double angle;  // 子弹角度
-    private double speed = 10; // 子弹速度
-    private double bulletSize = 0.02;  // 子弹大小比例
+    private double speed = 7; // 子弹速度
+    private double bulletSize = 0.04;  // 子弹大小比例
     private long createTime;  // 记录子弹创建时间和存活时间（毫秒）
     private final long lifeTime = 3000; // 子弹存活时间（ms）
+    private final ImageIcon[] icons = new ImageIcon[CannonManager.getTopCannonLevel()];;  // 炮弹图片
 
     public Bullet() {}
 
@@ -24,11 +26,19 @@ public class Bullet extends ElementObj implements Collider {
         // 根据角度移动子弹
         this.setX((int)(this.getX() + this.speed * Math.sin(angle)));
         this.setY((int)(this.getY() + this.speed * -Math.cos(angle)));
+
+        // 设置子弹图片
+        this.setIcon(this.icons[CannonManager.getCannonLevel() - 1]);
     }
 
     @Override
     public boolean isAlive() {
         return this.alive;
+    }
+
+    @Override
+    public void onClick() {
+
     }
 
     // 子弹生存周期
@@ -47,10 +57,21 @@ public class Bullet extends ElementObj implements Collider {
 
     @Override
     public ElementObj createElement(JSONObject jsonObject) {
-        ImageIcon Icon = GameLoad.findResourceIcon(jsonObject.getString("bullet"));
+        ImageIcon Icon = GameLoad.findResourceIcon("/before/cannon/bulletandnet.png",
+                "/before/cannon/bulletandnet.plist", "bullet01.png");
+
+//        ImageIcon Icon = GameLoad.findResourceIcon(jsonObject.getString("bullet"));
         this.setIcon(Icon);
         this.setSize(ElementManager.getManager().getMainPanelSize());
+
+        // 预加载所有炮弹图片
+        for (int i = 0; i < CannonManager.getTopCannonLevel(); i++) {
+            this.icons[i] = GameLoad.findResourceIcon("/before/cannon/bulletandnet.png",
+                    "/before/cannon/bulletandnet.plist", "bullet0" + (i + 1) + ".png");
+        }
+
         return this;
+
     }
 
     @Override

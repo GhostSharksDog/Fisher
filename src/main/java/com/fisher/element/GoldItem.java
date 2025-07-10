@@ -67,6 +67,11 @@ public class GoldItem extends ElementObj{
     }
 
     @Override
+    public void onClick() {
+
+    }
+
+    @Override
     public ElementObj createElement(JSONObject jsonObject) {
 //     处理iconList
         JSONArray j = jsonObject.getJSONArray("goldImages"); // 得到小图图片数组

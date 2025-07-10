@@ -1,6 +1,7 @@
 package com.fisher.element;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fisher.manager.CannonManager;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameLoad;
 
@@ -48,6 +49,11 @@ public class CannonRightDecoration extends ElementObj {
     @Override
     public boolean isAlive() {
         return true;  // 装饰物始终显示
+    }
+
+    @Override
+    public void onClick() {
+        CannonManager.getInstance().addCannonLevel();
     }
 
     @Override

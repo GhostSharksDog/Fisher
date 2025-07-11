@@ -4,10 +4,7 @@ import com.fisher.element.Bullet;
 import com.fisher.element.ElementObj;
 import com.fisher.element.ExplosionEffect;
 import com.fisher.element.Fish;
-import com.fisher.manager.ElementManager;
-import com.fisher.manager.FishClass;
-import com.fisher.manager.GameElement;
-import com.fisher.manager.GameLoad;
+import com.fisher.manager.*;
 
 import java.util.Iterator;
 import java.util.List;
@@ -129,21 +126,14 @@ public class GameThread extends Thread{
     }
 
     public void generateFishes(int count) {
-        Collidercontroller instance = Collidercontroller.getInstance();
         for (int i = 0; i < count; i++) {
-            ElementObj fishObj = GameLoad.getInstance().getElement("Fish");
+            ElementObj fishObj = GameLoad.getInstance().getElement("Fish.fish01");
             if (fishObj instanceof Fish) {
                 Fish fish = (Fish) fishObj;
-
-                // 根据概率选择鱼的种类
-                FishClass fishClass = Fish.getRandomFishClass();
-
-                // 创建新的鱼对象（指定类型）
-                Fish newFish = new Fish(fishClass);
-                newFish.setIcon(fish.getIcon()); // 保留图像
-
-                EM.addElement(newFish, GameElement.FISH);
-                instance.addCollider(newFish);
+                // 添加鱼类到管理器
+                EM.addElement(fish, GameElement.FISH);
+                // 添加碰撞器
+                Collidercontroller.getInstance().addCollider(fish);
             }
         }
     }
@@ -154,7 +144,7 @@ public class GameThread extends Thread{
         Collidercontroller collidercontroller = Collidercontroller.getInstance();
 
         // 检测子弹与鱼的碰撞
-//      这里不可以使用:的方式循环，因为无法保证线程安全!!!
+//        这里不可以使用:的方式循环，因为无法保证线程安全!!!
 //        需要修改为:int i=0; i<bullets.size(); i++的方式
         for (int i = 0; i<bullets.size(); i++) {
             ElementObj bulletObj =  bullets.get(i);
@@ -181,18 +171,18 @@ public class GameThread extends Thread{
         // 2.播放特效
         createExplosionEffect(fish.getX(), fish.getY());
 
-        // 3.鱼死亡
-        fish.setAlive(false);
+        // 3.标记鱼为被捕捉状态
+        fish.setCatch(true);
+        fish.resetCatchAnimation();
 
         // 4.增加分数
-        int score = fish.getScore();
-
-//        ScoreManager.addScore(score);
+        CoinManager instance = CoinManager.getInstance();
+        instance.addCoins(fish.getScore());
 
     }
 
     private void createExplosionEffect(int x, int y) {
-        ElementObj effect = GameLoad.getInstance().getElement("ExplosionEffect");
+        ElementObj effect = GameLoad.getInstance().getElement("ExplosionEffect.effect");
         if (effect instanceof ExplosionEffect) {
             ExplosionEffect explosion = (ExplosionEffect) effect;
 
@@ -212,6 +202,14 @@ public class GameThread extends Thread{
             Iterator<ElementObj> iterator = list.iterator();
             while (iterator.hasNext()) {
                 ElementObj obj = iterator.next();
+                // 对于鱼，需要检查捕捉动画是否完成
+                if (obj instanceof Fish) {
+                    Fish fish = (Fish) obj;
+                    if (fish.isCatch() && fish.isCatchAnimationComplete()) {
+                        fish.setAlive(false); // 动画完成后标记为死亡
+                    }
+                }
+
                 if (!obj.isAlive()) {
                     // 如果是碰撞体，从碰撞管理器中移除
                     if (obj instanceof Collider) {

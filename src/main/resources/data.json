@@ -2,11 +2,6 @@
   "player": {
     "coordinates": "(10, 10)"
   },
-  "fish": {
-    "images": [
-      "image/fish/testFish.png"
-    ]
-  },
   "panelBackground": "image/background/fishlightbg_0.jpg",
   "allClass": {
     "Play": {
@@ -393,7 +388,21 @@
     },
     "ExplosionEffect": {
       "className": "com.fisher.element.ExplosionEffect",
-      "effect": "/before/cannon/tenstar.png"
+      "effect": {
+        "bigImage": "/before/cannon/bulletandnet.png",
+        "bigImageplist": "/before/cannon/bulletandnet.plist",
+        "imageNormal": [
+          "net01.png",
+          "net02.png",
+          "net03.png",
+          "net04.png",
+          "net05.png",
+          "net06.png",
+          "net07.png",
+          "net08.png",
+          "net09.png"
+        ]
+      }
     },
     "CannonLeftDecoration": {
       "className": "com.fisher.element.CannonLeftDecoration",

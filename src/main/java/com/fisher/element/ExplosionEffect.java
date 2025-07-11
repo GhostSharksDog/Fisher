@@ -1,5 +1,6 @@
 package com.fisher.element;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameElement;
@@ -44,7 +45,7 @@ public class ExplosionEffect extends ElementObj {
     @Override
     public void showElement(Graphics g) {
         if (getIcon() != null) {
-            g.drawImage(getIcon().getImage(), x, y, getWidth(), getHeight(), null);
+            g.drawImage(getIcon().getImage(), x, y, (int)(getWidth() * 1.4), (int)(getHeight() * 1.4), null);
         } else {
             g.setColor(Color.RED);
             g.fillRect(x, y, 50, 50);
@@ -78,13 +79,16 @@ public class ExplosionEffect extends ElementObj {
 
     @Override
     public ElementObj createElement(JSONObject jsonObject) {
-        String effectPath = jsonObject.getString("effect");
-//        System.out.println("加载炮弹图片: " + effectPath);
+        if (jsonObject != null) {
+            String bigImage = jsonObject.getString("bigImage");
+            String plist = jsonObject.getString("bigImageplist");
+            JSONArray imageNormal = jsonObject.getJSONArray("imageNormal");
 
-        ImageIcon Icon = GameLoad.findResourceIcon(effectPath);
-        this.setIcon(Icon);
-
-        if (Icon == null) {
+            if (imageNormal != null) {
+                String effectIcon = imageNormal.getString(5);
+                setIcon(GameLoad.findResourceIcon(bigImage, plist, effectIcon));
+            }
+        }else{
             System.err.println("没有找到图片!");
         }
 

@@ -1,5 +1,6 @@
 package com.fisher.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fisher.element.Bullet;
 import com.fisher.element.ElementObj;
 import com.fisher.element.ExplosionEffect;
@@ -179,6 +180,25 @@ public class GameThread extends Thread{
         CoinManager instance = CoinManager.getInstance();
         instance.addCoins(fish.getScore());
 
+        createGoldItems(fish, fish.getScore());
+    }
+
+    private void createGoldItems(Fish fish, int score) {
+        // 根据鱼的分数创建多个金币
+        for (int i = 0; i < Math.min(score, 10); i++) { // 最多生成10个金币
+            // 创建金币对象
+            ElementObj gold = GameLoad.getInstance().getElement("GoldItem");
+            if (gold != null) {
+                // 设置金币初始位置为鱼的位置
+                JSONObject position = new JSONObject();
+                position.put("x", fish.getX() + fish.getWidth()/2);
+                position.put("y", fish.getY() + fish.getHeight()/2);
+
+                // 使用运行时数据创建金币
+                gold = GameLoad.getInstance().getElement("GoldItem", position.toJSONString());
+                ElementManager.getManager().addElement(gold, GameElement.GOLD);
+            }
+        }
     }
 
     private void createExplosionEffect(int x, int y) {

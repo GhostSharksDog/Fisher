@@ -10,4 +10,5 @@ public enum GameElement {
     CannonRightDecoration,  // 右边炮台装饰
     CannonLeftDecoration,  // 左边炮台装饰
     PLAYER,  // 玩家
+    GOLD
 }

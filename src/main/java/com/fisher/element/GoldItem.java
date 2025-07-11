@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GoldItem extends ElementObj{
-    private static final double VELOCITY = 1; // 速度
+    private static final double VELOCITY = 3; // 速度
     private static final int ROTATE_TIME = 5; // 旋转时间
 // 金币的iconList
     private final List<ImageIcon> iconList =  new ArrayList<>();

@@ -13,7 +13,8 @@ import com.fisher.manager.GameElement;
 import com.fisher.manager.GameLoad;
 
 public class ScoreItem extends ElementObj {
-
+    private int startTime; // 开始时间
+    private int liveTime; // 存活时间
     private List<ImageIcon> images = new ArrayList<>(); // 图片
     private int currentIconIndex = 0; // 当前图片索引
 
@@ -40,6 +41,9 @@ public class ScoreItem extends ElementObj {
 
     @Override
     public boolean isAlive() {
+        if(ElementManager.getManager().GameThreadTime - startTime >= liveTime){
+            return false;
+        }
         return true;
     }
 
@@ -69,6 +73,7 @@ public class ScoreItem extends ElementObj {
          * ]
          * }
          */
+        startTime = (int) ElementManager.getManager().GameThreadTime; // 记录开始时间
         int x = jsonObject.getIntValue("x");
         int y = jsonObject.getIntValue("y");
         String bigImage = jsonObject.getString("bigImage");

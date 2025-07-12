@@ -55,24 +55,7 @@ public class Fish extends ElementObj implements Collider {
     private int score;
 
     public Fish() {
-        // 无参构造函数
-        this(getRandomFishClass());
-    }
-
-    /**
-     * 获取随机鱼种
-     */
-    public static FishClass getRandomFishClass() {
-        Random rand = new Random();
-        double randomValue = rand.nextDouble() * 100;
-
-        if (randomValue <= 50) {
-            return FishClass.SMALL;
-        } else if (randomValue <= 95) {
-            return FishClass.MEDIUM;
-        } else {
-            return FishClass.LARGE;
-        }
+        this(FishClass.SMALL);
     }
 
 

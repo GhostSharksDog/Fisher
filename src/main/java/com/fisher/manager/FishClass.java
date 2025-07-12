@@ -1,7 +1,7 @@
 package com.fisher.manager;
 
 public enum FishClass {
-    SMALL(5, 30, 50, 3.0, 2,1, 2, 10),   // 积分，最小尺寸，最大尺寸，速度，移动间隔
+    SMALL(5, 30, 50, 3.0, 2,1, 2, 10),
     MEDIUM(10, 50, 100, 2.0, 3,3, 3, 12),
     LARGE(25, 100, 150, 1.5, 4,5, 4, 15);
 

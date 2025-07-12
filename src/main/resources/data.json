@@ -26,6 +26,7 @@
     "Fish": {
       "className": "com.fisher.element.Fish",
       "fish01": {
+        "type": "SMALL",
         "bigImage": "/image/fish/fish.png",
         "bigImageplist": "/image/fish/fish.plist",
         "imageNormal": [
@@ -397,10 +398,7 @@
           "net03.png",
           "net04.png",
           "net05.png",
-          "net06.png",
-          "net07.png",
-          "net08.png",
-          "net09.png"
+          "net06.png"
         ]
       }
     },

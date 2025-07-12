@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.fisher.element.Fish;
 import org.xml.sax.SAXException;
 
 import java.awt.image.BufferedImage;
@@ -102,7 +103,19 @@ public class GameLoad {
         }
         JSONObject jObject = getJSONObj(split);
         try {
-            ElementObj obj = (ElementObj) classMap.get(split[0]).newInstance();
+            Class<?> clazz = classMap.get(split[0]);
+            ElementObj obj;
+            // 特殊处理鱼类
+            if (Fish.class.equals(clazz)) {
+                // 从配置中读取鱼的类型
+                String typeStr = jObject.getString("type");
+                FishClass fishClass = FishClass.valueOf(typeStr);
+
+                // 直接使用有参构造函数创建鱼对象
+                obj = new Fish(fishClass);
+            } else {
+                obj = (ElementObj) clazz.newInstance();
+            }
             return obj.createElement(jObject);
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();

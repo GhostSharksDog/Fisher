@@ -36,11 +36,11 @@ public class GameThread extends Thread{
     @Override
     public void run() {
         while(true){  //true换成变量控制结束
-        //游戏开始前     读进度条，加载游戏资源
+            //游戏开始前     读进度条，加载游戏资源
             gameLoad(currentStatus, currentLevel);
-        //游戏进行时     游戏过程中
+            //游戏进行时     游戏过程中
             gameRun();
-        //游戏场景结束   游戏资源回收
+            //游戏场景结束   游戏资源回收
             gameOver();
 
             try {
@@ -138,6 +138,7 @@ public class GameThread extends Thread{
             }
         }
     }
+
 
     private void checkCollisions() {
         List<ElementObj> bullets = EM.getElementByKey(GameElement.BULLET);

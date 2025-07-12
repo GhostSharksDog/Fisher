@@ -330,8 +330,8 @@
         ]
       },
       "fish11": {
-        "bigImage": "/image/fish/seamaid.png",
-        "bigImageplist": "/image/fish/seamaid.plist",
+        "bigImage": "/before/fish/seamaid.png",
+        "bigImageplist": "/before/fish/seamaid.plist",
         "imageNormal": [
           "fish11_01.png",
           "fish11_02.png",
@@ -358,8 +358,8 @@
         ]
       },
       "fish12": {
-        "bigImage": "/image/fish/seamaid.png",
-        "bigImageplist": "/image/fish/seamaid.plist",
+        "bigImage": "/before/fish/seamaid.png",
+        "bigImageplist": "/before/fish/seamaid.plist",
         "imageNormal": [
           "fish12_01.png",
           "fish12_02.png",

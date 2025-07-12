@@ -58,8 +58,8 @@ public class GameThread extends Thread{
         loadSplint();
         loadPlayer();
         loadScoreBoard();
-        ElementObj e = GameLoad.getInstance().getElement("ScoreItem.highPoint.x30", "{x:100,y:100}");
-        EM.addElement(e, GameElement.PLAYER);
+//        ElementObj e = GameLoad.getInstance().getElement("ScoreItem.highPoint.x30", "{x:100,y:100}");
+//        EM.addElement(e, GameElement.PLAYER);
     }
 
     /**
@@ -177,7 +177,6 @@ public class GameThread extends Thread{
 
         // 3.标记鱼为被捕捉状态
         fish.setCatch(true);
-        fish.resetCatchAnimation();
 
         // 4.增加分数
         CoinManager instance = CoinManager.getInstance();

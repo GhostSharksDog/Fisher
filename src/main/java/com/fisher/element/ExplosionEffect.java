@@ -45,7 +45,7 @@ public class ExplosionEffect extends ElementObj {
     @Override
     public void showElement(Graphics g) {
         if (getIcon() != null) {
-            g.drawImage(getIcon().getImage(), x, y, (int)(getWidth() * 1.4), (int)(getHeight() * 1.4), null);
+            g.drawImage(getIcon().getImage(), x - (int)(getWidth() * 1.4)/2, y - (int)(getHeight() * 1.4)/2, (int)(getWidth() * 1.4), (int)(getHeight() * 1.4), null);
         } else {
             g.setColor(Color.RED);
             g.fillRect(x, y, 50, 50);

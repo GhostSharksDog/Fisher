@@ -10,10 +10,7 @@ import com.fisher.element.ElementObj;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
-
-import com.fisher.element.Fish;
 import org.xml.sax.SAXException;
-
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -91,9 +88,10 @@ public class GameLoad {
 
     /**
      * 通过key，返回对应的ElementObj对象
+     * 
      * @param key data.json的资源字符串
-     * eg:Fish.fish1表示使用的资源是data.json中allClass的Fish.fish1字段的数据,
-     * 实体类的全类名是allClass.Fish.className,创建对象
+     *            eg:Fish.fish1表示使用的资源是data.json中allClass的Fish.fish1字段的数据,
+     *            实体类的全类名是allClass.Fish.className,创建对象
      * @return ElementObj对象
      */
     public ElementObj getElement(String key) {
@@ -103,19 +101,7 @@ public class GameLoad {
         }
         JSONObject jObject = getJSONObj(split);
         try {
-            Class<?> clazz = classMap.get(split[0]);
-            ElementObj obj;
-            // 特殊处理鱼类
-            if (Fish.class.equals(clazz)) {
-                // 从配置中读取鱼的类型
-                String typeStr = jObject.getString("type");
-                FishClass fishClass = FishClass.valueOf(typeStr);
-
-                // 直接使用有参构造函数创建鱼对象
-                obj = new Fish(fishClass);
-            } else {
-                obj = (ElementObj) clazz.newInstance();
-            }
+            ElementObj obj = (ElementObj) classMap.get(split[0]).newInstance();
             return obj.createElement(jObject);
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
@@ -125,17 +111,17 @@ public class GameLoad {
 
     /**
      *
-     * @param key data.json的资源字符串
+     * @param key         data.json的资源字符串
      * @param runningData 运行时数据,有时候创建对象除了静态资源外，还需要一些运行时数据，比如金币创建时候的位置和🐟死亡的位置有关
      * @return ElementObj对象
      */
-    public ElementObj getElement(String key, JSONObject runningData){
+    public ElementObj getElement(String key, JSONObject runningData) {
         String[] split = key.split("\\.");
         if (!classMap.containsKey(split[0])) {
             return null;
         }
         JSONObject jObject = getJSONObj(split); // 获取静态资源的json对象
-//        合并静态资源的json对象和运行时数据
+        // 合并静态资源的json对象和运行时数据
         jObject = mergeWithConflictCheck(jObject, runningData);
         try {
             ElementObj obj = (ElementObj) classMap.get(split[0]).newInstance();
@@ -148,19 +134,20 @@ public class GameLoad {
 
     /**
      * 通过key，返回对应的ElementObj对象，运行时数据为字符串形式
-     * @param key data.json的资源字符串
+     * 
+     * @param key         data.json的资源字符串
      * @param runningData 运行时数据，字符串形式
      * @return ElementObj对象
      */
-    public ElementObj getElement(String key, String runningData){
-//        将运行时数据转换为json对象
+    public ElementObj getElement(String key, String runningData) {
+        // 将运行时数据转换为json对象
         JSONObject jsonObject = JSONObject.parseObject(runningData);
-        return getElement(key,jsonObject);
+        return getElement(key, jsonObject);
     }
-
 
     /**
      * getElement的辅助方法，用于获取静态资源的json对象(层级深度较大的json对象也可以处理)
+     * 
      * @param split data.json的资源字符串用"."分割后的数组
      * @return json对象
      */
@@ -174,6 +161,7 @@ public class GameLoad {
 
     /**
      * 合并两个json对象，如果有键名冲突(即重复)，则报错
+     * 
      * @param source json对象
      * @param target json对象
      * @return 合并后的json对象
@@ -190,12 +178,12 @@ public class GameLoad {
                 // 1.1 冲突时报错（核心需求）
                 throw new IllegalStateException("Key conflict detected: '" + key + "'");
             }
-//            将source中的键值对写入target
+            // 将source中的键值对写入target
             result.put(key, source.get(key));
         }
         // 2. 合并target中的键值对
-        for(String key : target.keySet()) {
-//            不需要检测冲突，如果有键名冲突，上方的冲突检测会报错
+        for (String key : target.keySet()) {
+            // 不需要检测冲突，如果有键名冲突，上方的冲突检测会报错
             // 2.1 将target中的键值对写入result
             result.put(key, target.get(key));
         }
@@ -293,7 +281,7 @@ public class GameLoad {
      * @param bigImgPath resources开始的路径
      * @return BufferedImage
      */
-    private static BufferedImage readImage(String bigImgPath) {
+    public static BufferedImage readImage(String bigImgPath) {
         if (bigImgMap.containsKey(bigImgPath)) {
             return bigImgMap.get(bigImgPath);
         }

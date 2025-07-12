@@ -2,7 +2,6 @@ package com.fisher.element;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fisher.manager.CannonManager;
-import com.fisher.manager.CoinManager;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameLoad;
 

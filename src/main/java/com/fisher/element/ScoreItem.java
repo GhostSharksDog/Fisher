@@ -9,7 +9,6 @@ import javax.swing.ImageIcon;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fisher.manager.ElementManager;
-import com.fisher.manager.GameElement;
 import com.fisher.manager.GameLoad;
 
 public class ScoreItem extends ElementObj {

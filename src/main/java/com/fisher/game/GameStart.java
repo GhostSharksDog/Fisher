@@ -6,7 +6,6 @@ import com.fisher.show.GameJFrame;
 import com.fisher.show.GameMainPanel;
 import com.fisher.show.StartPanel;
 
-import java.awt.*;
 
 public class GameStart {
     /**

@@ -2,8 +2,6 @@ package com.fisher.element;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.fisher.manager.ElementManager;
-import com.fisher.manager.GameElement;
 import com.fisher.manager.GameLoad;
 
 import javax.swing.*;

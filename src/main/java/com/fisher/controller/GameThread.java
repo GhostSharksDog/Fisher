@@ -126,28 +126,48 @@ public class GameThread extends Thread{
         }
     }
 
+    /**
+     * fish02红色小鱼
+     *03绿色小鱼
+     *04墨鱼
+     *05小丑鱼
+     *06黄色小鱼
+     *07蓝黄色小鱼
+     *08海龟
+     *09灯笼鱼
+     *10魔鬼鱼
+     *13锤头鲨
+     *14水母
+     *15绿箭
+     *17黄青蛙
+     */
     public void generateFishes(int count) {
         String[] fishTypes = {
-                "Fish.fish01", "Fish.fish02", "Fish.fish03",
-                "Fish.fish04", "Fish.fish05", "Fish.fish06",
-                "Fish.fish07", "Fish.fish08", "Fish.fish09",
-                "Fish.fish10", "Fish.fish11", "Fish.fish12",
-                "Fish.fish13", "Fish.fish14", "Fish.fish15",
-                "Fish.fish16", "Fish.fish17"
+                "Fish.fish17"
         };
 
         for (int i = 0; i < count; i++) {
+            // 随机选择一种鱼类型
+            String fishKey = fishTypes[random.nextInt(fishTypes.length)];
 
-            ElementObj fishObj = GameLoad.getInstance().getElement("Fish.fish10");
-            if (fishObj instanceof Fish) {
-                Fish fish = (Fish) fishObj;
-                // 添加鱼类到管理器
+            // 创建基础鱼对象
+            ElementObj fishObj = GameLoad.getInstance().getElement(fishKey);
+            if (!(fishObj instanceof Fish)) continue;
+
+            Fish baseFish = (Fish) fishObj;
+            baseFish.setKey(fishKey); // 设置配置键
+
+            // 根据类型生成鱼群
+            List<Fish> fishGroup = FishGenerator.generateFishGroup(baseFish);
+
+            // 添加所有鱼到游戏
+            for (Fish fish : fishGroup) {
                 EM.addElement(fish, GameElement.FISH);
-                // 添加碰撞器
                 Collidercontroller.getInstance().addCollider(fish);
             }
         }
     }
+
 
     private void checkCollisions() {
         List<ElementObj> bullets = EM.getElementByKey(GameElement.BULLET);

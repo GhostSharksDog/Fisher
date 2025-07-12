@@ -15,9 +15,9 @@ import java.util.Random;
 
 public class Fish extends ElementObj implements Collider {
     public enum Type {
-        SMALL(5, 30, 50, 3.0, 2, 1, 2, 10),
-        MEDIUM(10, 50, 100, 2.0, 3, 1, 3, 12),
-        LARGE(25, 100, 150, 1.5, 4, 1, 4, 15);
+        SMALL(5, 30, 50, 1.6, 2, 1, 2, 10),
+        MEDIUM(10, 50, 100, 1.2, 3, 1, 3, 12),
+        LARGE(25, 100, 150, 1, 4, 1, 4, 15);
 
         private final int score;
         private final int minSize;
@@ -87,6 +87,7 @@ public class Fish extends ElementObj implements Collider {
     private double direction;  // 当前移动方向
     private int frameCounter = 0;  // 新增帧计数器
     private int moveInterval = 3; // 每3帧移动一次
+    private static final double HEADING_OFFSET = Math.PI; // 鱼头初始朝左
 
     // 生存属性
     private boolean isAlive = true;  //鱼的生存状态
@@ -97,7 +98,7 @@ public class Fish extends ElementObj implements Collider {
     // 动画属性
     private List<ImageIcon> animationFrames = new ArrayList<>(); // 存储运动动画帧
     private int currentFrameIndex = 0;        // 当前帧索引
-    private int animationSpeed = 5;            // 动画速度（每n帧切换一次）
+    private int animationSpeed = 8;            // 动画速度（每n帧切换一次）
     private int animationCounter = 0;          // 动画计数器
     private List<ImageIcon> catchFrames = new ArrayList<>();     // 存储被捕捉动画帧
     private int catchFrameIndex = 0;           // 被捕捉动画当前帧
@@ -109,6 +110,10 @@ public class Fish extends ElementObj implements Collider {
 
     //积分系统属性
     private int score;
+
+    // 生成鱼群属性
+    private String key; // 存储鱼的配置键
+
 
     public Fish() {
 
@@ -125,7 +130,6 @@ public class Fish extends ElementObj implements Collider {
             return;
         }
 
-        // 转换为 Graphics2D 以支持变换
         Graphics2D g2d = (Graphics2D) g.create();
 
         // 计算鱼的中心点
@@ -141,8 +145,8 @@ public class Fish extends ElementObj implements Collider {
         // 移动到中心点
         transform.translate(centerX, centerY);
 
-        // 计算旋转角度（鱼头初始朝左是180度，所以需要额外旋转180度使鱼头朝向移动方向）
-        double rotationAngle = direction + Math.PI;
+        // 计算旋转角度（使用移动方向加上鱼头偏移）
+        double rotationAngle = direction + HEADING_OFFSET;
 
         // 应用旋转
         transform.rotate(rotationAngle);
@@ -291,16 +295,6 @@ public class Fish extends ElementObj implements Collider {
             x += dx;
             y += dy;
 
-
-            // 20%的概率随机改变方向
-            if (random.nextFloat() < 0.2f) {
-                // 计算最大偏移量（5度转换为弧度）
-                double maxOffset = Math.toRadians(5);
-                // 生成-5度到+5度之间的随机偏移
-                double randomOffset = (random.nextDouble() * 2 - 1) * maxOffset;
-                // 应用偏移到当前方向
-                direction += randomOffset;
-            }
         }
 
     }
@@ -370,7 +364,7 @@ public class Fish extends ElementObj implements Collider {
         double baseDirection = Math.atan2(dy, dx);
 
         // 随机偏移量（±60度范围，即 ±π/3 弧度）
-        double randomOffset = (random.nextDouble() - 0.5) * Math.PI / 2.5;
+        double randomOffset = (random.nextDouble() - 0.5) * Math.PI / 1.5;
 
         // 返回带偏移的方向
         return baseDirection + randomOffset;
@@ -513,4 +507,62 @@ public class Fish extends ElementObj implements Collider {
     public int getCenterY() {
         return y + height / 2;
     }
+
+    public void setPosition(int x, int y) {
+        Dimension size = ElementManager.getManager().getMainPanelSize();
+        int maxX = (int) size.getWidth();
+        int maxY = (int) size.getHeight();
+
+        // 确保位置在边界内（包括边界外一定范围）
+        this.x = Math.max(-this.width * 2, Math.min(x, maxX + this.width * 2));
+        this.y = Math.max(-this.height * 2, Math.min(y, maxY + this.height * 2));
+    }
+
+    public void setDirection(double direction) {
+        // 确保方向在0到2π之间
+        this.direction = direction % (2 * Math.PI);
+        if (this.direction < 0) {
+            this.direction += 2 * Math.PI;
+        }
+    }
+
+    public double getDirection() {
+        return direction;
+    }
+
+    public void setFishType(Type type) {
+        this.type = type;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    // 添加设置尺寸的方法
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    // 添加设置速度的方法
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    // 添加设置分数的方法
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public double getSpeed() {
+        return this.speed;
+    }
+
 }

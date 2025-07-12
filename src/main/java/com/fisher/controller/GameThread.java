@@ -36,11 +36,11 @@ public class GameThread extends Thread{
     @Override
     public void run() {
         while(true){  //true换成变量控制结束
-            //游戏开始前     读进度条，加载游戏资源
+        //游戏开始前     读进度条，加载游戏资源
             gameLoad(currentStatus, currentLevel);
-            //游戏进行时     游戏过程中
+        //游戏进行时     游戏过程中
             gameRun();
-            //游戏场景结束   游戏资源回收
+        //游戏场景结束   游戏资源回收
             gameOver();
 
             try {
@@ -58,8 +58,8 @@ public class GameThread extends Thread{
         loadSplint();
         loadPlayer();
         loadScoreBoard();
-//        ElementObj e = GameLoad.getInstance().getElement("ScoreItem.highPoint.x30", "{x:100,y:100}");
-//        EM.addElement(e, GameElement.PLAYER);
+        ElementObj e = GameLoad.getInstance().getElement("ScoreItem.highPoint.90", "{x:100,y:100}");
+        EM.addElement(e, GameElement.PLAYER);
     }
 
     /**
@@ -141,7 +141,6 @@ public class GameThread extends Thread{
         }
     }
 
-
     private void checkCollisions() {
         List<ElementObj> bullets = EM.getElementByKey(GameElement.BULLET);
         List<ElementObj> fishes = EM.getElementByKey(GameElement.FISH);
@@ -177,6 +176,7 @@ public class GameThread extends Thread{
 
         // 3.标记鱼为被捕捉状态
         fish.setCatch(true);
+        fish.resetCatchAnimation();
 
         // 4.增加分数
         CoinManager instance = CoinManager.getInstance();

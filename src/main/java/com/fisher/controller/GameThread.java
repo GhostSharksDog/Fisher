@@ -127,8 +127,18 @@ public class GameThread extends Thread{
     }
 
     public void generateFishes(int count) {
+        String[] fishTypes = {
+                "Fish.fish01", "Fish.fish02", "Fish.fish03",
+                "Fish.fish04", "Fish.fish05", "Fish.fish06",
+                "Fish.fish07", "Fish.fish08", "Fish.fish09",
+                "Fish.fish10", "Fish.fish11", "Fish.fish12",
+                "Fish.fish13", "Fish.fish14", "Fish.fish15",
+                "Fish.fish16", "Fish.fish17"
+        };
+
         for (int i = 0; i < count; i++) {
-            ElementObj fishObj = GameLoad.getInstance().getElement("Fish.fish14");
+
+            ElementObj fishObj = GameLoad.getInstance().getElement("Fish.fish10");
             if (fishObj instanceof Fish) {
                 Fish fish = (Fish) fishObj;
                 // 添加鱼类到管理器
@@ -171,7 +181,7 @@ public class GameThread extends Thread{
         Collidercontroller.getInstance().removeCollider(fish);
 
         // 2.播放特效
-        createExplosionEffect(fish.getX(), fish.getY());
+        createExplosionEffect(fish.getCenterX(), fish.getCenterY());
 
         // 3.标记鱼为被捕捉状态
         fish.setCatch(true);
@@ -207,8 +217,11 @@ public class GameThread extends Thread{
         if (effect instanceof ExplosionEffect) {
             ExplosionEffect explosion = (ExplosionEffect) effect;
 
-            ExplosionEffect newExplosion = new ExplosionEffect(x,y);
+            // 使用中心点创建爆炸效果
+            ExplosionEffect newExplosion = new ExplosionEffect(x, y);
             newExplosion.setIcon(explosion.getIcon()); // 保留图像
+            newExplosion.setWidth(explosion.getWidth());
+            newExplosion.setHeight(explosion.getHeight());
 
             EM.addElement(newExplosion, GameElement.EFFECT);
         }

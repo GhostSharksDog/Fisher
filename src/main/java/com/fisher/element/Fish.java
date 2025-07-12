@@ -5,17 +5,73 @@ import com.alibaba.fastjson.JSONObject;
 import com.fisher.controller.Collider;
 import com.fisher.manager.ElementManager;
 import com.fisher.manager.GameLoad;
-import com.fisher.manager.FishClass;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class Fish extends ElementObj implements Collider {
+    public enum Type {
+        SMALL(5, 30, 50, 3.0, 2, 1, 2, 10),
+        MEDIUM(10, 50, 100, 2.0, 3, 1, 3, 12),
+        LARGE(25, 100, 150, 1.5, 4, 1, 4, 15);
+
+        private final int score;
+        private final int minSize;
+        private final int maxSize;
+        private final double speed;
+        private final int moveInterval;
+        private final double sizeFactor; // 新增尺寸大小
+        private final int catchLoops; // 捕捉动画循环次数
+        private final int catchSpeed; // 捕捉动画速度（帧间隔）
+
+        Type(int score, int minSize, int maxSize, double speed, int moveInterval, double sizeFactor, int catchLoops, int catchSpeed) {
+            this.score = score;
+            this.minSize = minSize;
+            this.maxSize = maxSize;
+            this.speed = speed;
+            this.moveInterval = moveInterval;
+            this.sizeFactor = sizeFactor;
+            this.catchLoops = catchLoops;
+            this.catchSpeed = catchSpeed;
+        }
+
+        public double getSizeFactor() {
+            return sizeFactor;
+        }
+
+        public int getScore() {
+            return score;
+        }
+
+        public int getMinSize() {
+            return minSize;
+        }
+
+        public int getMaxSize() {
+            return maxSize;
+        }
+
+        public double getSpeed() {
+            return speed;
+        }
+
+        public int getMoveInterval() {
+            return moveInterval;
+        }
+
+        public int getCatchLoops() {
+            return catchLoops;
+        }
+
+        public int getCatchSpeed() {
+            return catchSpeed;
+        }
+    }
+
     private Random random = new Random();
 
     // 鱼的基本属性
@@ -23,7 +79,7 @@ public class Fish extends ElementObj implements Collider {
     private int width, height; // 尺寸
     private Dimension size;    // 屏幕边界
     private double boundaryWidth, boundaryHeight;
-    private FishClass fishClass;
+    private Type type; // 鱼的种类
     private ImageIcon icon;    // 图片素材
 
     // 矢量属性
@@ -55,52 +111,13 @@ public class Fish extends ElementObj implements Collider {
     private int score;
 
     public Fish() {
-        this(FishClass.SMALL);
-    }
 
-
-    /**
-     * 鱼的构造函数
-     * @param fishClass 鱼的三种等级
-     * 鱼
-     * 鱼会乱游，设置随机数和设计算法使鱼按照一定规则移动，鱼超出屏幕范围外生命周期结束
-     * x,y,width,height
-     */
-    public Fish(FishClass fishClass) {
-        this.fishClass = fishClass;
-        size = ElementManager.getManager().getMainPanelSize();
-
-        // 使用枚举中的属性
-        this.score = fishClass.getScore();
-        this.speed = fishClass.getSpeed();
-        this.moveInterval = fishClass.getMoveInterval();
-
-        this.width = fishClass.getMinSize();
-        this.height = fishClass.getMinSize();
-
-        this.boundaryWidth = size.getWidth();
-        this.boundaryHeight = size.getHeight();
-        this.createTime = System.currentTimeMillis();
-        this.liveTime = (long)(Math.sqrt(Math.pow(boundaryWidth,2) + Math.pow(boundaryHeight,2)) / speed) * 100;
-
-        this.catchAnimationSpeed = fishClass.getCatchSpeed();
-        this.catchAnimationLoops = fishClass.getCatchLoops();
-
-
-        // 随机位置（确保在边界内）
-        int[] siteXY = randomBoundary((int)(boundaryWidth), (int)(boundaryHeight), width, height, random);
-        x = siteXY[0];
-        y = siteXY[1];
-
-        // 随机初始方向
-        direction = calInwardDirection(x,y,(int)(boundaryWidth), (int)(boundaryHeight),random);
     }
 
     @Override
     public void setSize(Dimension size) {
 
     }
-
 
     @Override
     public void showElement(Graphics g) {
@@ -150,45 +167,73 @@ public class Fish extends ElementObj implements Collider {
 
     @Override
     public ElementObj createElement(JSONObject jsonObject) {
+        // 从配置中读取鱼的类型
+        String typeStr = jsonObject.getString("type");
+        this.type = Type.valueOf(typeStr);
 
-        // 从 fish配置中获取图集信息
-        if (jsonObject != null) {
-            String bigImage = jsonObject.getString("bigImage");
-            String plist = jsonObject.getString("bigImageplist");
-            JSONArray normalImages = jsonObject.getJSONArray("imageNormal");
-            JSONArray catchImages = jsonObject.getJSONArray("imageCatch");
+        // 使用枚举中的属性初始化
+        this.score = type.getScore();
+        this.speed = type.getSpeed();
+        this.moveInterval = type.getMoveInterval();
+        this.catchAnimationSpeed = type.getCatchSpeed();
+        this.catchAnimationLoops = type.getCatchLoops();
 
-            // 加载所有动画帧
-            if (normalImages != null) {
-                for (int i = 0; i < normalImages.size(); i++) {
-                    String frameName = normalImages.getString(i);
-                    ImageIcon frame = GameLoad.findResourceIcon(bigImage, plist, frameName);
-                    animationFrames.add(frame);
-                }
-                for (int i = 0; i < catchImages.size(); i++) {
-                    String frameName = catchImages.getString(i);
-                    ImageIcon frame = GameLoad.findResourceIcon(bigImage, plist, frameName);
-                    catchFrames.add(frame);
-                }
+        // 初始化位置和方向
+        size = ElementManager.getManager().getMainPanelSize();
+        this.boundaryWidth = size.getWidth();
+        this.boundaryHeight = size.getHeight();
+        this.createTime = System.currentTimeMillis();
+        this.liveTime = (long)(Math.sqrt(Math.pow(boundaryWidth,2) + Math.pow(boundaryHeight,2)) / speed) * 100;
 
-                // 设置初始帧
-                if (!animationFrames.isEmpty()) {
-                    ImageIcon firstFrame = animationFrames.get(0);
-                    setIcon(firstFrame);
+        // 设置尺寸
+        this.width = type.getMinSize();
+        this.height = type.getMinSize();
 
-                    // 在资源加载后计算实际尺寸
-                    int originalWidth = firstFrame.getIconWidth();
-                    int originalHeight = firstFrame.getIconHeight();
+        // 随机位置（确保在边界内）
+        int[] siteXY = randomBoundary((int)(boundaryWidth), (int)(boundaryHeight), width, height, random);
+        x = siteXY[0];
+        y = siteXY[1];
 
-                    // 计算缩放比例
-                    double scale = fishClass.getSizeFactor();
+        // 随机初始方向
+        direction = calInwardDirection(x,y,(int)(boundaryWidth), (int)(boundaryHeight),random);
 
-                    // 计算实际尺寸
-                    this.width = (int)(originalWidth * scale);
-                    this.height = (int)(originalHeight * scale);
-                }
+        // 加载图像资源
+        String bigImage = jsonObject.getString("bigImage");
+        String plist = jsonObject.getString("bigImageplist");
+        JSONArray normalImages = jsonObject.getJSONArray("imageNormal");
+        JSONArray catchImages = jsonObject.getJSONArray("imageCatch");
+
+        // 加载所有动画帧
+        if (normalImages != null) {
+            for (int i = 0; i < normalImages.size(); i++) {
+                String frameName = normalImages.getString(i);
+                ImageIcon frame = GameLoad.findResourceIcon(bigImage, plist, frameName);
+                animationFrames.add(frame);
+            }
+            for (int i = 0; i < catchImages.size(); i++) {
+                String frameName = catchImages.getString(i);
+                ImageIcon frame = GameLoad.findResourceIcon(bigImage, plist, frameName);
+                catchFrames.add(frame);
+            }
+
+            // 设置初始帧
+            if (!animationFrames.isEmpty()) {
+                ImageIcon firstFrame = animationFrames.get(0);
+                setIcon(firstFrame);
+
+                // 在资源加载后计算实际尺寸
+                int originalWidth = firstFrame.getIconWidth();
+                int originalHeight = firstFrame.getIconHeight();
+
+                // 计算缩放比例
+                double scale = type.getSizeFactor();
+
+                // 计算实际尺寸
+                this.width = (int)(originalWidth * scale);
+                this.height = (int)(originalHeight * scale);
             }
         }
+
         return this;
     }
 
@@ -443,8 +488,8 @@ public class Fish extends ElementObj implements Collider {
     }
 
     // 添加获取鱼等级和积分的方法
-    public FishClass getFishClass() {
-        return fishClass;
+    public Type getFishType() {
+        return type;
     }
 
     public int getScore() {
@@ -459,5 +504,13 @@ public class Fish extends ElementObj implements Collider {
     @Override
     public ElementObj getThis() {
         return this;
+    }
+
+    public int getCenterX() {
+        return x + width / 2;
+    }
+
+    public int getCenterY() {
+        return y + height / 2;
     }
 }

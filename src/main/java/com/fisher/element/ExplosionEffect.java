@@ -9,17 +9,17 @@ import java.awt.*;
 
 public class ExplosionEffect extends ElementObj {
     private int x, y;
+    private int centerX, centerY; // 存储中心点坐标
     private int width, height;
     private long startTime;
     private static final long DURATION = 1000; // 显示1000ms
 
     private boolean isAlive = true;  //生存状态
 
-    public ExplosionEffect(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public ExplosionEffect(int centerX, int centerY) {
+        this.centerX = centerX;
+        this.centerY = centerY;
         this.startTime = System.currentTimeMillis();
-
     }
 
     @Override
@@ -43,10 +43,21 @@ public class ExplosionEffect extends ElementObj {
     @Override
     public void showElement(Graphics g) {
         if (getIcon() != null) {
-            g.drawImage(getIcon().getImage(), x - (int)(getWidth() * 1.4)/2, y - (int)(getHeight() * 1.4)/2, (int)(getWidth() * 1.4), (int)(getHeight() * 1.4), null);
+            // 计算左上角坐标，使图像中心在指定位置
+            int drawX = centerX - getWidth() / 2;
+            int drawY = centerY - getHeight() / 2;
+
+            // 绘制图像（放大1.4倍）
+            int scaledWidth = (int)(getWidth() * 1.4);
+            int scaledHeight = (int)(getHeight() * 1.4);
+            int scaledX = centerX - scaledWidth / 2;
+            int scaledY = centerY - scaledHeight / 2;
+
+            g.drawImage(getIcon().getImage(), scaledX, scaledY, scaledWidth, scaledHeight, null);
         } else {
+            // 错误处理
             g.setColor(Color.RED);
-            g.fillRect(x, y, 50, 50);
+            g.fillRect(centerX - 25, centerY - 25, 50, 50);
             System.err.println("特效图像为null!");
         }
     }

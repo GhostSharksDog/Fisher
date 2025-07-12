@@ -242,7 +242,7 @@
         ]
       },
       "fish11": {
-        "type": "SMALL",
+        "type": "LARGE",
         "bigImage": "/image/fish/seamaid.png",
         "bigImageplist": "/image/fish/seamaid.plist",
         "imageNormal": [
@@ -271,7 +271,7 @@
         ]
       },
       "fish12": {
-        "type": "SMALL",
+        "type": "LARGE",
         "bigImage": "/image/fish/seamaid.png",
         "bigImageplist": "/image/fish/seamaid.plist",
         "imageNormal": [
@@ -300,7 +300,7 @@
         ]
       },
       "fish13": {
-        "type": "SMALL",
+        "type": "LARGE",
         "bigImage": "/image/fish/fish.png",
         "bigImageplist": "/image/fish/fish.plist",
         "imageNormal": [
@@ -323,7 +323,7 @@
         ]
       },
       "fish14": {
-        "type": "SMALL",
+        "type": "MEDIUM",
         "bigImage": "/image/fish/fish.png",
         "bigImageplist": "/image/fish/fish.plist",
         "imageNormal": [
@@ -346,7 +346,7 @@
         ]
       },
       "fish15": {
-        "type": "SMALL",
+        "type": "MEDIUM",
         "bigImage": "/image/fish/fish2.png",
         "bigImageplist": "/image/fish/fish2.plist",
         "imageNormal": [
@@ -365,19 +365,6 @@
           "fish15_catch_01.png",
           "fish15_catch_02.png"
         ]
-      },
-      "fish16": {
-        "type": "SMALL",
-        "bigImage": "/image/fish/fish2.png",
-        "bigImageplist": "/image/fish/fish2.plist",
-        "imageNormal": [
-          "fish16_01.png",
-          "fish16_02.png",
-          "fish16_03.png",
-          "fish16_04.png",
-          "fish16_05.png"
-        ],
-        "imageCatch": []
       },
       "fish17": {
         "type": "SMALL",

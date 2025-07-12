@@ -58,6 +58,8 @@ public class GameThread extends Thread{
         loadSplint();
         loadPlayer();
         loadScoreBoard();
+        ElementObj e = GameLoad.getInstance().getElement("ScoreItem.highPoint.x30", "{x:100,y:100}");
+        EM.addElement(e, GameElement.PLAYER);
     }
 
     /**

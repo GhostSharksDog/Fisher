@@ -58,8 +58,8 @@ public class GameThread extends Thread{
         loadSplint();
         loadPlayer();
         loadScoreBoard();
-        ElementObj e = GameLoad.getInstance().getElement("ScoreItem.highPoint.90", "{x:100,y:100}");
-        EM.addElement(e, GameElement.PLAYER);
+//        ElementObj e = GameLoad.getInstance().getElement("ScoreItem.highPoint.90", "{x:100,y:100}");
+//        EM.addElement(e, GameElement.PLAYER);
     }
 
     /**
@@ -170,6 +170,7 @@ public class GameThread extends Thread{
     private void handleCollision(Bullet bullet, Fish fish) {
         // 1.子弹消失
         bullet.setAlive(false);
+        Collidercontroller.getInstance().removeCollider(fish);
 
         // 2.播放特效
         createExplosionEffect(fish.getX(), fish.getY());

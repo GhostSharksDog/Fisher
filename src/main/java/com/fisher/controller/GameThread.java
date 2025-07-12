@@ -128,7 +128,7 @@ public class GameThread extends Thread{
 
     public void generateFishes(int count) {
         for (int i = 0; i < count; i++) {
-            ElementObj fishObj = GameLoad.getInstance().getElement("Fish.fish01");
+            ElementObj fishObj = GameLoad.getInstance().getElement("Fish.fish14");
             if (fishObj instanceof Fish) {
                 Fish fish = (Fish) fishObj;
                 // 添加鱼类到管理器
@@ -168,6 +168,7 @@ public class GameThread extends Thread{
     private void handleCollision(Bullet bullet, Fish fish) {
         // 1.子弹消失
         bullet.setAlive(false);
+        Collidercontroller.getInstance().removeCollider(fish);
 
         // 2.播放特效
         createExplosionEffect(fish.getX(), fish.getY());

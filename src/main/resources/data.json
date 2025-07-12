@@ -242,7 +242,7 @@
         ]
       },
       "fish11": {
-        "type": "SMALL",
+        "type": "LARGE",
         "bigImage": "/image/fish/seamaid.png",
         "bigImageplist": "/image/fish/seamaid.plist",
         "imageNormal": [
@@ -271,7 +271,7 @@
         ]
       },
       "fish12": {
-        "type": "SMALL",
+        "type": "LARGE",
         "bigImage": "/image/fish/seamaid.png",
         "bigImageplist": "/image/fish/seamaid.plist",
         "imageNormal": [
@@ -300,7 +300,7 @@
         ]
       },
       "fish13": {
-        "type": "SMALL",
+        "type": "LARGE",
         "bigImage": "/image/fish/fish.png",
         "bigImageplist": "/image/fish/fish.plist",
         "imageNormal": [
@@ -323,7 +323,7 @@
         ]
       },
       "fish14": {
-        "type": "SMALL",
+        "type": "MEDIUM",
         "bigImage": "/image/fish/fish.png",
         "bigImageplist": "/image/fish/fish.plist",
         "imageNormal": [

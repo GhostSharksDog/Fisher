@@ -77,6 +77,7 @@ public class Bullet extends ElementObj implements Collider {
     @Override
     public void showElement(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
+        g2d.rotate(this.angle, this.getX(), this.getY());
         g2d.drawImage(this.getIcon().getImage(),
                 this.getX(), this.getY(),
                 this.getWidth(), this.getHeight(), null);

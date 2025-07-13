@@ -7,6 +7,7 @@ import com.fisher.element.ExplosionEffect;
 import com.fisher.element.Fish;
 import com.fisher.manager.*;
 
+import java.awt.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -156,18 +157,49 @@ public class GameThread extends Thread{
         };
 
         for (int i = 0; i < count; i++) {
+            String fishKey = fishTypes[random.nextInt(fishTypes.length)];
+            ElementObj fishObj = GameLoad.getInstance().getElement(fishKey);
 
-            ElementObj fishObj = GameLoad.getInstance().getElement("Fish.fish10");
             if (fishObj instanceof Fish) {
-                Fish fish = (Fish) fishObj;
-                // 添加鱼类到管理器
-                EM.addElement(fish, GameElement.FISH);
-                // 添加碰撞器
-                Collidercontroller.getInstance().addCollider(fish);
+                Fish baseFish = (Fish) fishObj;
+
+                // 确保基础鱼有正确的边界设置
+                Dimension size = ElementManager.getManager().getMainPanelSize();
+                baseFish.boundaryWidth = size.getWidth();
+                baseFish.boundaryHeight = size.getHeight();
+
+                // 确保基础鱼有正确的位置
+                int[] siteXY = Fish.randomBoundary(
+                        (int) size.getWidth(),
+                        (int) size.getHeight(),
+                        baseFish.getWidth(),
+                        baseFish.getHeight(),
+                        random
+                );
+                baseFish.setPosition(siteXY[0], siteXY[1]);
+
+                // 确保基础鱼有正确的方向
+                int fishCenterX = siteXY[0] + baseFish.getWidth() / 2;
+                int fishCenterY = siteXY[1] + baseFish.getHeight() / 2;
+                double direction = Fish.calInwardDirection(
+                        fishCenterX, fishCenterY,
+                        size.getWidth() / 2, size.getHeight() / 2,
+                        random
+                );
+                baseFish.setDirection(direction);
+
+                // 使用FishGenerator生成鱼群
+                List<Fish> fishGroup = FishGenerator.generateFishGroup(baseFish);
+
+                for (Fish fish : fishGroup) {
+                    // 添加鱼类到管理器
+                    EM.addElement(fish, GameElement.FISH);
+                    // 添加碰撞器
+                    Collidercontroller.getInstance().addCollider(fish);
+                }
             }
         }
     }
-
 
     private void checkCollisions() {
         List<ElementObj> bullets = EM.getElementByKey(GameElement.BULLET);

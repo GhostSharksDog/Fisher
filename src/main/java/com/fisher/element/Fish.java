@@ -79,7 +79,8 @@ public class Fish extends ElementObj implements Collider {
     private double preciseX, preciseY;
     private int width, height; // 尺寸
     private Dimension size;    // 屏幕边界
-    private double boundaryWidth, boundaryHeight;
+    public double boundaryWidth;
+    public double boundaryHeight;
     private Type type; // 鱼的种类
     private ImageIcon icon;    // 图片素材
 
@@ -96,11 +97,11 @@ public class Fish extends ElementObj implements Collider {
     private Boolean isCatch = false; //鱼是否被捕捉
 
     // 动画属性
-    private List<ImageIcon> animationFrames = new ArrayList<>(); // 存储运动动画帧
+    public List<ImageIcon> animationFrames = new ArrayList<>(); // 存储运动动画帧
     private int currentFrameIndex = 0;        // 当前帧索引
     private int animationSpeed = 5;            // 动画速度（每n帧切换一次）
     private int animationCounter = 0;          // 动画计数器
-    private List<ImageIcon> catchFrames = new ArrayList<>();     // 存储被捕捉动画帧
+    public List<ImageIcon> catchFrames = new ArrayList<>();     // 存储被捕捉动画帧
     private int catchFrameIndex = 0;           // 被捕捉动画当前帧
     private int catchFrameCounter = 0;         // 被捕捉动画计数器
     private boolean catchAnimationComplete = false; // 被捕捉动画结束标志
@@ -110,6 +111,8 @@ public class Fish extends ElementObj implements Collider {
 
     //积分系统属性
     private int score;
+
+    public String key;
 
     public Fish() {
 
@@ -169,6 +172,7 @@ public class Fish extends ElementObj implements Collider {
 
     @Override
     public ElementObj createElement(JSONObject jsonObject) {
+
         // 从配置中读取鱼的类型
         String typeStr = jsonObject.getString("type");
         this.type = Type.valueOf(typeStr);
@@ -210,6 +214,7 @@ public class Fish extends ElementObj implements Collider {
         // 加载图像资源
         String bigImage = jsonObject.getString("bigImage");
         String plist = jsonObject.getString("bigImageplist");
+        this.key = jsonObject.getString("key");
         JSONArray normalImages = jsonObject.getJSONArray("imageNormal");
         JSONArray catchImages = jsonObject.getJSONArray("imageCatch");
 
@@ -327,8 +332,7 @@ public class Fish extends ElementObj implements Collider {
     public static int[] randomBoundary(
             int boundaryWidth, int boundaryHeight,
             int width, int height,
-            Random random
-    ) {
+            Random random) {
         int margin = 50; // 边界外 50 像素范围
         int side = random.nextInt(4); // 随机选择边界的一侧：0=上，1=右，2=下，3=左
 
@@ -364,7 +368,7 @@ public class Fish extends ElementObj implements Collider {
      * @return 指向屏幕内部的方向(弧度)
      */
     // 修改方向计算方法（使用双精度参数）
-    private double calInwardDirection(
+    public static double calInwardDirection(
             double startX, double startY,
             double targetX, double targetY,
             Random random) {
@@ -531,5 +535,52 @@ public class Fish extends ElementObj implements Collider {
 
     public int getCenterY() {
         return (int)(preciseY + height/2);
+    }
+
+    // 设置位置
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+        this.preciseX = x;
+        this.preciseY = y;
+    }
+
+    // 设置方向
+    public void setDirection(double direction) {
+        this.direction = direction;
+    }
+
+    // 设置鱼的种类
+    public void setFishType(Type type) {
+        this.type = type;
+        // 更新相关属性
+        this.score = type.getScore();
+        this.speed = type.getSpeed();
+        this.moveInterval = type.getMoveInterval();
+    }
+
+    // 获取方向
+    public double getDirection() {
+        return direction;
+    }
+
+    // 获取鱼的key（用于创建相似鱼）
+    public String getKey() {
+        // 这里需要根据实际情况返回鱼的key
+        // 例如："Fish.fish01", "Fish.fish02" 等
+        // 您需要在createElement中保存key
+        return this.key;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public double getSpeed() {
+        return this.speed;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 }

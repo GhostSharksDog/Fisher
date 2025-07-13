@@ -15,9 +15,9 @@ import java.util.Random;
 
 public class Fish extends ElementObj implements Collider {
     public enum Type {
-        SMALL(5, 30, 50, 1.6, 2, 1, 2, 10),
-        MEDIUM(10, 50, 100, 1.2, 3, 1, 3, 12),
-        LARGE(25, 100, 150, 1, 4, 1, 4, 15);
+        SMALL(5, 30, 50, 1, 2, 1, 2, 10),
+        MEDIUM(10, 50, 100, 1, 3, 1, 3, 12),
+        LARGE(25, 100, 150, 0.8, 4, 1, 4, 15);
 
         private final int score;
         private final int minSize;
@@ -76,6 +76,7 @@ public class Fish extends ElementObj implements Collider {
 
     // 鱼的基本属性
     private int x, y;          // 位置坐标
+    private double preciseX, preciseY;
     private int width, height; // 尺寸
     private Dimension size;    // 屏幕边界
     private double boundaryWidth, boundaryHeight;
@@ -87,7 +88,6 @@ public class Fish extends ElementObj implements Collider {
     private double direction;  // 当前移动方向
     private int frameCounter = 0;  // 新增帧计数器
     private int moveInterval = 3; // 每3帧移动一次
-    private static final double HEADING_OFFSET = Math.PI; // 鱼头初始朝左
 
     // 生存属性
     private boolean isAlive = true;  //鱼的生存状态
@@ -98,7 +98,7 @@ public class Fish extends ElementObj implements Collider {
     // 动画属性
     private List<ImageIcon> animationFrames = new ArrayList<>(); // 存储运动动画帧
     private int currentFrameIndex = 0;        // 当前帧索引
-    private int animationSpeed = 8;            // 动画速度（每n帧切换一次）
+    private int animationSpeed = 5;            // 动画速度（每n帧切换一次）
     private int animationCounter = 0;          // 动画计数器
     private List<ImageIcon> catchFrames = new ArrayList<>();     // 存储被捕捉动画帧
     private int catchFrameIndex = 0;           // 被捕捉动画当前帧
@@ -111,10 +111,6 @@ public class Fish extends ElementObj implements Collider {
     //积分系统属性
     private int score;
 
-    // 生成鱼群属性
-    private String key; // 存储鱼的配置键
-
-
     public Fish() {
 
     }
@@ -124,50 +120,52 @@ public class Fish extends ElementObj implements Collider {
 
     }
 
+    // 在Fish类的showElement方法中，修改旋转部分：
     @Override
     public void showElement(Graphics g) {
-        if (this.getIcon() == null || animationFrames.isEmpty()) {
-            return;
-        }
+        if (this.getIcon() == null || animationFrames.isEmpty()) return;
 
         Graphics2D g2d = (Graphics2D) g.create();
 
-        // 计算鱼的中心点
-        int centerX = this.getX() + this.getWidth() / 2;
-        int centerY = this.getY() + this.getHeight() / 2;
+        // 使用精确位置计算中心点
+        double centerX = preciseX + this.getWidth() / 2.0;
+        double centerY = preciseY + this.getHeight() / 2.0;
 
-        // 保存原始变换
-        AffineTransform originalTransform = g2d.getTransform();
+        // 获取当前帧
+        ImageIcon currentIcon = getCurrentIcon();
+        Image image = currentIcon.getImage();
 
-        // 创建新变换
-        AffineTransform transform = new AffineTransform();
+        // 计算旋转角度（鱼头初始朝左是180度，所以需要额外旋转180度使鱼头朝向移动方向）
+        double rotationAngle = direction + Math.PI;
 
-        // 移动到中心点
-        transform.translate(centerX, centerY);
+        // 优化旋转逻辑
+        AffineTransform original = g2d.getTransform();
+        g2d.translate(centerX, centerY);
+        g2d.rotate(rotationAngle); // 使用修正后的旋转角度
 
-        // 计算旋转角度（使用移动方向加上鱼头偏移）
-        double rotationAngle = direction + HEADING_OFFSET;
+        // 从中心绘制
+        g2d.drawImage(image,
+                -width/2, -height/2,
+                width, height, null);
 
-        // 应用旋转
-        transform.rotate(rotationAngle);
-
-        // 移动回原始位置
-        transform.translate(-this.getWidth() / 2, -this.getHeight() / 2);
-
-        // 应用变换
-        g2d.setTransform(transform);
-
-        // 绘制图像
-        g2d.drawImage(this.getIcon().getImage(),
-                0, 0,
-                this.getWidth(), this.getHeight(), null);
-
-        // 恢复原始变换
-        g2d.setTransform(originalTransform);
-
-        // 释放资源
+        g2d.setTransform(original);
         g2d.dispose();
     }
+
+    // 添加获取当前帧的方法
+    private ImageIcon getCurrentIcon() {
+        if (isCatch) {
+            if (!catchFrames.isEmpty() && catchFrameIndex < catchFrames.size()) {
+                return catchFrames.get(catchFrameIndex);
+            }
+        } else {
+            if (!animationFrames.isEmpty()) {
+                return animationFrames.get(currentFrameIndex);
+            }
+        }
+        return getIcon(); // 默认返回基础图标
+    }
+
 
     @Override
     public ElementObj createElement(JSONObject jsonObject) {
@@ -193,13 +191,21 @@ public class Fish extends ElementObj implements Collider {
         this.width = type.getMinSize();
         this.height = type.getMinSize();
 
-        // 随机位置（确保在边界内）
+        // 随机位置（确保在边界外）
         int[] siteXY = randomBoundary((int)(boundaryWidth), (int)(boundaryHeight), width, height, random);
         x = siteXY[0];
         y = siteXY[1];
+        preciseX = x;
+        preciseY = y;
 
-        // 随机初始方向
-        direction = calInwardDirection(x,y,(int)(boundaryWidth), (int)(boundaryHeight),random);
+        // 用中心点计算方向
+        int fishCenterX = this.x + this.width/2;
+        int fishCenterY = this.y + this.height/2;
+        direction = calInwardDirection(
+                fishCenterX, fishCenterY,
+                boundaryWidth/2, boundaryHeight/2,
+                random
+        );
 
         // 加载图像资源
         String bigImage = jsonObject.getString("bigImage");
@@ -275,28 +281,38 @@ public class Fish extends ElementObj implements Collider {
 
     @Override
     public void move() {
-        if (isCatch) {
-            return;
+        if (isCatch) return;
+
+        // 使用浮点计算移动增量
+        double dx = Math.cos(direction) * speed;
+        double dy = Math.sin(direction) * speed;
+
+        // 更新精确位置
+        preciseX += dx;
+        preciseY += dy;
+
+        // 同步给整数坐标
+        x = (int) preciseX;
+        y = (int) preciseY;
+
+        // 每帧都移动（取消帧计数器）
+        if (random.nextFloat() < 0.05f) {
+            // 更小幅度的方向变化（±3度）
+            direction += (random.nextDouble() - 0.5) * Math.toRadians(3);
         }
+    }
 
-        if (System.currentTimeMillis() - createTime > liveTime) {
-            isAlive = false; // 标记为需要销毁
-            return;
+    // 修改边界检查方法
+    private void checkBoundary() {
+        double centerX = preciseX + width/2.0;
+        double centerY = preciseY + height/2.0;
+
+        if (centerX < -100 ||
+                centerY < -100 ||
+                centerX > boundaryWidth + 100 ||
+                centerY > boundaryHeight + 100) {
+            isAlive = false;
         }
-
-        frameCounter++;
-        if (frameCounter >= moveInterval) {
-            frameCounter = 0; // 重置计数器
-            // 计算移动向量
-            int dx = (int) (Math.cos(direction) * speed);
-            int dy = (int) (Math.sin(direction) * speed);
-
-            // 更新位置
-            x += dx;
-            y += dy;
-
-        }
-
     }
 
     /**
@@ -345,29 +361,38 @@ public class Fish extends ElementObj implements Collider {
 
     /**
      * 计算从边界外指向屏幕内部的初始方向
-     * @param x 鱼的x坐标
-     * @param y 鱼的y坐标
-     * @param boundaryWidth 边界宽度
-     * @param boundaryHeight 边界高度
      * @return 指向屏幕内部的方向(弧度)
      */
-    private double calInwardDirection(int x, int y, int boundaryWidth, int boundaryHeight, Random random) {
-        // 计算屏幕中心点
-        int centerX = boundaryWidth / 2;
-        int centerY = boundaryHeight / 2;
+    // 修改方向计算方法（使用双精度参数）
+    private double calInwardDirection(
+            double startX, double startY,
+            double targetX, double targetY,
+            Random random) {
 
-        // 计算指向中心的方向向量
-        int dx = centerX - x;
-        int dy = centerY - y;
+        double dx = targetX - startX;
+        double dy = targetY - startY;
 
-        // 基础方向（指向中心）
-        double baseDirection = Math.atan2(dy, dx);
+        double baseAngle = Math.atan2(dy, dx);
 
-        // 随机偏移量（±60度范围，即 ±π/3 弧度）
-        double randomOffset = (random.nextDouble() - 0.5) * Math.PI / 1.5;
+        // 减小随机偏移范围（±15度）
+        double randomOffset = (random.nextDouble() - 0.5) * Math.PI / 6;
 
-        // 返回带偏移的方向
-        return baseDirection + randomOffset;
+        return baseAngle + randomOffset;
+    }
+
+    // 添加坐标同步方法
+    public void syncPosition() {
+        if (isCatch) return;
+
+        // 检查是否需要同步
+        double diffX = preciseX - x;
+        double diffY = preciseY - y;
+
+        // 超过0.5像素才更新（减少无效更新）
+        if (Math.abs(diffX) > 0.5 || Math.abs(diffY) > 0.5) {
+            x = (int) Math.round(preciseX);
+            y = (int) Math.round(preciseY);
+        }
     }
 
     /**
@@ -501,68 +526,10 @@ public class Fish extends ElementObj implements Collider {
     }
 
     public int getCenterX() {
-        return x + width / 2;
+        return (int)(preciseX + width/2);
     }
 
     public int getCenterY() {
-        return y + height / 2;
+        return (int)(preciseY + height/2);
     }
-
-    public void setPosition(int x, int y) {
-        Dimension size = ElementManager.getManager().getMainPanelSize();
-        int maxX = (int) size.getWidth();
-        int maxY = (int) size.getHeight();
-
-        // 确保位置在边界内（包括边界外一定范围）
-        this.x = Math.max(-this.width * 2, Math.min(x, maxX + this.width * 2));
-        this.y = Math.max(-this.height * 2, Math.min(y, maxY + this.height * 2));
-    }
-
-    public void setDirection(double direction) {
-        // 确保方向在0到2π之间
-        this.direction = direction % (2 * Math.PI);
-        if (this.direction < 0) {
-            this.direction += 2 * Math.PI;
-        }
-    }
-
-    public double getDirection() {
-        return direction;
-    }
-
-    public void setFishType(Type type) {
-        this.type = type;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    // 添加设置尺寸的方法
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    // 添加设置速度的方法
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-
-    // 添加设置分数的方法
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public double getSpeed() {
-        return this.speed;
-    }
-
 }

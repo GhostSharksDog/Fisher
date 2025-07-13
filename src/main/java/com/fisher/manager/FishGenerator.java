@@ -25,7 +25,7 @@ public class FishGenerator {
             case MEDIUM:
                 return generateMediumFishGroup(baseFish);
             case LARGE:
-                return Collections.singletonList(baseFish);
+                return generateLargeFish(baseFish); // 确保调用大鱼生成方法
             default:
                 return Collections.singletonList(baseFish);
         }
@@ -100,9 +100,34 @@ public class FishGenerator {
         return group;
     }
 
-    /**
-     * 创建相似的鱼（相同类型）
-     */
+    // 确保这个方法被正确调用
+    private static List<Fish> generateLargeFish(Fish baseFish) {
+        Dimension size = ElementManager.getManager().getMainPanelSize();
+        int boundaryWidth = (int) size.getWidth();
+        int boundaryHeight = (int) size.getHeight();
+
+        Random random = new Random();
+        boolean leftToRight = random.nextBoolean();
+        int buffer = 50; // 屏幕外缓冲区
+
+        if (leftToRight) {
+            // 从左侧生成，向右移动
+            baseFish.setPosition(-baseFish.getWidth() - buffer - random.nextInt(50),
+                    random.nextInt(boundaryHeight - baseFish.getHeight()));
+            baseFish.setDirection(0); // 0弧度 = 向右
+        } else {
+            // 从右侧生成，向左移动
+            baseFish.setPosition(boundaryWidth + buffer + random.nextInt(50),
+                    random.nextInt(boundaryHeight - baseFish.getHeight()));
+            baseFish.setDirection(Math.PI); // π弧度 = 向左
+        }
+
+        // 标记大鱼方向已设置
+        baseFish.setDirectionFixed(true);
+
+        return Collections.singletonList(baseFish);
+    }
+
     /**
      * 创建相似的鱼（相同类型）
      */

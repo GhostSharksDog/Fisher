@@ -15,25 +15,23 @@ import java.util.Random;
 
 public class Fish extends ElementObj implements Collider {
     public enum Type {
-        SMALL(5, 30, 50, 0.5, 2, 1, 2, 10),
-        MEDIUM(10, 50, 100, 0.3, 3, 1, 3, 12),
-        LARGE(25, 100, 150, 0.1, 4, 1, 4, 15);
+        SMALL(5, 30, 50, 0.5, 1, 2, 10),
+        MEDIUM(10, 50, 100, 0.3,  1, 3, 12),
+        LARGE(25, 100, 150, 0.1,  1, 4, 15);
 
         private final int score;
         private final int minSize;
         private final int maxSize;
         private final double speed;
-        private final int moveInterval;
         private final double sizeFactor; // 新增尺寸大小
         private final int catchLoops; // 捕捉动画循环次数
         private final int catchSpeed; // 捕捉动画速度（帧间隔）
 
-        Type(int score, int minSize, int maxSize, double speed, int moveInterval, double sizeFactor, int catchLoops, int catchSpeed) {
+        Type(int score, int minSize, int maxSize, double speed,double sizeFactor, int catchLoops, int catchSpeed) {
             this.score = score;
             this.minSize = minSize;
             this.maxSize = maxSize;
             this.speed = speed;
-            this.moveInterval = moveInterval;
             this.sizeFactor = sizeFactor;
             this.catchLoops = catchLoops;
             this.catchSpeed = catchSpeed;
@@ -57,10 +55,6 @@ public class Fish extends ElementObj implements Collider {
 
         public double getSpeed() {
             return speed;
-        }
-
-        public int getMoveInterval() {
-            return moveInterval;
         }
 
         public int getCatchLoops() {
@@ -87,8 +81,6 @@ public class Fish extends ElementObj implements Collider {
     // 矢量属性
     private double speed;  // 鱼的移动速度,每帧移动的固定距离
     private double direction;  // 当前移动方向
-    private int frameCounter = 0;  // 新增帧计数器
-    private int moveInterval = 3; // 每3帧移动一次
 
     // 生存属性
     private boolean isAlive = true;  //鱼的生存状态
@@ -114,13 +106,18 @@ public class Fish extends ElementObj implements Collider {
 
     public String key;
 
+    private boolean directionFixed = false; // 添加方向锁定标志
+
     public Fish() {
 
     }
 
+    // 确保边界尺寸正确设置
     @Override
     public void setSize(Dimension size) {
-
+        this.size = size;
+        this.boundaryWidth = size.getWidth();
+        this.boundaryHeight = size.getHeight();
     }
 
     // 在Fish类的showElement方法中，修改旋转部分：
@@ -180,7 +177,6 @@ public class Fish extends ElementObj implements Collider {
         // 使用枚举中的属性初始化
         this.score = type.getScore();
         this.speed = type.getSpeed();
-        this.moveInterval = type.getMoveInterval();
         this.catchAnimationSpeed = type.getCatchSpeed();
         this.catchAnimationLoops = type.getCatchLoops();
 
@@ -288,6 +284,12 @@ public class Fish extends ElementObj implements Collider {
     public void move() {
         if (isCatch) return;
 
+        // 如果方向已固定，不进行随机方向变化
+        if (!directionFixed && random.nextFloat() < 0.05f) {
+            // 更小幅度的方向变化（±3度）
+            direction += (random.nextDouble() - 0.5) * Math.toRadians(3);
+        }
+
         // 使用浮点计算移动增量
         double dx = Math.cos(direction) * speed;
         double dy = Math.sin(direction) * speed;
@@ -299,12 +301,6 @@ public class Fish extends ElementObj implements Collider {
         // 同步给整数坐标
         x = (int) preciseX;
         y = (int) preciseY;
-
-        // 每帧都移动（取消帧计数器）
-        if (random.nextFloat() < 0.05f) {
-            // 更小幅度的方向变化（±3度）
-            direction += (random.nextDouble() - 0.5) * Math.toRadians(3);
-        }
     }
 
     // 修改边界检查方法
@@ -328,6 +324,9 @@ public class Fish extends ElementObj implements Collider {
      * @param height 对象高度（避免对象部分出现在边界内）
      * @param random 随机数生成器
      * @return 包含 x 和 y 坐标的数组 [x, y]
+     */
+    /**
+     * 生成位于边界外 50 像素范围内的随机坐标
      */
     public static int[] randomBoundary(
             int boundaryWidth, int boundaryHeight,
@@ -365,9 +364,7 @@ public class Fish extends ElementObj implements Collider {
 
     /**
      * 计算从边界外指向屏幕内部的初始方向
-     * @return 指向屏幕内部的方向(弧度)
      */
-    // 修改方向计算方法（使用双精度参数）
     public static double calInwardDirection(
             double startX, double startY,
             double targetX, double targetY,
@@ -383,6 +380,7 @@ public class Fish extends ElementObj implements Collider {
 
         return baseAngle + randomOffset;
     }
+
 
     // 添加坐标同步方法
     public void syncPosition() {
@@ -556,7 +554,6 @@ public class Fish extends ElementObj implements Collider {
         // 更新相关属性
         this.score = type.getScore();
         this.speed = type.getSpeed();
-        this.moveInterval = type.getMoveInterval();
     }
 
     // 获取方向
@@ -582,5 +579,10 @@ public class Fish extends ElementObj implements Collider {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    // 添加方向锁定方法
+    public void setDirectionFixed(boolean fixed) {
+        this.directionFixed = fixed;
     }
 }

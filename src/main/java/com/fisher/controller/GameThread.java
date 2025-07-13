@@ -165,8 +165,7 @@ public class GameThread extends Thread{
 
                 // 确保基础鱼有正确的边界设置
                 Dimension size = ElementManager.getManager().getMainPanelSize();
-                baseFish.boundaryWidth = size.getWidth();
-                baseFish.boundaryHeight = size.getHeight();
+                baseFish.setSize(size);
 
                 // 确保基础鱼有正确的位置
                 int[] siteXY = Fish.randomBoundary(
@@ -179,11 +178,11 @@ public class GameThread extends Thread{
                 baseFish.setPosition(siteXY[0], siteXY[1]);
 
                 // 确保基础鱼有正确的方向
-                int fishCenterX = siteXY[0] + baseFish.getWidth() / 2;
-                int fishCenterY = siteXY[1] + baseFish.getHeight() / 2;
+                int fishCenterX = siteXY[0] + baseFish.getWidth()/2;
+                int fishCenterY = siteXY[1] + baseFish.getHeight()/2;
                 double direction = Fish.calInwardDirection(
                         fishCenterX, fishCenterY,
-                        size.getWidth() / 2, size.getHeight() / 2,
+                        size.getWidth()/2, size.getHeight()/2,
                         random
                 );
                 baseFish.setDirection(direction);
@@ -192,6 +191,9 @@ public class GameThread extends Thread{
                 List<Fish> fishGroup = FishGenerator.generateFishGroup(baseFish);
 
                 for (Fish fish : fishGroup) {
+                    // 确保每条鱼都有正确的边界设置
+                    fish.setSize(size);
+
                     // 添加鱼类到管理器
                     EM.addElement(fish, GameElement.FISH);
                     // 添加碰撞器

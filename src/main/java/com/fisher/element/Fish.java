@@ -104,12 +104,27 @@ public class Fish extends ElementObj implements Collider {
     //积分系统属性
     private int score;
 
+    //鱼群属性
     public String key;
-
     private boolean directionFixed = false; // 添加方向锁定标志
     private boolean inSchool = false; // 标记是否在鱼群中
     private int groupId = -1; // 鱼群ID
     private Fish groupLeader; // 鱼群领导者
+
+    // 添加转向平滑处理
+    private double targetDirection; // 目标方向
+    private boolean isTurning = false; // 是否正在转向
+    private static final double TURN_SPEED = Math.toRadians(0.5); // 转向速度
+    // 添加转向动画相关参数
+    private double bodyRotation = 0; // 鱼身旋转角度
+    private static final double MAX_BODY_ROTATION = Math.toRadians(15); // 最大鱼身旋转角度
+    // 修改鱼群转向参数
+    private static final double MIN_DIRECTION_CHANGE = Math.toRadians(20); // 最小转向角度20度
+    private static final double MAX_DIRECTION_CHANGE = Math.toRadians(30); // 最大转向角度30度
+    private static final double DIRECTION_CHANGE_PROBABILITY = 0.005; // 降低转向概率
+    private long lastDirectionChangeTime = 0; // 记录上次转向时间
+    private static final long DIRECTION_CHANGE_COOLDOWN = 8000; // 8秒冷却时间
+
 
     public Fish() {
 
@@ -138,8 +153,8 @@ public class Fish extends ElementObj implements Collider {
         ImageIcon currentIcon = getCurrentIcon();
         Image image = currentIcon.getImage();
 
-        // 计算旋转角度（鱼头初始朝左是180度，所以需要额外旋转180度使鱼头朝向移动方向）
-        double rotationAngle = direction + Math.PI;
+        // 计算旋转角度（添加鱼身旋转效果）
+        double rotationAngle = direction + Math.PI + bodyRotation;
 
         // 优化旋转逻辑
         AffineTransform original = g2d.getTransform();
@@ -262,40 +277,51 @@ public class Fish extends ElementObj implements Collider {
     }
 
     @Override
-    public void setAlive(boolean alive) {
-        this.isAlive = alive;
-    }
-
-    @Override
-    public boolean isAlive() {
-        return this.isAlive;
-    }
-
-    @Override
-    public void onClick() {
-
-    }
-
-    public Boolean isCatch(){
-        return this.isCatch;
-    }
-
-    public void setCatch(Boolean isCatch) {
-        this.isCatch = isCatch;
-    }
-
-    @Override
     public void move() {
         if (isCatch) return;
 
-        // 如果是鱼群成员，完全跟随领导者的方向
-        if (groupId != -1 && groupLeader != null && groupLeader.isAlive()) {
-            this.direction = groupLeader.getDirection();
-        }
-        // 如果不是鱼群成员，正常移动
-        else if (!directionFixed && random.nextFloat() < 0.05f) {
-            // 更小幅度的方向变化（±3度）
-            direction += (random.nextDouble() - 0.5) * Math.toRadians(3);
+        // 大鱼(LARGE)跳过所有转向逻辑
+        if (type != Type.LARGE) {
+            long currentTime = System.currentTimeMillis();
+            boolean canTurn = currentTime - lastDirectionChangeTime > DIRECTION_CHANGE_COOLDOWN;
+
+            // 如果是鱼群领导者且可以转向，尝试改变方向
+            if (isGroupLeader() && canTurn && random.nextDouble() < DIRECTION_CHANGE_PROBABILITY) {
+                // 随机转向20-30度
+                double directionChange = MIN_DIRECTION_CHANGE +
+                        random.nextDouble() * (MAX_DIRECTION_CHANGE - MIN_DIRECTION_CHANGE);
+
+                // 随机选择左右方向
+                if (random.nextBoolean()) {
+                    directionChange = -directionChange;
+                }
+
+                // 应用转向
+                direction += directionChange;
+                lastDirectionChangeTime = currentTime;
+
+                // 重置转向动画
+                isTurning = true;
+                targetDirection = direction; // 设置目标方向为当前方向
+                bodyRotation = 0; // 重置鱼身旋转
+            }
+
+            // 平滑转向处理（视觉反馈）
+            if (isTurning) {
+                // 鱼身旋转效果（视觉反馈）
+                bodyRotation = Math.sin(System.currentTimeMillis() % 2000 / 1000.0 * Math.PI) * MAX_BODY_ROTATION;
+
+                // 0.5秒后结束转向动画
+                if (currentTime - lastDirectionChangeTime > 500) {
+                    isTurning = false;
+                    bodyRotation = 0;
+                }
+            }
+
+            // 如果是鱼群成员，完全跟随领导者的方向
+            if (groupId != -1 && groupLeader != null && groupLeader.isAlive()) {
+                this.direction = groupLeader.getDirection();
+            }
         }
 
         // 使用浮点计算移动增量
@@ -631,5 +657,33 @@ public class Fish extends ElementObj implements Collider {
     // 添加获取边界的方法
     public Dimension getBoundary() {
         return new Dimension((int)boundaryWidth, (int)boundaryHeight);
+    }
+
+    // 添加判断是否是鱼群领导者的方法
+    public boolean isGroupLeader() {
+        return groupLeader == this || groupId == this.hashCode();
+    }
+
+    @Override
+    public void setAlive(boolean alive) {
+        this.isAlive = alive;
+    }
+
+    @Override
+    public boolean isAlive() {
+        return this.isAlive;
+    }
+
+    @Override
+    public void onClick() {
+
+    }
+
+    public Boolean isCatch(){
+        return this.isCatch;
+    }
+
+    public void setCatch(Boolean isCatch) {
+        this.isCatch = isCatch;
     }
 }

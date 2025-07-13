@@ -24,15 +24,17 @@ public class FishGenerator {
      * 根据鱼的类型生成鱼群
      */
     public static List<Fish> generateFishGroup(Fish baseFish) {
-        Type type = baseFish.getFishType();
+        // 如果是大鱼，直接返回单个鱼
+        if (baseFish.getFishType() == Type.LARGE) {
+            return generateLargeFish(baseFish);
+        }
 
-        switch (type) {
+        // 其他类型鱼按原逻辑处理
+        switch (baseFish.getFishType()) {
             case SMALL:
                 return generateSmallFishSchool(baseFish);
             case MEDIUM:
                 return generateMediumFishGroup(baseFish);
-            case LARGE:
-                return generateLargeFish(baseFish);
             default:
                 return Collections.singletonList(baseFish);
         }
@@ -49,6 +51,8 @@ public class FishGenerator {
 
         // 添加基础鱼
         school.add(baseFish);
+        baseFish.setGroupLeader(baseFish); // 明确设置自己是领导者
+        baseFish.setGroupId(baseFish.hashCode());
 
         // 生成额外的鱼
         for (int i = 1; i < schoolSize; i++) {
@@ -60,7 +64,7 @@ public class FishGenerator {
             double angle = Math.PI * 2 * (i - 1) / (schoolSize - 1);
 
             // 设置位置（距离基础鱼100-200像素）
-            int distance = 100 + random.nextInt(100);
+            int distance = 50 + random.nextInt(100);
             int offsetX = (int)(Math.cos(angle) * distance);
             int offsetY = (int)(Math.sin(angle) * distance);
 
@@ -90,6 +94,8 @@ public class FishGenerator {
 
         // 添加基础鱼
         group.add(baseFish);
+        baseFish.setGroupLeader(baseFish); // 明确设置自己是领导者
+        baseFish.setGroupId(baseFish.hashCode());
 
         // 生成额外的鱼
         for (int i = 1; i < groupSize; i++) {
@@ -140,6 +146,8 @@ public class FishGenerator {
         // 标记大鱼方向已固定
         baseFish.setDirectionFixed(true);
         baseFish.setInSchool(false); // 大鱼不是鱼群成员
+        baseFish.setGroupId(-1); // 清除鱼群ID
+        baseFish.setGroupLeader(null); // 清除鱼群领导者
 
         return Collections.singletonList(baseFish);
     }

@@ -253,7 +253,58 @@ public class GameThread extends Thread{
         instance.addCoins(fish.getScore());
 
         createGoldItems(fish, fish.getScore());
+
+        // 5. 创建分数显示项
+        createScoreItem(fish.getCenterX(), fish.getCenterY(), fish.getScore());
     }
+
+    private void createScoreItem(int centerX, int centerY, int score) {
+        JSONObject position = new JSONObject();
+        position.put("x", centerX);
+        position.put("y", centerY);
+
+        // 根据分数值选择对应的资源路径
+        String scoreCategory;
+        String scoreValue;
+
+        // 100分以上的鱼使用hundred资源
+        if (score >= 100) {
+            scoreCategory = "hundred";
+            scoreValue = String.valueOf(score);
+        }
+        // 10-90分的鱼使用highPoint资源
+        else {
+            scoreCategory = "highPoint";
+
+            // 特殊倍数值处理
+            if (score == 10 || score == 20 || score == 30 || score == 35) {
+                scoreValue = "x" + score;
+            }
+            // 普通分数值处理
+            else {
+                // 向下取整到最近的10的倍数（40、50...90）
+                int roundedScore = (score / 10) * 10;
+                // 确保在40-90范围内
+                scoreValue = String.valueOf(Math.max(40, Math.min(90, roundedScore)));
+            }
+        }
+
+        // 构建资源key
+        String scoreKey = "ScoreItem." + scoreCategory + "." + scoreValue;
+        ElementObj scoreItem = GameLoad.getInstance().getElement(scoreKey, position.toJSONString());
+
+        if (scoreItem != null) {
+            EM.addElement(scoreItem, GameElement.SCOREITEM);
+        } else {
+            // 回退机制：使用默认的100分资源
+            String fallbackKey = "ScoreItem.hundred.100";
+            ElementObj fallbackItem = GameLoad.getInstance().getElement(fallbackKey, position.toJSONString());
+            if (fallbackItem != null) {
+                EM.addElement(fallbackItem, GameElement.SCOREITEM);
+            }
+        }
+    }
+
 
     private void createGoldItems(Fish fish, int score) {
         // 根据鱼的分数创建多个金币

@@ -15,9 +15,9 @@ import java.util.Random;
 
 public class Fish extends ElementObj implements Collider {
     public enum Type {
-        SMALL(5, 30, 50, 0.5, 1, 2, 10),
-        MEDIUM(10, 50, 100, 0.3,  1, 3, 12),
-        LARGE(25, 100, 150, 0.1,  1, 4, 15);
+        SMALL(40, 30, 50, 0.5, 1, 2, 10),
+        MEDIUM(80, 50, 100, 0.3,  1, 3, 12),
+        LARGE(120, 100, 150, 0.1,  1, 4, 15);
 
         private final int score;
         private final int minSize;

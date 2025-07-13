@@ -162,7 +162,10 @@ public class GameThread extends Thread{
 
             if (fishObj instanceof Fish) {
                 Fish baseFish = (Fish) fishObj;
-
+                // 确保基础鱼有key
+                if (baseFish.getKey() == null) {
+                    baseFish.key = fishKey; // 显式设置key
+                }
                 // 确保基础鱼有正确的边界设置
                 Dimension size = ElementManager.getManager().getMainPanelSize();
                 baseFish.setSize(size);

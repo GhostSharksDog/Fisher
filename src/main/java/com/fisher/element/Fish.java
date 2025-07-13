@@ -619,4 +619,15 @@ public class Fish extends ElementObj implements Collider {
     public void setGroupLeader(Fish groupLeader) {
         this.groupLeader = groupLeader;
     }
+
+    // 添加设置边界的方法
+    public void setBoundary(Dimension size) {
+        this.boundaryWidth = size.getWidth();
+        this.boundaryHeight = size.getHeight();
+    }
+
+    // 添加获取边界的方法
+    public Dimension getBoundary() {
+        return new Dimension((int)boundaryWidth, (int)boundaryHeight);
+    }
 }

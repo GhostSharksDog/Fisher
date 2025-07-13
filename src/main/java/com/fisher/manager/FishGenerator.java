@@ -12,7 +12,11 @@ import java.util.Random;
 
 public class FishGenerator {
     private static final Random random = new Random();
-
+    // 添加静态方法创建新鱼
+    private static Fish createNewFish(String key) {
+        ElementObj obj = GameLoad.getInstance().getElement(key);
+        return (obj instanceof Fish) ? (Fish) obj : null;
+    }
     /**
      * 根据鱼的类型生成鱼群
      */
@@ -33,7 +37,7 @@ public class FishGenerator {
 
     private static List<Fish> generateSmallFishSchool(Fish baseFish) {
         List<Fish> school = new ArrayList<>();
-        int schoolSize = 3 + random.nextInt(3); // 3-5条
+        int schoolSize = 1 + random.nextInt(5); // 1-6条
 
         // 基础位置和方向
         int baseX = baseFish.getX();
@@ -45,9 +49,10 @@ public class FishGenerator {
 
         // 生成额外的鱼
         for (int i = 1; i < schoolSize; i++) {
-            Fish newFish = createSimilarFish(baseFish);
+            Fish newFish = createNewFish(baseFish.getKey());
             if (newFish == null) continue;
 
+            copyFishState(baseFish, newFish);
             // 计算偏移角度 (0°, 90°, 180°, 270°)
             double angle = Math.PI * 2 * (i - 1) / (schoolSize - 1);
 
@@ -85,7 +90,7 @@ public class FishGenerator {
 
         // 生成额外的鱼
         for (int i = 1; i < groupSize; i++) {
-            Fish newFish = createSimilarFish(baseFish);
+            Fish newFish = createNewFish(baseFish.getKey());
             if (newFish == null) continue;
 
             // 设置位置（在基础位置附近150-250像素）
@@ -136,35 +141,16 @@ public class FishGenerator {
         return Collections.singletonList(baseFish);
     }
 
-    /**
-     * 创建相似的鱼（相同类型）
-     */
-    private static Fish createSimilarFish(Fish original) {
-        // 使用原始鱼的属性创建新鱼
-        Fish newFish = new Fish();
-
-        // 手动设置属性（避免使用 GameLoad）
-        newFish.setFishType(original.getFishType());
-        newFish.setWidth(original.getWidth());
-        newFish.setHeight(original.getHeight());
-        newFish.setSpeed(original.getSpeed());
-        newFish.setScore(original.getScore());
-
-        // 复制动画帧
-        newFish.animationFrames = new ArrayList<>(original.animationFrames);
-        newFish.catchFrames = new ArrayList<>(original.catchFrames);
-
-        // 设置存活状态
-        newFish.setAlive(true);
-
-        // 设置边界（非常重要）
-        Dimension size = ElementManager.getManager().getMainPanelSize();
-        newFish.boundaryWidth = size.getWidth();
-        newFish.boundaryHeight = size.getHeight();
-
-        // 设置 key
-        newFish.key = original.getKey();
-
-        return newFish;
+    // 添加方法复制鱼的状态
+    private static void copyFishState(Fish src, Fish dest) {
+        dest.setFishType(src.getFishType());
+        dest.setSpeed(src.getSpeed());
+        dest.setDirection(src.getDirection());
+        dest.setGroupId(src.hashCode());
+        dest.setGroupLeader(src);
+        dest.setBoundary(new Dimension(
+                (int)src.boundaryWidth,
+                (int)src.boundaryHeight
+        ));
     }
 }

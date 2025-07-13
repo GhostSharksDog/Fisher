@@ -367,7 +367,7 @@
         ]
       },
       "fish17": {
-        "type": "SMALL",
+        "type": "MEDIUM",
         "bigImage": "/image/fish/fish3.png",
         "bigImageplist": "/image/fish/fish3.plist",
         "imageNormal": [

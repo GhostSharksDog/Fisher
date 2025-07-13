@@ -25,7 +25,7 @@ public class FishGenerator {
             case MEDIUM:
                 return generateMediumFishGroup(baseFish);
             case LARGE:
-                return generateLargeFish(baseFish); // 确保调用大鱼生成方法
+                return generateLargeFish(baseFish);
             default:
                 return Collections.singletonList(baseFish);
         }
@@ -48,17 +48,22 @@ public class FishGenerator {
             Fish newFish = createSimilarFish(baseFish);
             if (newFish == null) continue;
 
-            // 设置位置（在基础位置附近随机偏移）
-            int offsetX = 30 + random.nextInt(60);
-            int offsetY = 30 + random.nextInt(60);
-            if (random.nextBoolean()) offsetX = -offsetX;
-            if (random.nextBoolean()) offsetY = -offsetY;
+            // 计算偏移角度 (0°, 90°, 180°, 270°)
+            double angle = Math.PI * 2 * (i - 1) / (schoolSize - 1);
+
+            // 设置位置（距离基础鱼100-200像素）
+            int distance = 100 + random.nextInt(100);
+            int offsetX = (int)(Math.cos(angle) * distance);
+            int offsetY = (int)(Math.sin(angle) * distance);
 
             newFish.setPosition(baseX + offsetX, baseY + offsetY);
 
-            // 设置方向（与基础方向略有偏差）
-            double directionOffset = (random.nextDouble() - 0.5) * Math.PI / 8; // ±22.5度
-            newFish.setDirection(baseDirection + directionOffset);
+            // 设置相同的方向
+            newFish.setDirection(baseDirection);
+
+            // 标记为鱼群成员
+            newFish.setGroupId(baseFish.hashCode());
+            newFish.setGroupLeader(baseFish);
 
             school.add(newFish);
         }
@@ -83,16 +88,19 @@ public class FishGenerator {
             Fish newFish = createSimilarFish(baseFish);
             if (newFish == null) continue;
 
-            // 设置位置（在基础位置附近随机偏移）
-            int offsetX = 50 + random.nextInt(100);
-            int offsetY = 50 + random.nextInt(100);
+            // 设置位置（在基础位置附近150-250像素）
+            int offsetX = 150 + random.nextInt(100);
+            int offsetY = 150 + random.nextInt(100);
             if (random.nextBoolean()) offsetX = -offsetX;
             if (random.nextBoolean()) offsetY = -offsetY;
 
             newFish.setPosition(baseX + offsetX, baseY + offsetY);
 
-            // 设置方向（与基础方向一致）
+            // 设置方向（与基础方向相同）
             newFish.setDirection(baseDirection);
+
+            // 标记为鱼群成员
+            newFish.setInSchool(true);
 
             group.add(newFish);
         }
@@ -100,7 +108,6 @@ public class FishGenerator {
         return group;
     }
 
-    // 确保这个方法被正确调用
     private static List<Fish> generateLargeFish(Fish baseFish) {
         Dimension size = ElementManager.getManager().getMainPanelSize();
         int boundaryWidth = (int) size.getWidth();
@@ -108,22 +115,23 @@ public class FishGenerator {
 
         Random random = new Random();
         boolean leftToRight = random.nextBoolean();
-        int buffer = 50; // 屏幕外缓冲区
+        int buffer = 100; // 增大缓冲区
 
         if (leftToRight) {
             // 从左侧生成，向右移动
-            baseFish.setPosition(-baseFish.getWidth() - buffer - random.nextInt(50),
+            baseFish.setPosition(-baseFish.getWidth() - buffer - random.nextInt(100),
                     random.nextInt(boundaryHeight - baseFish.getHeight()));
             baseFish.setDirection(0); // 0弧度 = 向右
         } else {
             // 从右侧生成，向左移动
-            baseFish.setPosition(boundaryWidth + buffer + random.nextInt(50),
+            baseFish.setPosition(boundaryWidth + buffer + random.nextInt(100),
                     random.nextInt(boundaryHeight - baseFish.getHeight()));
             baseFish.setDirection(Math.PI); // π弧度 = 向左
         }
 
-        // 标记大鱼方向已设置
+        // 标记大鱼方向已固定
         baseFish.setDirectionFixed(true);
+        baseFish.setInSchool(false); // 大鱼不是鱼群成员
 
         return Collections.singletonList(baseFish);
     }

@@ -107,6 +107,9 @@ public class Fish extends ElementObj implements Collider {
     public String key;
 
     private boolean directionFixed = false; // 添加方向锁定标志
+    private boolean inSchool = false; // 标记是否在鱼群中
+    private int groupId = -1; // 鱼群ID
+    private Fish groupLeader; // 鱼群领导者
 
     public Fish() {
 
@@ -255,6 +258,7 @@ public class Fish extends ElementObj implements Collider {
 
         updateAnimation();
         move();
+        schoolBehavior();
     }
 
     @Override
@@ -284,8 +288,12 @@ public class Fish extends ElementObj implements Collider {
     public void move() {
         if (isCatch) return;
 
-        // 如果方向已固定，不进行随机方向变化
-        if (!directionFixed && random.nextFloat() < 0.05f) {
+        // 如果是鱼群成员，完全跟随领导者的方向
+        if (groupId != -1 && groupLeader != null && groupLeader.isAlive()) {
+            this.direction = groupLeader.getDirection();
+        }
+        // 如果不是鱼群成员，正常移动
+        else if (!directionFixed && random.nextFloat() < 0.05f) {
             // 更小幅度的方向变化（±3度）
             direction += (random.nextDouble() - 0.5) * Math.toRadians(3);
         }
@@ -301,6 +309,18 @@ public class Fish extends ElementObj implements Collider {
         // 同步给整数坐标
         x = (int) preciseX;
         y = (int) preciseY;
+    }
+
+    // 添加鱼群行为
+    private void schoolBehavior() {
+        if (!inSchool) return;
+
+        // 10%的概率跟随鱼群方向
+        if (random.nextFloat() < 0.1f) {
+            // 这里可以添加复杂的鱼群行为算法
+            // 简化为小幅调整方向
+            direction += (random.nextDouble() - 0.5) * Math.toRadians(5);
+        }
     }
 
     // 修改边界检查方法
@@ -584,5 +604,19 @@ public class Fish extends ElementObj implements Collider {
     // 添加方向锁定方法
     public void setDirectionFixed(boolean fixed) {
         this.directionFixed = fixed;
+    }
+
+    public void setInSchool(boolean inSchool) {
+        this.inSchool = inSchool;
+    }
+
+    // 设置鱼群ID
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
+
+    // 设置鱼群领导者
+    public void setGroupLeader(Fish groupLeader) {
+        this.groupLeader = groupLeader;
     }
 }

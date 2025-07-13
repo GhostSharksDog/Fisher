@@ -187,6 +187,10 @@ public class GameThread extends Thread{
                 );
                 baseFish.setDirection(direction);
 
+                // 设置基础鱼为鱼群领导者
+                baseFish.setGroupId(baseFish.hashCode());
+                baseFish.setGroupLeader(baseFish);
+
                 // 使用FishGenerator生成鱼群
                 List<Fish> fishGroup = FishGenerator.generateFishGroup(baseFish);
 

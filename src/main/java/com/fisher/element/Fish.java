@@ -15,9 +15,9 @@ import java.util.Random;
 
 public class Fish extends ElementObj implements Collider {
     public enum Type {
-        SMALL(5, 30, 50, 1, 2, 1, 2, 10),
-        MEDIUM(10, 50, 100, 1, 3, 1, 3, 12),
-        LARGE(25, 100, 150, 0.8, 4, 1, 4, 15);
+        SMALL(5, 30, 50, 0.5, 2, 1, 2, 10),
+        MEDIUM(10, 50, 100, 0.3, 3, 1, 3, 12),
+        LARGE(25, 100, 150, 0.1, 4, 1, 4, 15);
 
         private final int score;
         private final int minSize;
@@ -99,7 +99,7 @@ public class Fish extends ElementObj implements Collider {
     // 动画属性
     public List<ImageIcon> animationFrames = new ArrayList<>(); // 存储运动动画帧
     private int currentFrameIndex = 0;        // 当前帧索引
-    private int animationSpeed = 5;            // 动画速度（每n帧切换一次）
+    private int animationSpeed = 10;            // 动画速度（每n帧切换一次）
     private int animationCounter = 0;          // 动画计数器
     public List<ImageIcon> catchFrames = new ArrayList<>();     // 存储被捕捉动画帧
     private int catchFrameIndex = 0;           // 被捕捉动画当前帧

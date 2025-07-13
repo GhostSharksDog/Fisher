@@ -7,6 +7,7 @@ import com.fisher.element.ExplosionEffect;
 import com.fisher.element.Fish;
 import com.fisher.manager.*;
 
+import java.awt.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +83,12 @@ public class GameThread extends Thread{
 
             //统一删除死亡元素
             removeDeadElements();
-
+            List<ElementObj> fishes = EM.getElementByKey(GameElement.FISH);
+            for (ElementObj fish : fishes) {
+                if (fish instanceof Fish) {
+                    ((Fish) fish).syncPosition();
+                }
+            }
             gameTime++;
             EM.GameThreadTime = gameTime; // 更新ElementManager中记录的游戏主线程时间
             //true改为变量控制结束
@@ -126,25 +132,71 @@ public class GameThread extends Thread{
         }
     }
 
+    /**
+     * fish02红色小鱼
+     *03绿色小鱼
+     *04墨鱼
+     *05小丑鱼
+     *06黄色小鱼
+     *07蓝黄色小鱼
+     *08海龟
+     *09灯笼鱼
+     *10魔鬼鱼
+     *13锤头鲨
+     *14水母
+     *15绿箭
+     *17黄青蛙
+     */
     public void generateFishes(int count) {
         String[] fishTypes = {
                 "Fish.fish01", "Fish.fish02", "Fish.fish03",
                 "Fish.fish04", "Fish.fish05", "Fish.fish06",
                 "Fish.fish07", "Fish.fish08", "Fish.fish09",
-                "Fish.fish10", "Fish.fish11", "Fish.fish12",
-                "Fish.fish13", "Fish.fish14", "Fish.fish15",
-                "Fish.fish16", "Fish.fish17"
+                "Fish.fish10", "Fish.fish13", "Fish.fish14",
+                "Fish.fish15", "Fish.fish17"
         };
 
         for (int i = 0; i < count; i++) {
+            String fishKey = fishTypes[random.nextInt(fishTypes.length)];
+            ElementObj fishObj = GameLoad.getInstance().getElement(fishKey);
 
-            ElementObj fishObj = GameLoad.getInstance().getElement("Fish.fish10");
             if (fishObj instanceof Fish) {
-                Fish fish = (Fish) fishObj;
-                // 添加鱼类到管理器
-                EM.addElement(fish, GameElement.FISH);
-                // 添加碰撞器
-                Collidercontroller.getInstance().addCollider(fish);
+                Fish baseFish = (Fish) fishObj;
+
+                // 确保基础鱼有正确的边界设置
+                Dimension size = ElementManager.getManager().getMainPanelSize();
+                baseFish.boundaryWidth = size.getWidth();
+                baseFish.boundaryHeight = size.getHeight();
+
+                // 确保基础鱼有正确的位置
+                int[] siteXY = Fish.randomBoundary(
+                        (int) size.getWidth(),
+                        (int) size.getHeight(),
+                        baseFish.getWidth(),
+                        baseFish.getHeight(),
+                        random
+                );
+                baseFish.setPosition(siteXY[0], siteXY[1]);
+
+                // 确保基础鱼有正确的方向
+                int fishCenterX = siteXY[0] + baseFish.getWidth() / 2;
+                int fishCenterY = siteXY[1] + baseFish.getHeight() / 2;
+                double direction = Fish.calInwardDirection(
+                        fishCenterX, fishCenterY,
+                        size.getWidth() / 2, size.getHeight() / 2,
+                        random
+                );
+                baseFish.setDirection(direction);
+
+                // 使用FishGenerator生成鱼群
+                List<Fish> fishGroup = FishGenerator.generateFishGroup(baseFish);
+
+                for (Fish fish : fishGroup) {
+                    // 添加鱼类到管理器
+                    EM.addElement(fish, GameElement.FISH);
+                    // 添加碰撞器
+                    Collidercontroller.getInstance().addCollider(fish);
+                }
             }
         }
     }

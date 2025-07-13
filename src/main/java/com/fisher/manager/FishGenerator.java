@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Random;
 
 public class FishGenerator {
+    // 添加安全距离
+    private static final int SAFE_DISTANCE = 300; // 安全距离300像素
+
     private static final Random random = new Random();
     // 添加静态方法创建新鱼
     private static Fish createNewFish(String key) {

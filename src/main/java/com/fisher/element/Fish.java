@@ -352,7 +352,10 @@ public class Fish extends ElementObj implements Collider {
             int boundaryWidth, int boundaryHeight,
             int width, int height,
             Random random) {
-        int margin = 50; // 边界外 50 像素范围
+        int minMargin = 300; // 最小边界距离
+        int maxMargin = 400; // 最大边界距离
+        int margin = minMargin + random.nextInt(maxMargin - minMargin); // 300-400像素
+
         int side = random.nextInt(4); // 随机选择边界的一侧：0=上，1=右，2=下，3=左
 
         int x, y;
@@ -360,18 +363,18 @@ public class Fish extends ElementObj implements Collider {
         switch (side) {
             case 0: // 上边界外
                 x = random.nextInt(boundaryWidth);
-                y = -height - random.nextInt(margin);
+                y = -height - margin;
                 break;
             case 1: // 右边界外
-                x = boundaryWidth + random.nextInt(margin);
+                x = boundaryWidth + margin;
                 y = random.nextInt(boundaryHeight);
                 break;
             case 2: // 下边界外
                 x = random.nextInt(boundaryWidth);
-                y = boundaryHeight + random.nextInt(margin);
+                y = boundaryHeight + margin;
                 break;
             case 3: // 左边界外
-                x = -width - random.nextInt(margin);
+                x = -width - margin;
                 y = random.nextInt(boundaryHeight);
                 break;
             default: // 默认情况（理论上不会执行）
@@ -395,12 +398,11 @@ public class Fish extends ElementObj implements Collider {
 
         double baseAngle = Math.atan2(dy, dx);
 
-        // 减小随机偏移范围（±15度）
-        double randomOffset = (random.nextDouble() - 0.5) * Math.PI / 6;
+        // 减小随机偏移范围（±10度）
+        double randomOffset = (random.nextDouble() - 0.5) * Math.PI / 18;
 
         return baseAngle + randomOffset;
     }
-
 
     // 添加坐标同步方法
     public void syncPosition() {

@@ -15,25 +15,23 @@ import java.util.Random;
 
 public class Fish extends ElementObj implements Collider {
     public enum Type {
-        SMALL(5, 30, 50, 3.0, 2, 1, 2, 10),
-        MEDIUM(10, 50, 100, 2.0, 3, 1, 3, 12),
-        LARGE(25, 100, 150, 1.5, 4, 1, 4, 15);
+        SMALL(40, 30, 50, 0.5, 1, 2, 10),
+        MEDIUM(80, 50, 100, 0.3,  1, 3, 12),
+        LARGE(120, 100, 150, 0.1,  1, 4, 15);
 
         private final int score;
         private final int minSize;
         private final int maxSize;
         private final double speed;
-        private final int moveInterval;
         private final double sizeFactor; // 新增尺寸大小
         private final int catchLoops; // 捕捉动画循环次数
         private final int catchSpeed; // 捕捉动画速度（帧间隔）
 
-        Type(int score, int minSize, int maxSize, double speed, int moveInterval, double sizeFactor, int catchLoops, int catchSpeed) {
+        Type(int score, int minSize, int maxSize, double speed,double sizeFactor, int catchLoops, int catchSpeed) {
             this.score = score;
             this.minSize = minSize;
             this.maxSize = maxSize;
             this.speed = speed;
-            this.moveInterval = moveInterval;
             this.sizeFactor = sizeFactor;
             this.catchLoops = catchLoops;
             this.catchSpeed = catchSpeed;
@@ -59,10 +57,6 @@ public class Fish extends ElementObj implements Collider {
             return speed;
         }
 
-        public int getMoveInterval() {
-            return moveInterval;
-        }
-
         public int getCatchLoops() {
             return catchLoops;
         }
@@ -76,17 +70,17 @@ public class Fish extends ElementObj implements Collider {
 
     // 鱼的基本属性
     private int x, y;          // 位置坐标
+    private double preciseX, preciseY;
     private int width, height; // 尺寸
     private Dimension size;    // 屏幕边界
-    private double boundaryWidth, boundaryHeight;
+    public double boundaryWidth;
+    public double boundaryHeight;
     private Type type; // 鱼的种类
     private ImageIcon icon;    // 图片素材
 
     // 矢量属性
     private double speed;  // 鱼的移动速度,每帧移动的固定距离
     private double direction;  // 当前移动方向
-    private int frameCounter = 0;  // 新增帧计数器
-    private int moveInterval = 3; // 每3帧移动一次
 
     // 生存属性
     private boolean isAlive = true;  //鱼的生存状态
@@ -95,11 +89,11 @@ public class Fish extends ElementObj implements Collider {
     private Boolean isCatch = false; //鱼是否被捕捉
 
     // 动画属性
-    private List<ImageIcon> animationFrames = new ArrayList<>(); // 存储运动动画帧
+    public List<ImageIcon> animationFrames = new ArrayList<>(); // 存储运动动画帧
     private int currentFrameIndex = 0;        // 当前帧索引
-    private int animationSpeed = 5;            // 动画速度（每n帧切换一次）
+    private int animationSpeed = 10;            // 动画速度（每n帧切换一次）
     private int animationCounter = 0;          // 动画计数器
-    private List<ImageIcon> catchFrames = new ArrayList<>();     // 存储被捕捉动画帧
+    public List<ImageIcon> catchFrames = new ArrayList<>();     // 存储被捕捉动画帧
     private int catchFrameIndex = 0;           // 被捕捉动画当前帧
     private int catchFrameCounter = 0;         // 被捕捉动画计数器
     private boolean catchAnimationComplete = false; // 被捕捉动画结束标志
@@ -110,63 +104,90 @@ public class Fish extends ElementObj implements Collider {
     //积分系统属性
     private int score;
 
+    //鱼群属性
+    public String key;
+    private boolean directionFixed = false; // 添加方向锁定标志
+    private boolean inSchool = false; // 标记是否在鱼群中
+    private int groupId = -1; // 鱼群ID
+    private Fish groupLeader; // 鱼群领导者
+
+    // 添加转向平滑处理
+    private double targetDirection; // 目标方向
+    private boolean isTurning = false; // 是否正在转向
+    private static final double TURN_SPEED = Math.toRadians(0.5); // 转向速度
+    // 添加转向动画相关参数
+    private double bodyRotation = 0; // 鱼身旋转角度
+    private static final double MAX_BODY_ROTATION = Math.toRadians(15); // 最大鱼身旋转角度
+    // 修改鱼群转向参数
+    private static final double MIN_DIRECTION_CHANGE = Math.toRadians(20); // 最小转向角度20度
+    private static final double MAX_DIRECTION_CHANGE = Math.toRadians(30); // 最大转向角度30度
+    private static final double DIRECTION_CHANGE_PROBABILITY = 0.005; // 降低转向概率
+    private long lastDirectionChangeTime = 0; // 记录上次转向时间
+    private static final long DIRECTION_CHANGE_COOLDOWN = 8000; // 8秒冷却时间
+
+
     public Fish() {
 
     }
 
+    // 确保边界尺寸正确设置
     @Override
     public void setSize(Dimension size) {
-
+        this.size = size;
+        this.boundaryWidth = size.getWidth();
+        this.boundaryHeight = size.getHeight();
     }
 
+    // 在Fish类的showElement方法中，修改旋转部分：
     @Override
     public void showElement(Graphics g) {
-        if (this.getIcon() == null || animationFrames.isEmpty()) {
-            return;
-        }
+        if (this.getIcon() == null || animationFrames.isEmpty()) return;
 
-        // 转换为 Graphics2D 以支持变换
         Graphics2D g2d = (Graphics2D) g.create();
 
-        // 计算鱼的中心点
-        int centerX = this.getX() + this.getWidth() / 2;
-        int centerY = this.getY() + this.getHeight() / 2;
+        // 使用精确位置计算中心点
+        double centerX = preciseX + this.getWidth() / 2.0;
+        double centerY = preciseY + this.getHeight() / 2.0;
 
-        // 保存原始变换
-        AffineTransform originalTransform = g2d.getTransform();
+        // 获取当前帧
+        ImageIcon currentIcon = getCurrentIcon();
+        Image image = currentIcon.getImage();
 
-        // 创建新变换
-        AffineTransform transform = new AffineTransform();
+        // 计算旋转角度（添加鱼身旋转效果）
+        double rotationAngle = direction + Math.PI + bodyRotation;
 
-        // 移动到中心点
-        transform.translate(centerX, centerY);
+        // 优化旋转逻辑
+        AffineTransform original = g2d.getTransform();
+        g2d.translate(centerX, centerY);
+        g2d.rotate(rotationAngle); // 使用修正后的旋转角度
 
-        // 计算旋转角度（鱼头初始朝左是180度，所以需要额外旋转180度使鱼头朝向移动方向）
-        double rotationAngle = direction + Math.PI;
+        // 从中心绘制
+        g2d.drawImage(image,
+                -width/2, -height/2,
+                width, height, null);
 
-        // 应用旋转
-        transform.rotate(rotationAngle);
-
-        // 移动回原始位置
-        transform.translate(-this.getWidth() / 2, -this.getHeight() / 2);
-
-        // 应用变换
-        g2d.setTransform(transform);
-
-        // 绘制图像
-        g2d.drawImage(this.getIcon().getImage(),
-                0, 0,
-                this.getWidth(), this.getHeight(), null);
-
-        // 恢复原始变换
-        g2d.setTransform(originalTransform);
-
-        // 释放资源
+        g2d.setTransform(original);
         g2d.dispose();
     }
 
+    // 添加获取当前帧的方法
+    private ImageIcon getCurrentIcon() {
+        if (isCatch) {
+            if (!catchFrames.isEmpty() && catchFrameIndex < catchFrames.size()) {
+                return catchFrames.get(catchFrameIndex);
+            }
+        } else {
+            if (!animationFrames.isEmpty()) {
+                return animationFrames.get(currentFrameIndex);
+            }
+        }
+        return getIcon(); // 默认返回基础图标
+    }
+
+
     @Override
     public ElementObj createElement(JSONObject jsonObject) {
+
         // 从配置中读取鱼的类型
         String typeStr = jsonObject.getString("type");
         this.type = Type.valueOf(typeStr);
@@ -174,7 +195,6 @@ public class Fish extends ElementObj implements Collider {
         // 使用枚举中的属性初始化
         this.score = type.getScore();
         this.speed = type.getSpeed();
-        this.moveInterval = type.getMoveInterval();
         this.catchAnimationSpeed = type.getCatchSpeed();
         this.catchAnimationLoops = type.getCatchLoops();
 
@@ -189,17 +209,26 @@ public class Fish extends ElementObj implements Collider {
         this.width = type.getMinSize();
         this.height = type.getMinSize();
 
-        // 随机位置（确保在边界内）
+        // 随机位置（确保在边界外）
         int[] siteXY = randomBoundary((int)(boundaryWidth), (int)(boundaryHeight), width, height, random);
         x = siteXY[0];
         y = siteXY[1];
+        preciseX = x;
+        preciseY = y;
 
-        // 随机初始方向
-        direction = calInwardDirection(x,y,(int)(boundaryWidth), (int)(boundaryHeight),random);
+        // 用中心点计算方向
+        int fishCenterX = this.x + this.width/2;
+        int fishCenterY = this.y + this.height/2;
+        direction = calInwardDirection(
+                fishCenterX, fishCenterY,
+                boundaryWidth/2, boundaryHeight/2,
+                random
+        );
 
         // 加载图像资源
         String bigImage = jsonObject.getString("bigImage");
         String plist = jsonObject.getString("bigImageplist");
+        this.key = jsonObject.getString("key");
         JSONArray normalImages = jsonObject.getJSONArray("imageNormal");
         JSONArray catchImages = jsonObject.getJSONArray("imageCatch");
 
@@ -244,65 +273,93 @@ public class Fish extends ElementObj implements Collider {
 
         updateAnimation();
         move();
-    }
-
-    @Override
-    public void setAlive(boolean alive) {
-        this.isAlive = alive;
-    }
-
-    @Override
-    public boolean isAlive() {
-        return this.isAlive;
-    }
-
-    @Override
-    public void onClick() {
-
-    }
-
-    public Boolean isCatch(){
-        return this.isCatch;
-    }
-
-    public void setCatch(Boolean isCatch) {
-        this.isCatch = isCatch;
+        schoolBehavior();
     }
 
     @Override
     public void move() {
-        if (isCatch) {
-            return;
-        }
+        if (isCatch) return;
 
-        if (System.currentTimeMillis() - createTime > liveTime) {
-            isAlive = false; // 标记为需要销毁
-            return;
-        }
+        // 大鱼(LARGE)跳过所有转向逻辑
+        if (type != Type.LARGE) {
+            long currentTime = System.currentTimeMillis();
+            boolean canTurn = currentTime - lastDirectionChangeTime > DIRECTION_CHANGE_COOLDOWN;
 
-        frameCounter++;
-        if (frameCounter >= moveInterval) {
-            frameCounter = 0; // 重置计数器
-            // 计算移动向量
-            int dx = (int) (Math.cos(direction) * speed);
-            int dy = (int) (Math.sin(direction) * speed);
+            // 如果是鱼群领导者且可以转向，尝试改变方向
+            if (isGroupLeader() && canTurn && random.nextDouble() < DIRECTION_CHANGE_PROBABILITY) {
+                // 随机转向20-30度
+                double directionChange = MIN_DIRECTION_CHANGE +
+                        random.nextDouble() * (MAX_DIRECTION_CHANGE - MIN_DIRECTION_CHANGE);
 
-            // 更新位置
-            x += dx;
-            y += dy;
+                // 随机选择左右方向
+                if (random.nextBoolean()) {
+                    directionChange = -directionChange;
+                }
 
+                // 应用转向
+                direction += directionChange;
+                lastDirectionChangeTime = currentTime;
 
-            // 20%的概率随机改变方向
-            if (random.nextFloat() < 0.2f) {
-                // 计算最大偏移量（5度转换为弧度）
-                double maxOffset = Math.toRadians(5);
-                // 生成-5度到+5度之间的随机偏移
-                double randomOffset = (random.nextDouble() * 2 - 1) * maxOffset;
-                // 应用偏移到当前方向
-                direction += randomOffset;
+                // 重置转向动画
+                isTurning = true;
+                targetDirection = direction; // 设置目标方向为当前方向
+                bodyRotation = 0; // 重置鱼身旋转
+            }
+
+            // 平滑转向处理（视觉反馈）
+            if (isTurning) {
+                // 鱼身旋转效果（视觉反馈）
+                bodyRotation = Math.sin(System.currentTimeMillis() % 2000 / 1000.0 * Math.PI) * MAX_BODY_ROTATION;
+
+                // 0.5秒后结束转向动画
+                if (currentTime - lastDirectionChangeTime > 500) {
+                    isTurning = false;
+                    bodyRotation = 0;
+                }
+            }
+
+            // 如果是鱼群成员，完全跟随领导者的方向
+            if (groupId != -1 && groupLeader != null && groupLeader.isAlive()) {
+                this.direction = groupLeader.getDirection();
             }
         }
 
+        // 使用浮点计算移动增量
+        double dx = Math.cos(direction) * speed;
+        double dy = Math.sin(direction) * speed;
+
+        // 更新精确位置
+        preciseX += dx;
+        preciseY += dy;
+
+        // 同步给整数坐标
+        x = (int) preciseX;
+        y = (int) preciseY;
+    }
+
+    // 添加鱼群行为
+    private void schoolBehavior() {
+        if (!inSchool) return;
+
+        // 10%的概率跟随鱼群方向
+        if (random.nextFloat() < 0.1f) {
+            // 这里可以添加复杂的鱼群行为算法
+            // 简化为小幅调整方向
+            direction += (random.nextDouble() - 0.5) * Math.toRadians(5);
+        }
+    }
+
+    // 修改边界检查方法
+    private void checkBoundary() {
+        double centerX = preciseX + width/2.0;
+        double centerY = preciseY + height/2.0;
+
+        if (centerX < -100 ||
+                centerY < -100 ||
+                centerX > boundaryWidth + 100 ||
+                centerY > boundaryHeight + 100) {
+            isAlive = false;
+        }
     }
 
     /**
@@ -314,12 +371,17 @@ public class Fish extends ElementObj implements Collider {
      * @param random 随机数生成器
      * @return 包含 x 和 y 坐标的数组 [x, y]
      */
+    /**
+     * 生成位于边界外 50 像素范围内的随机坐标
+     */
     public static int[] randomBoundary(
             int boundaryWidth, int boundaryHeight,
             int width, int height,
-            Random random
-    ) {
-        int margin = 50; // 边界外 50 像素范围
+            Random random) {
+        int minMargin = 300; // 最小边界距离
+        int maxMargin = 400; // 最大边界距离
+        int margin = minMargin + random.nextInt(maxMargin - minMargin); // 300-400像素
+
         int side = random.nextInt(4); // 随机选择边界的一侧：0=上，1=右，2=下，3=左
 
         int x, y;
@@ -327,18 +389,18 @@ public class Fish extends ElementObj implements Collider {
         switch (side) {
             case 0: // 上边界外
                 x = random.nextInt(boundaryWidth);
-                y = -height - random.nextInt(margin);
+                y = -height - margin;
                 break;
             case 1: // 右边界外
-                x = boundaryWidth + random.nextInt(margin);
+                x = boundaryWidth + margin;
                 y = random.nextInt(boundaryHeight);
                 break;
             case 2: // 下边界外
                 x = random.nextInt(boundaryWidth);
-                y = boundaryHeight + random.nextInt(margin);
+                y = boundaryHeight + margin;
                 break;
             case 3: // 左边界外
-                x = -width - random.nextInt(margin);
+                x = -width - margin;
                 y = random.nextInt(boundaryHeight);
                 break;
             default: // 默认情况（理论上不会执行）
@@ -351,29 +413,36 @@ public class Fish extends ElementObj implements Collider {
 
     /**
      * 计算从边界外指向屏幕内部的初始方向
-     * @param x 鱼的x坐标
-     * @param y 鱼的y坐标
-     * @param boundaryWidth 边界宽度
-     * @param boundaryHeight 边界高度
-     * @return 指向屏幕内部的方向(弧度)
      */
-    private double calInwardDirection(int x, int y, int boundaryWidth, int boundaryHeight, Random random) {
-        // 计算屏幕中心点
-        int centerX = boundaryWidth / 2;
-        int centerY = boundaryHeight / 2;
+    public static double calInwardDirection(
+            double startX, double startY,
+            double targetX, double targetY,
+            Random random) {
 
-        // 计算指向中心的方向向量
-        int dx = centerX - x;
-        int dy = centerY - y;
+        double dx = targetX - startX;
+        double dy = targetY - startY;
 
-        // 基础方向（指向中心）
-        double baseDirection = Math.atan2(dy, dx);
+        double baseAngle = Math.atan2(dy, dx);
 
-        // 随机偏移量（±60度范围，即 ±π/3 弧度）
-        double randomOffset = (random.nextDouble() - 0.5) * Math.PI / 2.5;
+        // 减小随机偏移范围（±10度）
+        double randomOffset = (random.nextDouble() - 0.5) * Math.PI / 18;
 
-        // 返回带偏移的方向
-        return baseDirection + randomOffset;
+        return baseAngle + randomOffset;
+    }
+
+    // 添加坐标同步方法
+    public void syncPosition() {
+        if (isCatch) return;
+
+        // 检查是否需要同步
+        double diffX = preciseX - x;
+        double diffY = preciseY - y;
+
+        // 超过0.5像素才更新（减少无效更新）
+        if (Math.abs(diffX) > 0.5 || Math.abs(diffY) > 0.5) {
+            x = (int) Math.round(preciseX);
+            y = (int) Math.round(preciseY);
+        }
     }
 
     /**
@@ -507,10 +576,114 @@ public class Fish extends ElementObj implements Collider {
     }
 
     public int getCenterX() {
-        return x + width / 2;
+        return (int)(preciseX + width/2);
     }
 
     public int getCenterY() {
-        return y + height / 2;
+        return (int)(preciseY + height/2);
+    }
+
+    // 设置位置
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+        this.preciseX = x;
+        this.preciseY = y;
+    }
+
+    // 设置方向
+    public void setDirection(double direction) {
+        this.direction = direction;
+    }
+
+    // 设置鱼的种类
+    public void setFishType(Type type) {
+        this.type = type;
+        // 更新相关属性
+        this.score = type.getScore();
+        this.speed = type.getSpeed();
+    }
+
+    // 获取方向
+    public double getDirection() {
+        return direction;
+    }
+
+    // 获取鱼的key（用于创建相似鱼）
+    public String getKey() {
+        // 这里需要根据实际情况返回鱼的key
+        // 例如："Fish.fish01", "Fish.fish02" 等
+        // 您需要在createElement中保存key
+        return this.key;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public double getSpeed() {
+        return this.speed;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    // 添加方向锁定方法
+    public void setDirectionFixed(boolean fixed) {
+        this.directionFixed = fixed;
+    }
+
+    public void setInSchool(boolean inSchool) {
+        this.inSchool = inSchool;
+    }
+
+    // 设置鱼群ID
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
+
+    // 设置鱼群领导者
+    public void setGroupLeader(Fish groupLeader) {
+        this.groupLeader = groupLeader;
+    }
+
+    // 添加设置边界的方法
+    public void setBoundary(Dimension size) {
+        this.boundaryWidth = size.getWidth();
+        this.boundaryHeight = size.getHeight();
+    }
+
+    // 添加获取边界的方法
+    public Dimension getBoundary() {
+        return new Dimension((int)boundaryWidth, (int)boundaryHeight);
+    }
+
+    // 添加判断是否是鱼群领导者的方法
+    public boolean isGroupLeader() {
+        return groupLeader == this || groupId == this.hashCode();
+    }
+
+    @Override
+    public void setAlive(boolean alive) {
+        this.isAlive = alive;
+    }
+
+    @Override
+    public boolean isAlive() {
+        return this.isAlive;
+    }
+
+    @Override
+    public void onClick() {
+
+    }
+
+    public Boolean isCatch(){
+        return this.isCatch;
+    }
+
+    public void setCatch(Boolean isCatch) {
+        this.isCatch = isCatch;
     }
 }

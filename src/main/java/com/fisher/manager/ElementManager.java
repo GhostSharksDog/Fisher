@@ -15,6 +15,7 @@ import java.util.List;
  *
  */
 public class ElementManager {
+    public String GameMapBgPath; // 地图背景路径
     public long GameThreadTime; // 游戏主线程时间
     private List<Object> listMap;  // 地图列表
     private List<Object> listPlay; // 玩家列表

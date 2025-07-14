@@ -62,6 +62,10 @@ public class GameLoad {
     }
 
     public ImageIcon getPanelBackground() {
+        System.out.println("getPanelBackground");
+        if(ElementManager.getManager().GameMapBgPath!=null && !ElementManager.getManager().GameMapBgPath.isEmpty()){
+            return findResourceIcon(ElementManager.getManager().GameMapBgPath);
+        }
         return imgMap.get("panelBackground");
     }
 

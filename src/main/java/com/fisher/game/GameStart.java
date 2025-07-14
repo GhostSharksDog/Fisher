@@ -13,13 +13,12 @@ public class GameStart {
      */
     public static void main(String[] args) {
         GameJFrame frame = new GameJFrame(); // 创建窗体
-        GameMainPanel mainPanel = new GameMainPanel(); // 创建游戏面板
         GameListener gameListener = new GameListener(); // 创建游戏监听器
         GameThread mainThread = new GameThread(); // 创建游戏主线程
 
         StartPanel startPanel = new StartPanel(e -> {
             // 开始游戏
-            frame.addPanel(mainPanel); // 将游戏主面板注入窗体
+            frame.addPanel(new GameMainPanel()); // 将游戏主面板注入窗体
             frame.start(); // 启动游戏
         }, e -> {
             // 退出游戏

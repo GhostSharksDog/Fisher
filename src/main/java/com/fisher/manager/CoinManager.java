@@ -22,6 +22,7 @@ public class CoinManager {
 
     // 减少金币
     public boolean reduceCoins(int mount) {
+        mount *= 10;
         if (this.coins >= mount) {
             this.coins -= mount;
             return true;
